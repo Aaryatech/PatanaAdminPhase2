@@ -254,7 +254,7 @@ public class FranchiseeController {
 	@RequestMapping(value = "/configureFranchisee")
 	public ModelAndView addconfigureFranchisee(HttpServletRequest request, HttpServletResponse response) {
 
-		logger.info("/configureFranchisee request mapping.");
+		//logger.info("/configureFranchisee request mapping.");
 
 		ModelAndView mav = new ModelAndView("franchisee/configureFr");
 		Constants.mainAct = 2;
@@ -266,7 +266,7 @@ public class FranchiseeController {
 					FranchiseeAndMenuList.class);
 
 			List<Menu> menuList = restTemplate.getForObject(Constants.url + "getNonConfMenus", List.class);
-			logger.info("Franchisee Response " + franchiseeAndMenuList.getAllFranchisee());
+			//logger.info("Franchisee Response " + franchiseeAndMenuList.getAllFranchisee());
 
 			mav.addObject("menuList", menuList);
 			mav.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
@@ -840,6 +840,31 @@ public class FranchiseeController {
 				// date ="0";
 			}
 
+			//Sachin 19-01-2021
+			int rateSettingFrom=Integer.parseInt(request.getParameter("rate_setting_from"));
+			float profitPer=0.0f;
+			int rateSettingType=-1;
+			
+			if(rateSettingFrom==0) {
+				profitPer=Float.parseFloat(request.getParameter("profit_per"));
+			}else {
+				rateSettingType=Integer.parseInt(request.getParameter("rateTypeValue"));
+			}
+			int delDays=Integer.parseInt(request.getParameter("del_date_days"));
+			int prodDays=Integer.parseInt(request.getParameter("prod_date_days"));
+			float discPer=0.0f;
+			int isDiscApp=Integer.parseInt(request.getParameter("is_disc_app"));
+			
+			if(isDiscApp==1) {
+				discPer=Float.parseFloat(request.getParameter("disc_per"));
+			}
+			float grnPer=0.0f;
+			try {
+			grnPer=Float.parseFloat(request.getParameter("grn_per"));
+			}catch (Exception e) {
+				grnPer=0.0f;
+			}
+			//Sachin 19-01-2021 Code end
 			RestTemplate rest = new RestTemplate();
 			/*
 			 * for(int j=0;j<frList.size();j++) {commented on 29 dec 18
