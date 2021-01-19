@@ -323,8 +323,9 @@
 												for="fr_password">Password</label>
 											<div class="col-sm-6 col-lg-4 controls">
 												<input type="password" name="fr_password" id="fr_password"
-													class="form-control" data-rule-required="true" value="NA"
-													data-rule-minlength="6" placeholder="Password" />
+													class="form-control" value="NA"
+													placeholder="Password" />
+													<!-- data-rule-minlength="6"  -->
 											</div>
 										</div>
 
@@ -333,10 +334,9 @@
 												for="fr_confirm_password">Confirm Password</label>
 											<div class="col-sm-6 col-lg-4 controls">
 												<input type="password" name="fr_confirm_password"
-													id="fr_confirm_password" class="form-control" value="NA"
-													data-rule-required="true" data-rule-minlength="6"
-													data-rule-equalTo="#fr_password"
+													id="fr_confirm_password" class="form-control" value="NA"													
 													placeholder="Confirm Password" />
+													<!-- data-rule-minlength="6"  data-rule-equalTo="#fr_password" -->
 											</div>
 										</div>
 
