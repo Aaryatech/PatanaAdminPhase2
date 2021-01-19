@@ -739,7 +739,7 @@ public class ItemController {
 		map.add("itemName", itemName);
 		map.add("itemGrp1", itemGrp1);
 		map.add("itemGrp2", itemGrp2);
-		map.add("itemGrp3", itemGrp3);
+		map.add("itemGrp3", Integer.parseInt(request.getParameter("product_type")));
 		map.add("minQty", minQty);
 		map.add("itemRate1", itemRate1);
 		map.add("itemRate2", itemRate2);
@@ -1338,7 +1338,7 @@ public class ItemController {
 		map.add("itemName", itemName);
 		map.add("itemGrp1", itemGrp1);
 		map.add("itemGrp2", itemGrp2);
-		map.add("itemGrp3", itemGrp3);
+		map.add("itemGrp3", Integer.parseInt(request.getParameter("product_type")));
 		map.add("itemRate1", itemRate1);
 		map.add("itemRate2", itemRate2);
 		map.add("itemRate3", itemRate3);

@@ -148,8 +148,18 @@
 								method="post" id="validation-form" enctype="multipart/form-data">
 
 
-								
-
+								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Product Type</label>
+									<div class="col-sm-9 col-lg-10 controls">
+										<label class="radio-inline"> <input type="radio"
+											name="product_type" id="prdRadios1" value="0" checked>
+											Franchise
+										</label> <label class="radio-inline"> <input type="radio"
+											name="product_type" id="prdRadios2" value="1"
+											data-rule-required="false" />3<sup>rd</sup> Party</label>
+										
+									</div>
+								</div>		
 
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Category</label>
@@ -181,6 +191,7 @@
 										</select>
 									</div>
 								</div>
+								
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Item Code</label>
 									<div class="col-sm-9 col-lg-10 controls">
@@ -398,6 +409,7 @@
 										</label>
 									</div>
 								</div>
+																
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Item
 										Shelf Life</label>
@@ -519,6 +531,16 @@
 
 
 	<script type="text/javascript">
+	
+	$( document ).ready(function() {
+	    var prdType = $("#prdRadios1").val();
+	    if(prdType == 0){
+	    	$('#item_id').prop('readonly', true);
+	    }else{
+	    	$('#item_id').prop('readonly', false);
+	    }
+	  
+	});
 
 			function onSubCatChange(item_grp2) {
 				var item_grp1 = parseFloat($("#item_grp1").val());

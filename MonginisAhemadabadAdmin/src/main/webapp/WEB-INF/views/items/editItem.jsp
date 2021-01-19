@@ -521,6 +521,19 @@
 											</div>
 										</div>
 										
+										<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Product Type</label>
+									<div class="col-sm-9 col-lg-10 controls">
+										<label class="radio-inline"> <input type="radio" ${item.itemGrp3==0 ? 'checked' : ''}
+											name="product_type" id="prdRadios1" value="0">
+											Franchise
+										</label> <label class="radio-inline"> <input type="radio"
+											name="product_type" id="prdRadios2" value="1" ${item.itemGrp3==1 ? 'checked' : ''}
+											data-rule-required="false" />3<sup>rd</sup> Party</label>
+										
+									</div>
+								</div>
+										
 										 <div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Item Shelf Life</label>
 									<div class="col-sm-9 col-lg-10 controls">

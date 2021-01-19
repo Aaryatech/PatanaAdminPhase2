@@ -171,13 +171,13 @@
 											</div>
 										</div>
 
-										<div class="form-group">
+										<div class="form-group" style="display: none;">
 											<label class="col-sm-3 col-lg-2 control-label">Target
 												Per Year</label>
 											<div class="col-sm-9 col-lg-4 controls">
-												<input type="text" name="fr_target" id="fr_target"
+												<input type="text" name="fr_target" id="fr_target" value="0"
 													placeholder="Target Per Year" class="form-control"
-													data-rule-required="true" data-rule-number="true"
+													 data-rule-number="true"
 													onKeyPress="return isNumberCommaDot(event)" />
 											</div>
 										</div>
@@ -318,22 +318,22 @@
 										</div>
 
 
-										<div class="form-group">
+										<div class="form-group" style="display: none;">
 											<label class="col-sm-3 col-lg-2 control-label"
 												for="fr_password">Password</label>
 											<div class="col-sm-6 col-lg-4 controls">
 												<input type="password" name="fr_password" id="fr_password"
-													class="form-control" data-rule-required="true"
+													class="form-control" data-rule-required="true" value="NA"
 													data-rule-minlength="6" placeholder="Password" />
 											</div>
 										</div>
 
-										<div class="form-group">
+										<div class="form-group" style="display: none;">
 											<label class="col-sm-3 col-lg-2 control-label"
 												for="fr_confirm_password">Confirm Password</label>
 											<div class="col-sm-6 col-lg-4 controls">
 												<input type="password" name="fr_confirm_password"
-													id="fr_confirm_password" class="form-control"
+													id="fr_confirm_password" class="form-control" value="NA"
 													data-rule-required="true" data-rule-minlength="6"
 													data-rule-equalTo="#fr_password"
 													placeholder="Confirm Password" />
