@@ -455,11 +455,11 @@ select {
 										<div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">GRN %</label>
 											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="grn_per" id="grn_per" maxlength="5"
+												<input type="text" name="grn_per" id="grn_per" maxlength="3"
 													class="form-control numberOnly" value="0" required />
 													 <span
 												class="text-danger"
-												id="error_grn_per" style="display: none;">Please enter value between 0 to 99.</span>
+												id="error_grn_per" style="display: none;">Please enter value between 0 to 100.</span>
 													
 											</div>
 										</div>
@@ -503,9 +503,10 @@ jQuery('.floatOnlyTwoDots').keyup(function() {
 	       $(this).val(data.toFixed(2));
 	   }
 	});
-$('.numberOnly').on('input', function() {
-	 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+jQuery('.numberOnly').keyup(function() {
+	 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
 	});
+	
 	
 $(function() {
 	$('.formgroup2').hide();
