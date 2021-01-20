@@ -26,6 +26,8 @@ public class GetBillHeader {
 	private String exVarchar1;//ex on 2july
 	private String exVarchar2;//ex on 2july
 	
+	private String billDateTime;
+	
 	
     public String getVehNo() {
 		return vehNo;
@@ -198,6 +200,14 @@ public class GetBillHeader {
 		this.time = time;
 	}
 
+	public String getBillDateTime() {
+		return billDateTime;
+	}
+
+	public void setBillDateTime(String billDateTime) {
+		this.billDateTime = billDateTime;
+	}
+
 	@Override
 	public String toString() {
 		return "GetBillHeader [billNo=" + billNo + ", frName=" + frName + ", time=" + time + ", taxApplicable="
@@ -205,7 +215,8 @@ public class GetBillHeader {
 				+ frCode + ", grandTotal=" + grandTotal + ", taxableAmt=" + taxableAmt + ", totalTax=" + totalTax
 				+ ", status=" + status + ", remark=" + remark + ", delStatus=" + delStatus + ", partyName=" + partyName
 				+ ", partyAddress=" + partyAddress + ", partyGstin=" + partyGstin + ", vehNo=" + vehNo + ", billTime="
-				+ billTime + ", exVarchar1=" + exVarchar1 + ", exVarchar2=" + exVarchar2 + "]";
+				+ billTime + ", exVarchar1=" + exVarchar1 + ", exVarchar2=" + exVarchar2 + ", billDateTime="
+				+ billDateTime + "]";
 	}
-    
+
 }

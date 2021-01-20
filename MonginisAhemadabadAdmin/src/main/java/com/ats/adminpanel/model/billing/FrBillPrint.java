@@ -34,6 +34,8 @@ public class FrBillPrint {
 	
 	Company company;
 	
+	private String frCity; //20-01-2021
+	
 	
 	public String getVehNo() {
 		return vehNo;
@@ -151,6 +153,12 @@ public class FrBillPrint {
 	public void setGrandTotal(float grandTotal) {
 		this.grandTotal = grandTotal;
 	}
+	public String getFrCity() {
+		return frCity;
+	}
+	public void setFrCity(String frCity) {
+		this.frCity = frCity;
+	}
 	@Override
 	public String toString() {
 		return "FrBillPrint [billDetailsList=" + billDetailsList + ", frId=" + frId + ", billNo=" + billNo + ", frName="
@@ -158,7 +166,7 @@ public class FrBillPrint {
 				+ ", billDate=" + billDate + ", amtInWords=" + amtInWords + ", grandTotal=" + grandTotal
 				+ ", partyName=" + partyName + ", partyGstin=" + partyGstin + ", partyAddress=" + partyAddress
 				+ ", vehNo=" + vehNo + ", billTime=" + billTime + ", exVarchar1=" + exVarchar1 + ", exVarchar2="
-				+ exVarchar2 + ", subCatList=" + subCatList + ", company=" + company + "]";
+				+ exVarchar2 + ", subCatList=" + subCatList + ", company=" + company + ", frCity=" + frCity + "]";
 	}
 	
 }

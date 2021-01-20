@@ -76,7 +76,7 @@ private int stockType;
 
 private String frAddress;
 
-private int frTarget;
+private String frTarget;
 
 private int isSameState;
 
@@ -328,11 +328,11 @@ public void setFrAddress(String frAddress) {
 	this.frAddress = frAddress;
 }
 
-public int getFrTarget() {
+public String getFrTarget() {
 	return frTarget;
 }
 
-public void setFrTarget(int frTarget) {
+public void setFrTarget(String frTarget) {
 	this.frTarget = frTarget;
 }
 

@@ -628,7 +628,7 @@ public class FranchiseeController {
 		logger.info("20] frAgreementDate " + frAgreementDate);
 
 		int frGstType = Integer.parseInt(request.getParameter("fr_gst_type"));
-		logger.info("21] frGstType " + frGstType);
+		logger.info("21] frGstType " + frGstType);		
 
 		String frGstNo;
 		if (frGstType == 0) {
@@ -646,8 +646,11 @@ public class FranchiseeController {
 		String frAddr = request.getParameter("fr_addr");
 		logger.info("25] frAddr " + frAddr);
 
-		String frTarget = request.getParameter("fr_target");
-		logger.info("26] frTarget " + frTarget);
+		String ownerMob = request.getParameter("owner_mob");
+		logger.info("26] frTarget " + ownerMob);
+		
+		String fdaNo = request.getParameter("fda_no");
+		logger.info("27] fdaNo " + fdaNo);
 
 		// String frImage=ImageS3Util.uploadFrImage(file);
 		VpsImageUpload upload = new VpsImageUpload();
@@ -721,8 +724,9 @@ public class FranchiseeController {
 		map.add("frGstNo", frGstNo);
 		map.add("stockType", stockType);
 		map.add("frAddress", frAddr);
-		map.add("frTarget", frTarget);
+		map.add("frTarget", ownerMob);
 		map.add("isSameState", isSameState);
+		map.add("fdaNo", fdaNo);
 		try {
 			FranchiseeList frResponse = rest.postForObject(Constants.url + "saveFranchisee", map, FranchiseeList.class);
 
@@ -1280,6 +1284,8 @@ public class FranchiseeController {
 	public ModelAndView listAllFranchisee(HttpServletRequest request, HttpServletResponse response) {
 		Constants.mainAct = 1;
 		Constants.subAct = 3;
+		ModelAndView mav = new ModelAndView("franchisee/listAllFranchisee");
+		try {
 		RestTemplate restTemplate = new RestTemplate();
 		AllFranchiseeList allFranchiseeList = restTemplate.getForObject(Constants.url + "getAllFranchisee",
 				AllFranchiseeList.class);
@@ -1289,7 +1295,7 @@ public class FranchiseeController {
 		List<Route> routeList = new ArrayList<Route>();
 		routeList = allRoutesListResponse.getRoute();
 
-		ModelAndView mav = new ModelAndView("franchisee/listAllFranchisee");
+		
 
 		List<FranchiseeList> franchiseeList = new ArrayList<FranchiseeList>();
 		franchiseeList = allFranchiseeList.getFranchiseeList();
@@ -1388,6 +1394,10 @@ public class FranchiseeController {
 
 		session.setAttribute("exportExcelListDummy", exportExcelListDummy);
 		session.setAttribute("excelName", "FrExcelImportFormat");
+		}catch (Exception e) {
+			System.out.println("Excep in /listAllFranchisee : "+e.getMessage());
+			e.printStackTrace();
+		}
 		return mav;
 	}
 
@@ -1491,7 +1501,7 @@ public class FranchiseeController {
 
 					franchisee.setFrGstNo(ItemController.getCellValueAsString(row.getCell(22)));
 
-					franchisee.setFrTarget(Integer.parseInt(ItemController.getCellValueAsString(row.getCell(23))));
+					franchisee.setFrTarget(ItemController.getCellValueAsString(row.getCell(23)));
 
 					franchisee.setStockType(Integer.parseInt(ItemController.getCellValueAsString(row.getCell(24))));
 
@@ -1940,8 +1950,11 @@ public class FranchiseeController {
 			String frAddr = request.getParameter("fr_addr");
 			logger.info("25] frAddr " + frAddr);
 
-			String frTarget = request.getParameter("fr_target");
-			logger.info("26] frTarget " + frTarget);
+			String ownerMob = request.getParameter("owner_mob");
+			logger.info("26] frTarget " + ownerMob);
+			
+			String fdaNo = request.getParameter("fda_no");
+			logger.info("26] fda_no " + fdaNo);
 			// logger.info("del status selected is==:" + delStatus);
 
 			logger.info("fr opening from  ==:" + frOpeningDate);
@@ -2022,8 +2035,10 @@ public class FranchiseeController {
 			map.add("frGstNo", frGstNo);
 			map.add("stockType", stockType);
 			map.add("frAddress", frAddr);
-			map.add("frTarget", frTarget);
-			map.add("isSameState", isSameState);
+			map.add("frTarget", ownerMob);
+			map.add("isSameState", isSameState);			
+			map.add("fdaNo", fdaNo);
+			
 			ErrorMessage errorMessage = rest.postForObject(Constants.url + "updateFranchisee", map, ErrorMessage.class);
 		} catch (Exception e) {
 			logger.info(e.getMessage());

@@ -2010,9 +2010,17 @@ public class BillController {
 				// billPrintList=new ArrayList<>();
 				billPrint.setSubCatList(filteredSubCat);
 				if (billPrint != null)
-					billPrintList.add(billPrint);
+				map.add("frId", billPrint.getFrId());
+				restTemplate = new RestTemplate();
+
+				FranchiseeList franchiseeList = restTemplate.getForObject(Constants.url + "getFranchisee?frId={frId}",
+						FranchiseeList.class, billPrint.getFrId());
+				billPrint.setFrCity(franchiseeList.getFrCity());
+				
+				billPrintList.add(billPrint);
 
 			}
+			
 			System.err.println("sub Cat List  " + billPrint.getSubCatList().toString());
 			System.out.println(" after adding detail List : bill Print List " + billPrintList.toString());
 

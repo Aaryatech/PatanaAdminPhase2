@@ -381,6 +381,19 @@
 													placeholder="Birthdate" />
 											</div>
 										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-3 col-lg-2 control-label">Owner's
+											Mobile</label>
+											<div class="col-sm-9 col-lg-4 controls">
+												<input type="text" name="owner_mob" id="owner_mob"
+													placeholder="Mobile" class="form-control"
+													data-rule-required="true" data-rule-minlength="10"
+													data-rule-maxlength="10"
+													onKeyPress="return isNumberCommaDot(event)" />
+											</div>
+										</div>
+										
 										<div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">FDA
 												License Date</label>
@@ -391,6 +404,17 @@
 													placeholder="FDA License Date" />
 											</div>
 										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-3 col-lg-2 control-label"
+												for="fda_no">FDA No.</label>
+											<div class="col-sm-6 col-lg-4 controls">
+												<input type="text" name="fda_no" required
+													id="fda_no" class="form-control"											
+													placeholder="FDA No." data-rule-minlength="11"/>													
+											</div>
+										</div>
+										
 										<div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">Agreement
 												Date</label>

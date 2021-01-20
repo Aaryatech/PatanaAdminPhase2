@@ -102,12 +102,12 @@
 	                                 <div class="col-sm-6 col-lg-4 controls"><textarea rows="4" cols="25" name="fr_addr" id="fr_addr" placeholder="Address"	class="form-control" form="validation-form"required>${franchiseeList.frAddress}</textarea></div>
 	                                 </div>
 	                                 
-		                             <div class="form-group">
+		                             <div class="form-group" style="display: none;">
 											<label class="col-sm-3 col-lg-2 control-label">Franchise Target</label>
 											<div class="col-sm-9 col-lg-4 controls">
 												<input type="text" name="fr_target" id="fr_target" placeholder="Franchisee Target"
 													class="form-control" data-rule-required="true"
-													data-rule-number="true" value="${franchiseeList.frTarget}"
+													data-rule-number="true" value="0"
 													onKeyPress="return isNumberCommaDot(event)"/>
 											</div>
 										</div>
@@ -289,23 +289,21 @@
 										</div>
 
 
-										<div class="form-group">
+										<div class="form-group" style="display:none;">
 											<label class="col-sm-3 col-lg-2 control-label"
 												for="fr_password">Password</label>
 											<div class="col-sm-6 col-lg-4 controls">
 												<input type="text" name="fr_password" id="fr_password"
-													value="${franchiseeList.frPassword}" class="form-control" data-rule-required="true"
-													data-rule-minlength="6" />
+													value="${franchiseeList.frPassword}" class="form-control"/>
 											</div>
 										</div>
 
-										<div class="form-group">
+										<div class="form-group" style="display:none;">
 											<label class="col-sm-3 col-lg-2 control-label"
 												for="fr_confirm_password">Confirm Password</label>
 											<div class="col-sm-6 col-lg-4 controls">
 												<input type="password" name="fr_confirm_password"
 													id="fr_confirm_password" class="form-control"value="${franchiseeList.frPassword}"
-													data-rule-required="true" data-rule-minlength="6"
 													data-rule-equalTo="#fr_password" />
 											</div>
 										</div>
@@ -338,7 +336,7 @@
 												Name</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												<input type="text" name="fr_owner" id="fr_owner"
-													value="${franchiseeList.frOwner }" placeholder="Owner"
+													value="${franchiseeList.frOwner}" placeholder="Owner"
 													class="form-control" data-rule-required="true" />
 											</div>
 										</div>
@@ -350,6 +348,19 @@
 													value="${franchiseeList.ownerBirthDate}"   placeholder="Birthdate"/>
 											</div>
 										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-3 col-lg-2 control-label">Owner's
+											Mobile</label>
+											<div class="col-sm-9 col-lg-4 controls">
+												<input type="text" name="owner_mob" id="owner_mob"
+													placeholder="Mobile" class="form-control"
+													data-rule-required="true" data-rule-minlength="10"
+													data-rule-maxlength="10" value="${franchiseeList.frTarget}" 
+													onKeyPress="return isNumberCommaDot(event)" />
+											</div>
+										</div>
+										
                                           <div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">FDA License Date</label>
 											<div class="col-sm-5 col-lg-4 controls">
@@ -358,6 +369,17 @@
 											required		 placeholder="FDA License Date"/>
 											</div>
 										</div>
+										
+										 <div class="form-group">
+											<label class="col-sm-3 col-lg-2 control-label"
+												for="fda_no">FDA No.</label>
+											<div class="col-sm-6 col-lg-4 controls">
+												<input type="text" name="fda_no" value="${franchiseeList.frRmn1}"
+													id="fda_no" class="form-control" required												
+													placeholder="FDA No." data-rule-minlength="11"/>													
+											</div>
+										</div> 
+
 										 <div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">Agreement Date</label>
 											<div class="col-sm-5 col-lg-4 controls">
