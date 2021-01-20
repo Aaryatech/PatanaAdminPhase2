@@ -137,8 +137,8 @@ public class SpecialCakeController {
 		return model;
 	}
 
+	List<SpecialCake> specialCakeList = new ArrayList<SpecialCake>();
 	@RequestMapping(value = "/showSpecialCake", method = RequestMethod.GET)
-
 	public ModelAndView redirectToSpCakeList(HttpServletRequest request, HttpServletResponse response) {
 
 		System.out.println("inside ViewSpCkeList");
@@ -162,7 +162,7 @@ public class SpecialCakeController {
 				SpCakeResponse spCakeResponse = restTemplate.getForObject(Constants.url + "showSpecialCakeList",
 						SpCakeResponse.class);
 				System.out.println("SpCake Controller SpCakeList Response " + spCakeResponse.toString());
-				List<SpecialCake> specialCakeList = new ArrayList<SpecialCake>();
+				
 
 				specialCakeList = spCakeResponse.getSpecialCake();
 				System.out.println("my cake list");
@@ -285,6 +285,30 @@ public class SpecialCakeController {
 			}
 		}
 		return model;
+	}
+	
+	@RequestMapping(value = "/showSpCakeImage", method = RequestMethod.GET)
+	public @ResponseBody Info showSpCakeImage(HttpServletRequest request, HttpServletResponse response) {
+		Info info = new Info();
+		String spImg =  null;
+		try {
+			int spId = Integer.parseInt(request.getParameter("spId"));
+			System.out.println("spId-----------"+spId);
+			
+			for (int i = 0; i < specialCakeList.size(); i++) {
+				if(specialCakeList.get(i).getSpId()==spId) {
+					spImg = Constants.SPCAKE_IMAGE_URL+specialCakeList.get(i).getSpImage();					
+				}
+			}			
+			
+			info.setMessage(spImg);
+			
+		}catch (Exception e) {
+			System.out.println("/Excep in showSpCakeImage : "+e.getMessage());
+			e.printStackTrace();
+		}
+		System.out.println(spImg);
+		return info;
 	}
 
 	/*

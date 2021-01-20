@@ -9,10 +9,52 @@
   table-layout: fixed;
   border:1px solid #ddd;
 }
+/* Model Css */
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 10px;
+  border: 1px solid #888;
+  width: 16%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
 	</style> 
 
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<body>
+	<c:url value="/showSpCakeImage" var="showSpCakeImage"></c:url>
 	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include> 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/tableSearch.css">
@@ -151,7 +193,7 @@
 															<th  style="width: 38px" align="left">Select</th>
 												
 														<th style="width: 38px" align="left">No</th>
-																<th width="104" style="text-align: center;">Image</th>
+																<!-- <th width="104" style="text-align: center;">Image</th> -->
 																<th width="126" style="text-align: center;">Code</th>
 																<th width="120" style="text-align: center;">Name</th>
 																<th width="96" style="text-align: center;">Type</th>
@@ -174,7 +216,7 @@
 											<th  style="width:38px" align="left">Select</th>
 												
 													<th  style="width: 38px" align="left">No</th>
-																<th width="104" style="text-align: center;">Image</th>
+																<!-- <th width="104" style="text-align: center;">Image</th> -->
 																<th width="126" style="text-align: center;">Code</th>
 																<th width="120" style="text-align: center;">Name</th>
 																<th width="96" style="text-align: center;">Type</th>
@@ -193,10 +235,10 @@
 																<td><input type="checkbox" class="chk" name="select_to_print" id="${specialCake.spId}"	value="${specialCake.spId}"/></td>
 																
 																	<td><c:out value="${count.index+1}"/></td>
-																	<td style="text-align: center;">
-																			 <img src="${url}${specialCake.spImage}" width="70" height="70" 	
-																			 onerror="this.src='resources/img/No_Image_Available.jpg';"/> 
-																	</td>
+																	<%-- <td style="text-align: center;">
+																			<img src="${url}${specialCake.spImage}" width="70" height="70" 	
+																			 onerror="this.src='resources/img/No_Image_Available.jpg';"/>  
+																	</td> --%>
 																	<td style="text-align: center;"><c:out
 																			value="${specialCake.spCode}  "></c:out></td>
 																	<td style="text-align: left;"><c:out
@@ -237,7 +279,10 @@
 					                                                  <i class="fa fa-list"></i></a>
                                                                          <a href="deleteSpecialCake/${specialCake.spId}"
 																		onClick="return confirm('Are you sure want to delete this record');" data-toggle="tooltip" title="Delete"><span
-																			class="glyphicon glyphicon-remove"></span></a></td>
+																			class="glyphicon glyphicon-remove"></span></a>
+																			
+																	<a href="javascript:void(0);" data-toggle="tooltip" title="Show Image" onclick="openImg(${specialCake.spId})">SS</a>		
+																	</td>
 														
 																	</c:when>
 
@@ -525,6 +570,47 @@ function exportToExcel1()
 {
 	window.open("${pageContext.request.contextPath}/exportToExcelDummy");
 			document.getElementById("expExcel1").disabled=true;
+}
+</script>
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+     <img src="" width="170" height="170" id="spImg"
+		onerror="this.src='resources/img/No_Image_Available.jpg';"/>
+  </div>
+
+</div>
+
+<script>
+//Get the modal
+var modal = document.getElementById("myModal");
+function openImg(spId){
+	var image = new Image();
+	$.getJSON('${showSpCakeImage}', {
+					spId : spId,
+					ajax : 'true',
+				},  function(data) {
+					document.getElementById("spImg").src = data.message;
+					modal.style.display = "block";
+				});
+  
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
 }
 </script>
 </html>
