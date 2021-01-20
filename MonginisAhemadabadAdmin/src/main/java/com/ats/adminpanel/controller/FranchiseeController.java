@@ -880,6 +880,19 @@ public class FranchiseeController {
 			map.add("settingType", settingType);
 			map.add("date", convertedDate);
 			map.add("day", convertedDays);
+			
+			//New Fields added
+			map.add("rateSettingFrom", rateSettingFrom);
+			map.add("profitPer", profitPer);
+			map.add("rateSettingType", rateSettingType);
+			
+			map.add("delDays", delDays);
+			map.add("prodDays", prodDays);
+			
+			map.add("isDiscApp", isDiscApp);
+			map.add("discPer", discPer);
+			
+			map.add("grnPer", grnPer);
 
 			ErrorMessage errorMessage = rest.postForObject(Constants.url + "configureFranchisee", map,
 					ErrorMessage.class);

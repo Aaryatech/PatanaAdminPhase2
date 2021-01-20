@@ -456,7 +456,7 @@ select {
 											<label class="col-sm-3 col-lg-2 control-label">GRN %</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												<input type="text" name="grn_per" id="grn_per" maxlength="5"
-													class="form-control floatOnlyTwoDots" value="0" required />
+													class="form-control numberOnly" value="0" required />
 													 <span
 												class="text-danger"
 												id="error_grn_per" style="display: none;">Please enter value between 0 to 99.</span>
