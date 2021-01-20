@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -862,11 +863,11 @@ public class FranchiseeController {
 			if(isDiscApp==1) {
 				discPer=Float.parseFloat(request.getParameter("disc_per"));
 			}
-			float grnPer=0.0f;
+			int grnPer=0;
 			try {
-			grnPer=Float.parseFloat(request.getParameter("grn_per"));
+			grnPer=Integer.parseInt(request.getParameter("grn_per"));
 			}catch (Exception e) {
-				grnPer=0.0f;
+				grnPer=0;
 			}
 			//Sachin 19-01-2021 Code end
 			RestTemplate rest = new RestTemplate();
@@ -897,6 +898,7 @@ public class FranchiseeController {
 			map.add("discPer", discPer);
 			
 			map.add("grnPer", grnPer);
+			map.add("subCat", 0);
 
 			ErrorMessage errorMessage = rest.postForObject(Constants.url + "configureFranchisee", map,
 					ErrorMessage.class);
@@ -908,6 +910,8 @@ public class FranchiseeController {
 
 			}
 			/* } */
+		}catch (HttpClientErrorException e) {
+			System.err.println("Exce at configureFranchisee " +e.getResponseBodyAsString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
