@@ -293,7 +293,6 @@ public class SpecialCakeController {
 		String spImg =  null;
 		try {
 			int spId = Integer.parseInt(request.getParameter("spId"));
-			System.out.println("spId-----------"+spId);
 			
 			for (int i = 0; i < specialCakeList.size(); i++) {
 				if(specialCakeList.get(i).getSpId()==spId) {

@@ -199,9 +199,9 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																<th width="96" style="text-align: center;">Type</th>
 																<th width="96" style="text-align: center;">Min Weight</th>
 																<th width="96" style="text-align: center;">Max Weight</th>
-																<th width="80" style="text-align: center;">Rate</th>
-																
+																<th width="80" style="text-align: center;">Rate</th>																
 																<th width="80" style="text-align: center;">MRP</th>
+																<th width="80" style="text-align: center;">Add On Rate</th>
 																<th width="90" style="text-align: center;">Action</th>
 												</tr>
 												</thead>
@@ -224,6 +224,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																<th width="96" style="text-align: center;">Weight</th>
 																<th width="80" style="text-align: center;">Rate</th>
 																<th width="80" style="text-align: center;">MRP</th>
+																<th width="80" style="text-align: center;">Add On Rate</th>
 																<th width="90" style="text-align: center;">Action</th>
 												</tr>
 												</thead>
@@ -269,8 +270,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																			value="${specialCake.mrpRate1}  "></c:out></td>
 																			
 																			
-																			
-																			<c:choose>
+																		<td style="text-align: left;"><c:out
+																			value="${specialCake.isAddonRateAppli == 1 ? 'YEs' : NO}  "></c:out></td>
+																		
+																		<c:choose>
 																	<c:when test="${isEdit==1 and isDelete==1}">
 																		<td  style="text-align: center;"><a
 																		href="updateSpCake/${specialCake.spId}"data-toggle="tooltip" title="Edit Special Cake">	<span
@@ -281,7 +284,9 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																		onClick="return confirm('Are you sure want to delete this record');" data-toggle="tooltip" title="Delete"><span
 																			class="glyphicon glyphicon-remove"></span></a>
 																			
-																	<a href="javascript:void(0);" data-toggle="tooltip" title="Show Image" onclick="openImg(${specialCake.spId})">SS</a>		
+																	<a href="javascript:void(0);" data-toggle="tooltip" title="Image" onclick="openImg(${specialCake.spId})">
+																		<span class="glyphicon glyphicon-picture"></span>
+																	</a>		
 																	</td>
 														
 																	</c:when>
@@ -294,7 +299,12 @@ body {font-family: Arial, Helvetica, sans-serif;}
 					                                                  <i class="fa fa-list"></i></a>
                                                                          <a href="deleteSpecialCake/${specialCake.spId}"  class="disableClick"
 																		onClick="return confirm('Are you sure want to delete this record');"><span
-																			class="glyphicon glyphicon-remove"></span></a></td>
+																			class="glyphicon glyphicon-remove"></span></a>
+																	
+																		<a href="javascript:void(0);" data-toggle="tooltip" title="Image" onclick="openImg(${specialCake.spId})">
+																		<span class="glyphicon glyphicon-picture"></span>
+																	</a>
+																	</td>
 																	</c:when>
 
 																	<c:when test="${isEdit==0 and isDelete==1}">
@@ -306,6 +316,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
                                                                          <a href="deleteSpecialCake/${specialCake.spId}"
 																		onClick="return confirm('Are you sure want to delete this record');"><span
 																			class="glyphicon glyphicon-remove"data-toggle="tooltip" title="Delete"></span></a></td>
+																	
+																	<a href="javascript:void(0);" data-toggle="tooltip" title="Image" onclick="openImg(${specialCake.spId})">
+																		<span class="glyphicon glyphicon-picture"></span>
+																	</a>
 																	</c:when>
 
 																	<c:otherwise>
@@ -317,9 +331,11 @@ body {font-family: Arial, Helvetica, sans-serif;}
 					                                                  	<i class="fa fa-list"></i></a>
                                                                          <a href="deleteSpecialCake/${specialCake.spId}"  class="disableClick"
 																		onClick="return confirm('Are you sure want to delete this record');"><span
-																			class="glyphicon glyphicon-remove"></span></a></td>
-														
-
+																			class="glyphicon glyphicon-remove"></span></a>
+																	<a href="javascript:void(0);" data-toggle="tooltip" title="Image" onclick="openImg(${specialCake.spId})">
+																		<span class="glyphicon glyphicon-picture"></span>
+																	</a>		
+																	</td>	
 																	</c:otherwise>
 																</c:choose>
 																			
