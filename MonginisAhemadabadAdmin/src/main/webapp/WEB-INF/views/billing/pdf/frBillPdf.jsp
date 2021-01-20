@@ -30,6 +30,7 @@ page-break-inside: auto !important
 	<c:set var="totalRowCount" value="0" />
 	<c:set var="maxRowCount" value="34" />
 	<div style="text-align: center; font-size: 12px;"><b>TAX INVOICE</b></div>
+
 		<div style="text-align: right; font-size: 10px;">CIN : ${frDetails.company.cinNo}
 			</div>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"
@@ -71,6 +72,7 @@ page-break-inside: auto !important
 					<p style="color: #000; font-size: 12px; text-align: left; margin: 0px;">
 					<b>${frDetails.partyName}</b>   <br /> 
 						<span style="font-size: 10px;"> ${frDetails.frAddress} </span><br></br>
+						<span style="font-size: 10px;">City: ${frDetails.frCity} </span><br></br>
 						<span style="font-size: 10px;">GSTIN:   ${frDetails.partyGstin}</span>
 					</p>
 				</td>
