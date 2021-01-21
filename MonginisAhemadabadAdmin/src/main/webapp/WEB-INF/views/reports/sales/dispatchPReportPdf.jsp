@@ -88,9 +88,33 @@ th {
 				<c:forEach items="${itemList}" var="item" varStatus="count">
 					<c:set var="total" value="0" />
 					<c:set var="frTotal" value="0" />
+					
+					<c:set var="chkTtlQty" value="0"></c:set>
+					<c:set var="chkTtl" value="0"></c:set>
 					<c:choose>
 						<c:when test="${item.itemGrp2==subCat.subCatId}">
-
+						<!-- ------------------------------------------------------ -->
+						
+						<c:forEach items="${frList}" var="fr" varStatus="count">
+									
+									 <c:forEach items="${dispatchReportList}" var="report"
+										varStatus="count">
+										<c:choose>
+											<c:when test="${report.itemId==item.id}">
+												<c:choose>
+													<c:when test="${report.frId==fr.frId}">	
+													
+														<c:set var="chkTtl" value="${report.editQty+chkTtl}"></c:set>														
+														
+													</c:when>
+												</c:choose>
+											</c:when>
+										</c:choose>										
+									</c:forEach>	
+								</c:forEach>
+								<c:set var="chkTtlQty" value="${chkTtl+chkTtlQty}"></c:set> 
+					<!-- ------------------------------------------------------ -->
+					<c:if test="${chkTtlQty>0}">
 							<tr>
 								<td width="100"><c:out value="${srNo}" /></td>
 								<c:set var="srNo" value="${srNo+1}"></c:set>
@@ -121,6 +145,7 @@ th {
 								<td width="40px" align="right">${total}</td>
 								<c:set var="allTotal" value="${total+allTotal}"></c:set>
 							</tr>
+							</c:if>
 						</c:when>
 					</c:choose>
 

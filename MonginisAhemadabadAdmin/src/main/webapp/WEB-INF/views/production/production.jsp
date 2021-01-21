@@ -264,6 +264,9 @@
 							<div class="row" align="center">
 									<div
 										class="col-md-12">
+								<button class="btn btn-primary" type="button" value="PDF" id="PDFButton"
+							onclick="genOrderPrdctn()">PDF</button> 
+							
 								<input type="submit" class="btn btn-primary"
 								  value="Submit" disabled id="callSubmit">
 								   <input type="button" id="expExcel" class="btn btn-primary" value="Export To Excel" onclick="exportToExcel();" disabled="disabled">
@@ -640,6 +643,15 @@ $(document).ready(function() {
         	window.open("${pageContext.request.contextPath}/exportToExcel");
         			document.getElementById("expExcel").disabled=true;
         }
+        
+        function genOrderPrdctn()
+		{
+        	var productionDate = $("#datepicker").val();
+			var selectedMenuList = $("#selectMenu").val();
+			
+			  window.open('pdfForDisReport?url=pdf/getOrderProductionPdf/'
+					  + productionDate + '/'+selectedMenuList);
+		}
 	</script>
 
 

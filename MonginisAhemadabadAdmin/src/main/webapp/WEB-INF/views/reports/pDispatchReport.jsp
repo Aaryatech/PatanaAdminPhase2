@@ -11,12 +11,15 @@
 <body>
 
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
-<c:url var="routListByAbcType" value="/routListByAbcType"></c:url>
-
+	
 	<c:url var="getBillList" value="/getPDispatchReportByRoute"></c:url>
-   	<c:url var="getFranchisees" value="/getFranchiseByRouteMul"></c:url>
+   	<c:url var="getFranchisees" value="/getFranchiseByRoute"></c:url>
+   	
+	<c:url var="routListByAbcType" value="/routListByAbcType"></c:url>
+   	<%-- <c:url var="getFranchisees" value="/getFranchiseByRouteMul"></c:url> --%>
    	<c:url var="getSubCatByCatId" value="/getSubCatByCatId"></c:url>
    	<c:url var="getAllMenusForDisp" value="/getAllMenusForDisp"></c:url>
+   	
 	<!-- BEGIN Sidebar -->
 	<div id="sidebar" class="navbar-collapse collapse" >
 
@@ -69,37 +72,22 @@
 
 
 					<div class="form-group">
-						<label class="col-sm-3 col-lg-2	 control-label">Delivery Date</label>
-						<div class="col-sm-6 col-lg-2 controls date_select">
+						<label class="col-sm-3 col-lg-2	 control-label">Production Date</label>
+						<div class="col-sm-6 col-lg-4 controls date_select">
 							<input class="form-control date-picker" id="billDate"
 								name="billDate" size="30" type="text" value="${todaysDate}" />
 						</div>
-						<label class="col-sm-3 col-lg-2 control-label">ABC Type</label>
-						<div class="col-sm-3 col-lg-2">
-
-							<select data-placeholder="Choose Category"
-								class="form-control chosen"   onchange="routListByAbcType()"
-								id="abcType" name="abcType">
-
-								<option value="">Select</option>
-								<option value="1">A</option>
-								<option value="2">B</option>
-								<option value="3">C</option>
-								<%-- <c:forEach items="${catList}" var="cat" varStatus="count">
-									<option value="${cat.catId}"><c:out value="${cat.catName}"/></option>
-								</c:forEach> --%>
-							</select>
-						</div>
-                    <label class="col-sm-3 col-lg-1 control-label">Route</label>
-						<div class="col-sm-6 col-lg-3 controls">
-							<select data-placeholder="Select Route" 
+                    <label class="col-sm-3 col-lg-2 control-label">Select
+							Route</label>
+						<div class="col-sm-6 col-lg-4 controls">
+							<select data-placeholder="Select Route"
 								class="form-control chosen" name="selectRoute" id="selectRoute"
-								onchange="getFranchise(this.value)" >
+								 onchange="getFranchise(this.value)">
 								<option value="0">Select Route</option>
-								<%-- <c:forEach items="${routeList}" var="route" varStatus="count">
+								<c:forEach items="${routeList}" var="route" varStatus="count">
 									<option value="${route.routeId}"><c:out value="${route.routeName}"/> </option>
 
-								</c:forEach> --%>
+								</c:forEach>
 							</select>
 
 						</div>
@@ -112,32 +100,13 @@
 
 					<div class="form-group">
 
-						<label class="col-sm-3 col-lg-2 control-label">Select Menu </label>
-						<div class="col-sm-3 col-lg-10">
-
-							<select data-placeholder="Select Menu "
-								class="form-control chosen" 
-								id="menuId" name="menuId" multiple="multiple" required onchange="onMenuChange(this.value)">
-
-								  <option value="-1" >All</option>
-								<c:forEach items="${menuList}" var="menuList" >
-									<option value="${menuList.menuId}"><c:out value="${menuList.menuTitle}"/> </option>
-
-								</c:forEach> 
-							</select>
-						</div>
-					</div>
-					</div><br>
-						<div class="row">
-
-					<div class="form-group">
 						<label class="col-sm-3 col-lg-2 control-label">Select
 							Category</label>
-						<div class="col-sm-3 col-lg-10">
+						<div class="col-sm-3 col-lg-4">
 
 							<select data-placeholder="Choose Category"
-								class="form-control chosen"  tabindex="6" multiple="multiple" 
-								id="selectCat" name="selectCat" onchange="getSubCategoriesByCatId()"> <!-- multiple="multiple" -->
+								class="form-control chosen" multiple="multiple" tabindex="6"
+								id="selectCat" name="selectCat">
 
 								<option value="-1"><c:out value="All"/></option>
 
@@ -146,69 +115,48 @@
 								</c:forEach>
 							</select>
 						</div>
-					
-					
-						<%-- <a
-							href="${pageContext.request.contextPath}/pdfForReport?url=showSaleRoyaltyByCatPdf"
-							target="_blank">PDF</a>
- --%>
-					</div>
 
-
-
-				</div><br>
-					<div class="row">
-
-					<div class="form-group">
-					<label class="col-sm-3 col-lg-2 control-label">Sub-Category</label>
-						<div class="col-sm-3 col-lg-10">
-
-							<select data-placeholder="Choose Sub Category"
-								class="form-control chosen" multiple="multiple" tabindex="6"
-								id="selectSubCat" name="selectSubCat">
-
-								<option value="-1"><c:out value="All"/></option>
-
-							</select>
-						</div>
-					
-					</div>
-				<!-- 		<button class="btn btn-info" onclick="searchReport()">Search
+						<button class="btn btn-info" onclick="searchReport()">Search
 							Report</button>
+<!-- 						<button class="btn search_btn" onclick="showChart()">Graph</button>
+ -->
 
 						<button class="btn btn-primary" value="PDF" id="PDFButton"
 							onclick="genPdf()">PDF</button>
-					</div><br> --></div><br>
+						<%-- <a
+							href="${pageContext.request.contextPath}/pdfForReport?url=showSaleRoyaltyByCatPdf"
+							target="_blank">PDF</a>
+ --%><button class="btn btn-primary" value="PDF" id="PDFButton"
+							onclick="genPdfHTML()">HTML Report</button>
+					</div>
+
+
+
+				</div>	
 				<div class="row">
 
 					<div class="form-group">
 
-						<label class="col-sm-2 col-lg-2 control-label">
+						<label class="col-sm-3 col-lg-2 control-label">Select
 							Franchisee</label>
-						<div class="col-sm-3 col-lg-8">
+						<div class="col-sm-3 col-lg-4">
 
 							<select data-placeholder="Choose Franchise"
-							tabindex="6" class="form-control chosen" multiple="multiple"
-								id="fraId" name="fraId" onchange="onFrChange()">
-								<option value="">Select Franchisee</option>
-								<option value="-1"><c:out value="All"/></option>
-								
-                               <%--  	<c:forEach items="${frListRes}" var="frListRes" varStatus="cnt">
-									<option value="${frListRes.frId}">${frListRes.frName}</option>
-								</c:forEach> --%>
-								
+								class="form-control"  tabindex="6"
+								id="fraId" name="fraId" >
+								<option value="">Select Franchise</option>
+                                
 							</select>
 						</div>
 
 
-					<!-- 	<button class="btn btn-primary" value="PDF" id="PDFButton"
-							onclick="genPdfBill()">Franchise PDF</button> -->
-							
-							
 						<button class="btn btn-primary" value="PDF" id="PDFButton"
-							onclick="genDispatchPdf()" style="display: none;">PDF</button> 
+							onclick="genPdfBill()">Franchise PDF</button>
+							
+							&nbsp;
 						<button class="btn btn-primary" value="PDF" id="PDFButton"
-							onclick="genDispatchItextPdf()">PDF</button>
+							onclick="genDispatchPdf()">Dispatch PDF</button>
+						
 							</div>
 							
 					<div align="center" id="loader" style="display: none">
@@ -372,184 +320,181 @@
 			}
 </script>
 		<script type="text/javascript">
-			function searchReport() {
-					var isValid = validate();
-				if(isValid==true){
-				//document.getElementById('chart').style.display = "block";
-				document.getElementById("PieChart_div").style = "display:none";
-				document.getElementById("chart_div").style = "display:none";
+		function searchReport() {
+			
+			//	var isValid = validate();
 
-				var routeId = $("#selectRoute").val();
-				
-				var routeName = $("#selectRoute option:selected").text();
-				document.getElementById("routeName").innerText="Route: "+$("#selectRoute option:selected").text();
-				document.getElementById("routeName").style.fontWeight="900";
-				var isGraph = 0;
+			//document.getElementById('chart').style.display = "block";
+			document.getElementById("PieChart_div").style = "display:none";
+			document.getElementById("chart_div").style = "display:none";
 
-				var selectedCat = $("#selectSubCat").val();
+			var routeId = $("#selectRoute").val();
+			
+			var routeName = $("#selectRoute option:selected").text();
+			document.getElementById("routeName").innerText="Route: "+$("#selectRoute option:selected").text();
+			document.getElementById("routeName").style.fontWeight="900";
+			var isGraph = 0;
 
-				var billDate = $("#billDate").val();
-				$('#loader').show();
+			var selectedCat = $("#selectCat").val();			
 
-				$
-						.getJSON(
-								'${getBillList}',
+			var billDate = $("#billDate").val();
+			$('#loader').show();
 
-								{
-									bill_date : billDate,
-									route_id : routeId,
-									cat_id_list : JSON.stringify(selectedCat),
-									routeName : routeName,
-									ajax : 'true'
+			$
+					.getJSON(
+							'${getBillList}',
 
-								},
-								function(data) {
-									 document.getElementById("submit").disabled=true;
-									$('#table_grid th').remove();
+							{
+								bill_date : billDate,
+								route_id : routeId,
+								cat_id_list : JSON.stringify(selectedCat),
+								routeName : routeName,
+								ajax : 'true'
 
-									$('#table_grid td').remove();
-									
-									$('#loader').hide();
-                                    var frListLength=data.frList.length;
-									if (data == "") {
-										alert("No records found !!");
-										  document.getElementById("expExcel").disabled=true;
-										  document.getElementById("submit").disabled=true;
-									}
-									
-									 var tr;
-								        tr = document.getElementById('table_grid').tHead.children[0];
-								        tr.insertCell(0).outerHTML = "<th align='left'>Sr.No.</th>"
+							},
+							function(data) {
+								 
+								$('#table_grid th').remove();								
+								$('#loader').hide();
+								
+                                var frListLength=data.frList.length;
+								if (data == "") {
+									alert("No records found !!");
+									 document.getElementById("expExcel").disabled=true;
+								}
+																
+								 var tr;
+							        tr = document.getElementById('table_grid').tHead.children[0];
+							        tr.insertCell(0).outerHTML = "<th align='left'>Sr.No.</th>"
 
-								        tr.insertCell(1).outerHTML = "<th style='width=170px'>ItemName</th>"
-								        	var i=0;var j=0;
-								        	 $.each(data.frList, function(key,fr){  
-								        	       i=key+2;
-								                 tr.insertCell(i).outerHTML = "<th style='width=80px'>"+fr.frName+"</th>"
-								         });//franchise for end    
+							        tr.insertCell(1).outerHTML = "<th style='width=170px'>ItemName</th>"
+							        	var i=0;var j=0;
+							        	 $.each(data.frList, function(key,fr){  
+							        	       i=key+2;
+							                 tr.insertCell(i).outerHTML = "<th style='width=80px'>"+fr.frName+"</th>"
+							         });//franchise for end    
 /* 								         tr.insertCell(i+1).outerHTML = "<th style='font-weight:bold'>Total</th>"
- */								         
-								         $.each(data.subCatList,
-													function(key,subCat) {
-								        		var tr = $('<tr></tr>');
-								        		tr
+*/								         
+							         $.each(data.subCatList,
+												function(key,subCat) {
+							        		var tr = $('<tr></tr>');
+							        		tr
+											.append($(
+													'<td></td>')
+													.html(" "));
+											tr
+													.append($(
+															'<td style="font-weight:bold"></td>')
+															.html(subCat.subCatName));
+											for(var i=0;i<=frListLength;i++)
+												{
+												tr
 												.append($(
 														'<td></td>')
 														.html(" "));
-												tr
-														.append($(
-																'<td style="font-weight:bold"></td>')
-																.html(subCat.subCatName));
-												for(var i=0;i<=frListLength;i++)
-													{
+												}
+											
+											$(
+											'#table_grid tbody')
+											.append(
+													tr);
+							        	 
+							             	var srNo = 0;
+												$.each(data.itemList,
+																function(key,item) {
+													if(item.itemGrp2==subCat.subCatId)
+														{
+													srNo = srNo + 1;
+													var tr = $('<tr></tr>');
 													tr
-													.append($(
-															'<td></td>')
-															.html(" "));
-													}
-												
-												$(
-												'#table_grid tbody')
-												.append(
-														tr);
-								        	 
-								             	var srNo = 0;
-													$.each(data.itemList,
-																	function(key,item) {
-														if(item.itemGrp2==subCat.subCatId)
-															{
-														srNo = srNo + 1;
-														var tr = $('<tr></tr>');
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																				srNo));
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																				item.itemName));
-														 $.each(data.frList, function(key,franchise){  
-																//alert(franchise.frId)
-																var orderId='o';
-																var orderQty=0;
-																var isBillGenerated=0;
-                                                          $.each(data.dispatchReportList,
-																		function(key,report) {
-                                                        	  if(franchise.frId==report.frId && item.id==report.itemId){
-                                                        		  orderId=report.orderId;
-                                                        		  orderQty=report.orderQty;
-                                                        		  isBillGenerated=report.isBillGenerated;
-															 }
-                                                        	  
-                                                          });
-                                                          if(isBillGenerated==2){
-                                                          tr
-															.append($(
-																	'<td style="color:blue;"></td>')
-																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 disabled/>"));
-                                                          }
-                                                          else
-                                                        	  {
-                                                        	 if(orderId=='o'){
-                                                        	  tr
-  															.append($(
-  																	'<td style="color:red;"></td>')
-  																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 disabled/>"));
-                                                        	 }
-                                                        	 else{
-                                                        		  tr
-        															.append($(
-        																	'<td style="color:green;"></td>')
-        																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 />"));
-                                                              	 
-                                                        	 }
-                                                        	  }
-														 });
-														/*  tr
 															.append($(
 																	'<td></td>')
-																	.html("<input type=text style='text-align:right; width:60px' class=form-control name=total"+key+""+item.id+" id=total"+key+""+item.id+" value=0 disabled/>"));
-												 */		$(
-																'#table_grid tbody')
-																.append(
-																		tr);
-															}//end if
-													});//itemList for end
-								         });//subCatList for end
-													//	var srNo = 0;
-														 $.each(data.dispatchReportList,
-																		function(key,report) {
-                                                                
-													         document.getElementById('itemQty'+report.frId+''+report.itemId+''+report.orderId).value = report.editQty;
+																	.html(
+																			srNo));
+													tr
+															.append($(
+																	'<td></td>')
+																	.html(
+																			item.itemName));
+													 $.each(data.frList, function(key,franchise){  
+															//alert(franchise.frId)
+															var orderId='o';
+															var orderQty=0;
+															var isBillGenerated=0;
+                                                      $.each(data.dispatchReportList,
+																	function(key,report) {
+                                                    	  if(franchise.frId==report.frId && item.id==report.itemId){
+                                                    		  orderId=report.orderId;
+                                                    		  orderQty=report.orderQty;
+                                                    		  isBillGenerated=report.isBillGenerated;
+														 }
+                                                    	  
+                                                      });
+                                                      if(isBillGenerated==2){
+                                                      tr
+														.append($(
+																'<td style="color:blue;"></td>')
+																.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 disabled/>"));
+                                                      }
+                                                      else
+                                                    	  {
+                                                    	 if(orderId=='o'){
+                                                    	  tr
+															.append($(
+																	'<td style="color:red;"></td>')
+																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 disabled/>"));
+                                                    	 }
+                                                    	 else{
+                                                    		  tr
+    															.append($(
+    																	'<td style="color:green;"></td>')
+    																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 />"));
+                                                          	 
+                                                    	 }
+                                                    	  }
+													 });
+													/*  tr
+														.append($(
+																'<td></td>')
+																.html("<input type=text style='text-align:right; width:60px' class=form-control name=total"+key+""+item.id+" id=total"+key+""+item.id+" value=0 disabled/>"));
+											 */		$(
+															'#table_grid tbody')
+															.append(
+																	tr);
+														}//end if
+												});//itemList for end
+							         });//subCatList for end
+												//	var srNo = 0;
+													 $.each(data.dispatchReportList,
+																	function(key,report) {
+                                                            
+												         document.getElementById('itemQty'+report.frId+''+report.itemId+''+report.orderId).value = report.editQty;
 
-															       
+														       
 
-																		});
-														
-														/* $.each(data.itemList,
-																	function(key,item) {
-																 var total=0;
-													     		 $.each(data.frList, function(key,franchise){  	
-													     			 var tot=parseFloat($("#itemQty"+franchise.frId+''+item.id).val());
-													     			
-													     			 total=total+tot;
-													     			 
-														     		
- 
-													     		 });
-													     		  document.getElementById('total'+key+''+item.id).value =total;
-													     	});	 */
-																		 
-																		
-																
-								        	 
+																	});
+													
+													/* $.each(data.itemList,
+																function(key,item) {
+															 var total=0;
+												     		 $.each(data.frList, function(key,franchise){  	
+												     			 var tot=parseFloat($("#itemQty"+franchise.frId+''+item.id).val());
+												     			
+												     			 total=total+tot;
+												     			 
+													     		
 
-								});
-				}
+												     		 });
+												     		  document.getElementById('total'+key+''+item.id).value =total;
+												     	});	 */
+																	 
+																	
+															
+							        	 
 
-			}
+							});
+
+		}
 		</script>
 
 	
@@ -826,15 +771,16 @@
 
 
 		<script type="text/javascript">
-			function genPdf() {
-				var billDate = $("#billDate").val();
-				var routeId = $("#selectRoute").val();
-				var selectedCat = $("#selectSubCat").val();
-				
-				window.open('pdfForDisReport?url=pdf/getPDispatchReportPdf/'
-						+ billDate + '/'+routeId+'/'+selectedCat);
+		function genPdf() {
+			var billDate = $("#billDate").val();
+			var routeId = $("#selectRoute").val();
+			var selectedCat = $("#selectCat").val();
+			
+			window.open('pdfForDisReport?url=pdf/getPDispatchReportPdf/'
+					+ billDate + '/'+routeId+'/'+selectedCat);
 
-			}
+		}
+		
 			function exportToExcel()
 			{
 				 
@@ -940,6 +886,245 @@
 	<script src="${pageContext.request.contextPath}/resources/js/flaty.js"></script>
 	<script
 		src="${pageContext.request.contextPath}/resources/js/flaty-demo-codes.js"></script>
+		<script type="text/javascript">
+
+			function getFranchise(routeId) {
+			
+				$.getJSON('${getFranchisees}', {
+					
+					routeId : routeId,
+					ajax : 'true'
+				}, function(data) {
+				 	var html = '<option value="">Select Franchisee</option>';
+				
+					var len = data.length;
+					
+					$('#fraId')
+				    .find('option')
+				    .remove()
+				    .end()
+				    
+				 $("#fraId").append(
+                                $("<option></option>").attr(
+                                    "value", 0).text("Select Franchisee")
+                            );
+					
+					for ( var i = 0; i < len; i++) {
+                        $("#fraId").append(
+                                $("<option></option>").attr(
+                                    "value", data[i].frId).text(data[i].frName)
+                            );
+					}
+					   $("#fraId").trigger("chosen:updated");
+				}); 
+			}
+</script>
+		<script type="text/javascript">
+			function searchReport1() {
+				//	var isValid = validate();
+
+				//document.getElementById('chart').style.display = "block";
+				document.getElementById("PieChart_div").style = "display:none";
+				document.getElementById("chart_div").style = "display:none";
+
+				var routeId = $("#selectRoute").val();
+				
+				var routeName = $("#selectRoute option:selected").text();
+				document.getElementById("routeName").innerText="Route: "+$("#selectRoute option:selected").text();
+				document.getElementById("routeName").style.fontWeight="900";
+				var isGraph = 0;
+
+				var selectedCat = $("#selectCat").val();
+
+				var billDate = $("#billDate").val();
+				$('#loader').show();
+
+				$
+						.getJSON(
+								'${getBillList}',
+
+								{
+									bill_date : billDate,
+									route_id : routeId,
+									cat_id_list : JSON.stringify(selectedCat),
+									routeName : routeName,
+									ajax : 'true'
+
+								},
+								function(data) {
+									 document.getElementById("submit").disabled=false;
+									$('#table_grid th').remove();
+
+									$('#table_grid td').remove();
+									
+									$('#loader').hide();
+                                    var frListLength=data.frList.length;
+									if (data == "") {
+										alert("No records found !!");
+										  document.getElementById("expExcel").disabled=true;
+										  document.getElementById("submit").disabled=true;
+									}
+									
+									 var tr;
+								        tr = document.getElementById('table_grid').tHead.children[0];
+								        tr.insertCell(0).outerHTML = "<th align='left'>Sr.No.</th>"
+
+								        tr.insertCell(1).outerHTML = "<th style='width=170px'>ItemName</th>"
+								        	var i=0;var j=0;
+								        	 $.each(data.frList, function(key,fr){  
+								        	       i=key+2;
+								                 tr.insertCell(i).outerHTML = "<th style='width=80px'>"+fr.frName+"</th>"
+								         });//franchise for end    
+/* 								         tr.insertCell(i+1).outerHTML = "<th style='font-weight:bold'>Total</th>"
+ */								         
+								         $.each(data.subCatList,
+													function(key,subCat) {
+								        		var tr = $('<tr></tr>');
+								        		tr
+												.append($(
+														'<td></td>')
+														.html(" "));
+												tr
+														.append($(
+																'<td style="font-weight:bold"></td>')
+																.html(subCat.subCatName));
+												for(var i=0;i<=frListLength;i++)
+													{
+													tr
+													.append($(
+															'<td></td>')
+															.html(" "));
+													}
+												
+												$(
+												'#table_grid tbody')
+												.append(
+														tr);
+								        	 
+								             	var srNo = 0;
+													$.each(data.itemList,
+																	function(key,item) {
+														if(item.itemGrp2==subCat.subCatId)
+															{
+														srNo = srNo + 1;
+														var tr = $('<tr></tr>');
+														tr
+																.append($(
+																		'<td></td>')
+																		.html(
+																				srNo));
+														tr
+																.append($(
+																		'<td></td>')
+																		.html(
+																				item.itemName));
+														 $.each(data.frList, function(key,franchise){  
+																//alert(franchise.frId)
+																var orderId='o';
+																var orderQty=0;
+																var isBillGenerated=0;
+                                                          $.each(data.dispatchReportList,
+																		function(key,report) {
+                                                        	  if(franchise.frId==report.frId && item.id==report.itemId){
+                                                        		  orderId=report.orderId;
+                                                        		  orderQty=report.orderQty;
+                                                        		  isBillGenerated=report.isBillGenerated;
+															 }
+                                                        	  
+                                                          });
+                                                          if(isBillGenerated==2){
+                                                          tr
+															.append($(
+																	'<td style="color:blue;"></td>')
+																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 disabled/>"));
+                                                          }
+                                                          else
+                                                        	  {
+                                                        	 if(orderId=='o'){
+                                                        	  tr
+  															.append($(
+  																	'<td style="color:red;"></td>')
+  																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 disabled/>"));
+                                                        	 }
+                                                        	 else{
+                                                        		  tr
+        															.append($(
+        																	'<td style="color:green;"></td>')
+        																	.html("Qty: "+orderQty+" <input type=number style='text-align:right; width:60px' min=0 class=form-control name=itemQty"+franchise.frId+""+item.id+""+orderId+" id=itemQty"+franchise.frId+""+item.id+""+orderId+" value=0 />"));
+                                                              	 
+                                                        	 }
+                                                        	  }
+														 });
+														/*  tr
+															.append($(
+																	'<td></td>')
+																	.html("<input type=text style='text-align:right; width:60px' class=form-control name=total"+key+""+item.id+" id=total"+key+""+item.id+" value=0 disabled/>"));
+												 */		$(
+																'#table_grid tbody')
+																.append(
+																		tr);
+															}//end if
+													});//itemList for end
+								         });//subCatList for end
+													//	var srNo = 0;
+														 $.each(data.dispatchReportList,
+																		function(key,report) {
+                                                                
+													         document.getElementById('itemQty'+report.frId+''+report.itemId+''+report.orderId).value = report.editQty;
+
+															       
+
+																		});
+														
+														/* $.each(data.itemList,
+																	function(key,item) {
+																 var total=0;
+													     		 $.each(data.frList, function(key,franchise){  	
+													     			 var tot=parseFloat($("#itemQty"+franchise.frId+''+item.id).val());
+													     			
+													     			 total=total+tot;
+													     			 
+														     		
+ 
+													     		 });
+													     		  document.getElementById('total'+key+''+item.id).value =total;
+													     	});	 */
+																		 
+																		
+																
+								        	 
+
+								});
+
+			}
+		</script>
+		<script type="text/javascript">
+			function validate() {
+
+				var selectedFr = $("#selectFr").val();
+				var selectedMenu = $("#selectMenu").val();
+				var selectedRoute = $("#selectRoute").val();
+
+				var isValid = true;
+
+				if (selectedFr == "" || selectedFr == null) {
+
+					if (selectedRoute == "" || selectedRoute == null) {
+						alert("Please Select atleast one ");
+						isValid = false;
+					}
+					//alert("Please select Franchise/Route");
+
+				} else if (selectedMenu == "" || selectedMenu == null) {
+
+					isValid = false;
+					alert("Please select Menu");
+
+				}
+				return isValid;
+
+			}
+		</script>
 <script type="text/javascript">
 function getSubCategoriesByCatId()
 {
