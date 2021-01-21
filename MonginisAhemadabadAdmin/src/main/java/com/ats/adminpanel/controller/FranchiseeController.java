@@ -1274,7 +1274,7 @@ try {
 		model.addObject("date", dateList);
 
 		model.addObject("franchiseeList", franchiseeList);
-
+ 
 		model.addObject("url", Constants.FR_IMAGE_URL);
 }catch (HttpClientErrorException e) {
 System.err.println("in 1280 fc "+e.getResponseBodyAsString());			// TODO: handle exception
