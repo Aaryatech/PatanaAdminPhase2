@@ -1097,7 +1097,7 @@ public class FranchiseeController {
 	public ModelAndView updateFranchiseeConf(@PathVariable int settingId) {
 
 		ModelAndView model = new ModelAndView("franchisee/editConfigureFr");
-
+try {
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -1276,7 +1276,12 @@ public class FranchiseeController {
 		model.addObject("franchiseeList", franchiseeList);
 
 		model.addObject("url", Constants.FR_IMAGE_URL);
-
+}catch (HttpClientErrorException e) {
+System.err.println("in 1280 fc "+e.getResponseBodyAsString());			// TODO: handle exception
+		}
+catch (Exception e) {
+	e.printStackTrace();
+}
 		return model;
 
 	}
