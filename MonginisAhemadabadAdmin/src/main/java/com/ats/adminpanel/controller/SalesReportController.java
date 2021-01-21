@@ -4272,99 +4272,161 @@ public class SalesReportController {
 	ArrayList<Menu> selectedMenuList = null;
 
 	// ---------------------------------------------------------------------------------------------------------
+//	@RequestMapping(value = "/showPDispatchItemReport", method = RequestMethod.GET)
+//	public ModelAndView showPDispatchItemReport(HttpServletRequest request, HttpServletResponse response) {
+//
+//		ModelAndView model = null;
+//		HttpSession session = request.getSession();
+//
+//		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+//		Info view = AccessControll.checkAccess("showPDispatchItemReport", "showPDispatchItemReport", "1", "0", "0", "0",
+//				newModuleList);
+//
+//		if (view.getError() == true) {
+//
+//			model = new ModelAndView("accessDenied");
+//
+//		} else {
+//			model = new ModelAndView("reports/pDispatchReport");
+//
+//			// Constants.mainAct =2;
+//			// Constants.subAct =20;
+//
+//			try {
+//				ZoneId z = ZoneId.of("Asia/Calcutta");
+//
+//				LocalDate date = LocalDate.now(z);
+//				DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d-MM-uuuu");
+//				todaysDate = date.format(formatters);
+//
+//				RestTemplate restTemplate = new RestTemplate();
+//
+//				// get Routes
+//
+//				AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+//						AllRoutesListResponse.class);
+//
+//				List<Route> routeList = new ArrayList<Route>();
+//
+//				routeList = allRouteListResponse.getRoute();
+//
+//				// end get Routes
+//
+//				allFrIdNameList = new AllFrIdNameList();
+//				try {
+//
+//					allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName",
+//							AllFrIdNameList.class);
+//
+//				} catch (Exception e) {
+//					System.out.println("Exception in getAllFrIdName" + e.getMessage());
+//					e.printStackTrace();
+//
+//				}
+//
+//				CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+//						CategoryListResponse.class);
+//				List<MCategoryList> categoryList;
+//				categoryList = categoryListResponse.getmCategoryList();
+//
+//				System.out.println(" Fra " + allFrIdNameList.getFrIdNamesList());
+//				List<Menu> menuList = null;
+//				try {
+//					AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url + "getAllMenu",
+//							AllMenuResponse.class);
+//
+//					menuList = allMenuResponse.getMenuConfigurationPage();
+//
+//				} catch (Exception e) {
+//					System.out.println("Exception in getAllFrIdName" + e.getMessage());
+//					e.printStackTrace();
+//
+//				}
+//				selectedMenuList = new ArrayList<Menu>();
+//
+//				for (int i = 0; i < menuList.size(); i++) {
+//
+//					if (menuList.get(i).getMainCatId() != 5) {
+//						selectedMenuList.add(menuList.get(i));
+//					}
+//
+//				}
+//				model.addObject("menuList", selectedMenuList);
+//				model.addObject("catList", categoryList);
+//
+//				model.addObject("todaysDate", todaysDate);
+//				model.addObject("frListRes", allFrIdNameList.getFrIdNamesList());
+//
+//				model.addObject("routeList", routeList);
+//
+//			} catch (Exception e) {
+//
+//				System.out.println("Exc in show sales report bill wise  " + e.getMessage());
+//				e.printStackTrace();
+//			}
+//		}
+//		return model;
+//
+//	}
 	@RequestMapping(value = "/showPDispatchItemReport", method = RequestMethod.GET)
 	public ModelAndView showPDispatchItemReport(HttpServletRequest request, HttpServletResponse response) {
 
-		ModelAndView model = null;
-		HttpSession session = request.getSession();
+		ModelAndView model = new ModelAndView("reports/pDispatchReport");
 
-		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-		Info view = AccessControll.checkAccess("showPDispatchItemReport", "showPDispatchItemReport", "1", "0", "0", "0",
-				newModuleList);
+		// Constants.mainAct =2;
+		// Constants.subAct =20;
 
-		if (view.getError() == true) {
+		try {
+			ZoneId z = ZoneId.of("Asia/Calcutta");
 
-			model = new ModelAndView("accessDenied");
+			LocalDate date = LocalDate.now(z);
+			DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d-MM-uuuu");
+			todaysDate = date.format(formatters);
 
-		} else {
-			model = new ModelAndView("reports/pDispatchReport");
+			RestTemplate restTemplate = new RestTemplate();
 
-			// Constants.mainAct =2;
-			// Constants.subAct =20;
+			// get Routes
 
+			AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+					AllRoutesListResponse.class);
+
+			List<Route> routeList = new ArrayList<Route>();
+
+			routeList = allRouteListResponse.getRoute();
+
+			// end get Routes
+
+			allFrIdNameList = new AllFrIdNameList();
 			try {
-				ZoneId z = ZoneId.of("Asia/Calcutta");
 
-				LocalDate date = LocalDate.now(z);
-				DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d-MM-uuuu");
-				todaysDate = date.format(formatters);
-
-				RestTemplate restTemplate = new RestTemplate();
-
-				// get Routes
-
-				AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
-						AllRoutesListResponse.class);
-
-				List<Route> routeList = new ArrayList<Route>();
-
-				routeList = allRouteListResponse.getRoute();
-
-				// end get Routes
-
-				allFrIdNameList = new AllFrIdNameList();
-				try {
-
-					allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName",
-							AllFrIdNameList.class);
-
-				} catch (Exception e) {
-					System.out.println("Exception in getAllFrIdName" + e.getMessage());
-					e.printStackTrace();
-
-				}
-
-				CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
-						CategoryListResponse.class);
-				List<MCategoryList> categoryList;
-				categoryList = categoryListResponse.getmCategoryList();
-
-				System.out.println(" Fra " + allFrIdNameList.getFrIdNamesList());
-				List<Menu> menuList = null;
-				try {
-					AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url + "getAllMenu",
-							AllMenuResponse.class);
-
-					menuList = allMenuResponse.getMenuConfigurationPage();
-
-				} catch (Exception e) {
-					System.out.println("Exception in getAllFrIdName" + e.getMessage());
-					e.printStackTrace();
-
-				}
-				selectedMenuList = new ArrayList<Menu>();
-
-				for (int i = 0; i < menuList.size(); i++) {
-
-					if (menuList.get(i).getMainCatId() != 5) {
-						selectedMenuList.add(menuList.get(i));
-					}
-
-				}
-				model.addObject("menuList", selectedMenuList);
-				model.addObject("catList", categoryList);
-
-				model.addObject("todaysDate", todaysDate);
-				model.addObject("frListRes", allFrIdNameList.getFrIdNamesList());
-
-				model.addObject("routeList", routeList);
+				allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName", AllFrIdNameList.class);
 
 			} catch (Exception e) {
-
-				System.out.println("Exc in show sales report bill wise  " + e.getMessage());
+				System.out.println("Exception in getAllFrIdName" + e.getMessage());
 				e.printStackTrace();
+
 			}
+
+			CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+					CategoryListResponse.class);
+			List<MCategoryList> categoryList;
+			categoryList = categoryListResponse.getmCategoryList();
+
+			System.out.println(" Fr " + allFrIdNameList.getFrIdNamesList());
+
+			model.addObject("catList", categoryList);
+
+			model.addObject("todaysDate", todaysDate);
+			model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
+
+			model.addObject("routeList", routeList);
+
+		} catch (Exception e) {
+
+			System.out.println("Exc in show sales report bill wise  " + e.getMessage());
+			e.printStackTrace();
 		}
+
 		return model;
 
 	}
@@ -4544,7 +4606,6 @@ public class SalesReportController {
 	}
 
 	List<PDispatchReport> pDispatchReportList = null;
-
 	@RequestMapping(value = "/getPDispatchReportByRoute", method = RequestMethod.GET)
 	public @ResponseBody PDispatchReportList getPDispatchReportByRoute(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -4665,7 +4726,8 @@ public class SalesReportController {
 
 			} else {
 				System.out.println("selectedCat" + selectedCat.toString());
-				map = new LinkedMultiValueMap<String, Object>();
+				System.out.println("selectedFr" + selectedFr.toString());
+
 				map.add("categories", selectedCat);
 				map.add("productionDate", billDate);
 				map.add("frId", selectedFr);
@@ -4694,12 +4756,8 @@ public class SalesReportController {
 				ParameterizedTypeReference<List<SubCategory>> typeRef2 = new ParameterizedTypeReference<List<SubCategory>>() {
 				};
 
-				ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate.exchange(
-						Constants.url + "getSubCatListForDis", HttpMethod.POST, new HttpEntity<>(map), typeRef2);// new
-																													// change
-																													// getSubCatList
-																													// to
-																													// getSubCatListForDis
+				ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate
+						.exchange(Constants.url + "getSubCatList", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
 
 				dispatchReports.setDispatchReportList(dispatchReportList);
 				dispatchReports.setFrList(frNameIdByRouteIdList);
@@ -4712,10 +4770,184 @@ public class SalesReportController {
 			e.printStackTrace();
 
 		}
+		
+		System.out.println("Dsip -------------- "+dispatchReports);
 
 		return dispatchReports;
 
 	}
+
+//	@RequestMapping(value = "/getPDispatchReportByRoute", method = RequestMethod.GET)
+//	public @ResponseBody PDispatchReportList getPDispatchReportByRoute(HttpServletRequest request,
+//			HttpServletResponse response) {
+//
+//		List<PDispatchReport> dispatchReportList = new ArrayList<PDispatchReport>();
+//		PDispatchReportList dispatchReports = new PDispatchReportList();
+//		try {
+//			System.out.println("Inside get Dispatch Report");
+//			String billDate = request.getParameter("bill_date");
+//			String routeId = request.getParameter("route_id");
+//			String selectedCat = request.getParameter("cat_id_list");
+//
+//			boolean isAllCatSelected = false;
+//			String selectedFr = null;
+//
+//			if (selectedCat.contains("-1")) {
+//				isAllCatSelected = true;
+//			} else {
+//				selectedCat = selectedCat.substring(1, selectedCat.length() - 1);
+//				selectedCat = selectedCat.replaceAll("\"", "");
+//				System.out.println("selectedCat" + selectedCat.toString());
+//			}
+//			List<String> catList = new ArrayList<>();
+//			catList = Arrays.asList(selectedCat);
+//
+//			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+//
+//			RestTemplate restTemplate = new RestTemplate();
+//
+//			map.add("routeId", routeId);
+//
+//			FrNameIdByRouteIdResponse frNameId = restTemplate.postForObject(Constants.url + "getFrNameIdByRouteId", map,
+//					FrNameIdByRouteIdResponse.class);
+//
+//			List<FrNameIdByRouteId> frNameIdByRouteIdList = frNameId.getFrNameIdByRouteIds();
+//
+//			System.out.println("route wise franchisee " + frNameIdByRouteIdList.toString());
+//
+//			StringBuilder sbForRouteFrId = new StringBuilder();
+//			for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+//
+//				sbForRouteFrId = sbForRouteFrId.append(frNameIdByRouteIdList.get(i).getFrId().toString() + ",");
+//
+//			}
+//
+//			String strFrIdRouteWise = sbForRouteFrId.toString();
+//			selectedFr = strFrIdRouteWise.substring(0, strFrIdRouteWise.length() - 1);
+//			System.out.println("fr Id Route WISE = " + selectedFr);
+//
+//			if (selectedCat.contains("-1")) {
+//				isAllCatSelected = true;
+//			}
+//
+//			map = new LinkedMultiValueMap<String, Object>();
+//
+//			allFrIdNameList = new AllFrIdNameList();
+//			try {
+//
+//				allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName", AllFrIdNameList.class);
+//
+//			} catch (Exception e) {
+//				System.out.println("Exception in getAllFrIdName" + e.getMessage());
+//				e.printStackTrace();
+//
+//			}
+//
+//			if (isAllCatSelected) {
+//				map = new LinkedMultiValueMap<String, Object>();
+//
+//				CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+//						CategoryListResponse.class);
+//				List<MCategoryList> categoryList = categoryListResponse.getmCategoryList();
+//				// List<Integer> cateList=new ArrayList<>();
+//				StringBuilder cateList = new StringBuilder();
+//
+//				for (MCategoryList mCategoryList : categoryList) {
+//					// cateList.add(mCategoryList.getCatId());
+//					cateList = cateList.append(mCategoryList.getCatId().toString() + ",");
+//				}
+//
+//				String catlist = cateList.toString();
+//				selectedCat = catlist.substring(0, catlist.length() - 1);
+//				System.out.println("cateList" + selectedCat.toString());
+//				System.out.println("selectedFr" + selectedFr.toString());
+//				System.out.println("productionDate" + billDate.toString());
+//
+//				map.add("categories", selectedCat);
+//				map.add("productionDate", billDate);
+//				map.add("frId", selectedFr);
+//
+//				ParameterizedTypeReference<List<PDispatchReport>> typeRef = new ParameterizedTypeReference<List<PDispatchReport>>() {
+//				};
+//
+//				ResponseEntity<List<PDispatchReport>> responseEntity = restTemplate.exchange(
+//						Constants.url + "getPDispatchItemReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+//
+//				dispatchReportList = responseEntity.getBody();
+//				pDispatchReportList = responseEntity.getBody();
+//				System.out.println("dispatchReportList = " + dispatchReportList.toString());
+//
+//				map = new LinkedMultiValueMap<String, Object>();
+//				map.add("catIdList", selectedCat);
+//				ParameterizedTypeReference<List<Item>> typeRef1 = new ParameterizedTypeReference<List<Item>>() {
+//				};
+//
+//				ResponseEntity<List<Item>> responseEntity1 = restTemplate.exchange(
+//						Constants.url + "getItemsByCatIdForDisp", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+//				System.out.println("Items:" + responseEntity1.toString());
+//				SubCategory[] subCatList = restTemplate.getForObject(Constants.url + "getAllSubCatList",
+//						SubCategory[].class);
+//
+//				ArrayList<SubCategory> subCatAList = new ArrayList<SubCategory>(Arrays.asList(subCatList));
+//				System.out.println("subCatAList:" + subCatAList.toString());
+//				dispatchReports.setDispatchReportList(dispatchReportList);
+//				dispatchReports.setFrList(frNameIdByRouteIdList);
+//				dispatchReports.setItemList(responseEntity1.getBody());
+//				dispatchReports.setSubCatList(subCatAList);
+//
+//			} else {
+//				System.out.println("selectedCat" + selectedCat.toString());
+//				map = new LinkedMultiValueMap<String, Object>();
+//				map.add("categories", selectedCat);
+//				map.add("productionDate", billDate);
+//				map.add("frId", selectedFr);
+//
+//				ParameterizedTypeReference<List<PDispatchReport>> typeRef = new ParameterizedTypeReference<List<PDispatchReport>>() {
+//				};
+//
+//				ResponseEntity<List<PDispatchReport>> responseEntity = restTemplate.exchange(
+//						Constants.url + "getPDispatchItemReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+//				System.out.println("Items:" + responseEntity.toString());
+//
+//				dispatchReportList = responseEntity.getBody();
+//				pDispatchReportList = responseEntity.getBody();
+//				System.out.println("dispatchReportList = " + dispatchReportList.toString());
+//
+//				map = new LinkedMultiValueMap<String, Object>();
+//				map.add("catIdList", selectedCat);
+//				ParameterizedTypeReference<List<Item>> typeRef1 = new ParameterizedTypeReference<List<Item>>() {
+//				};
+//
+//				ResponseEntity<List<Item>> responseEntity1 = restTemplate.exchange(
+//						Constants.url + "getItemsByCatIdForDisp", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+//
+//				map = new LinkedMultiValueMap<String, Object>();
+//				map.add("catId", selectedCat);
+//				ParameterizedTypeReference<List<SubCategory>> typeRef2 = new ParameterizedTypeReference<List<SubCategory>>() {
+//				};
+//
+//				ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate.exchange(
+//						Constants.url + "getSubCatListForDis", HttpMethod.POST, new HttpEntity<>(map), typeRef2);// new
+//																													// change
+//																													// getSubCatList
+//																													// to
+//																													// getSubCatListForDis
+//
+//				dispatchReports.setDispatchReportList(dispatchReportList);
+//				dispatchReports.setFrList(frNameIdByRouteIdList);
+//				dispatchReports.setItemList(responseEntity1.getBody());
+//				dispatchReports.setSubCatList(responseEntity2.getBody());
+//			}
+//
+//		} catch (Exception e) {
+//			System.out.println("get Dispatch Report Exception: " + e.getMessage());
+//			e.printStackTrace();
+//
+//		}
+//
+//		return dispatchReports;
+//
+//	}
 
 	@RequestMapping(value = "/submitEditedQty", method = RequestMethod.POST)
 	public String submitEditedQty(HttpServletRequest request, HttpServletResponse response) {
@@ -5215,7 +5447,7 @@ public class SalesReportController {
 				};
 
 				ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate.exchange(
-						Constants.url + "getSubCatListForDis", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+						Constants.url + "getSubCatList", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
 
 				model.addObject("dispatchReportList", dispatchReportList);
 				model.addObject("frList", frNameIdByRouteIdList);

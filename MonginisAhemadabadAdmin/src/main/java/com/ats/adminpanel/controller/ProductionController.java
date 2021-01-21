@@ -777,6 +777,54 @@ public class ProductionController {
 		return getOrderItemQtyList;
 
 	}
+	
+	@RequestMapping(value = "pdf/getOrderProductionPdf/{productionDate}/{selectedMenuList}", method = RequestMethod.GET)
+	public ModelAndView getOrderProductionPdf(@PathVariable String productionDate, @PathVariable String selectedMenuList,
+			HttpServletRequest request, HttpServletResponse response) {	
+		
+		ModelAndView model = new ModelAndView("reports/sales/pdf/orderPrdctnPdf");
+		
+		model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+		model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		
+		if (selectedMenuList.contains("-1")) {
+			System.out.println("selectedMenuList" + selectedMenuList.toString());
+
+			List<String> ids = new ArrayList<>();
+			for (int i = 0; i < menuList.size(); i++) {
+				ids.add(String.valueOf(menuList.get(i).getMenuId()));
+			}
+			String idList = ids.toString();
+			selectedMenuList = idList.substring(1, idList.length() - 1);
+			selectedMenuList = selectedMenuList.replaceAll("\"", "");
+			System.out.println("selectedMenuList" + selectedMenuList.toString());
+		} else {
+			selectedMenuList = selectedMenuList.substring(1, selectedMenuList.length() - 1);
+			selectedMenuList = selectedMenuList.replaceAll("\"", "");
+		}
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+
+		RestTemplate rest = new RestTemplate();
+
+		map.add("productionDate", productionDate);
+		map.add("menuId", selectedMenuList);
+		try {
+			ParameterizedTypeReference<List<GetOrderItemQty>> typeRef = new ParameterizedTypeReference<List<GetOrderItemQty>>() {
+			};
+			ResponseEntity<List<GetOrderItemQty>> responseEntity = rest.exchange(Constants.url + "getOrderAllItemQty",
+					HttpMethod.POST, new HttpEntity<>(map), typeRef);
+
+			List<GetOrderItemQty> getOrderItemQtyList = responseEntity.getBody();
+			
+			System.out.println("Production -------------"+getOrderItemQtyList.toString());
+		model.addObject("productionDate", productionDate);
+		model.addObject("itemList", getOrderItemQtyList);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		return model;
+		
+	}
 
 	// Pdf for Prod From Order
 	/*
