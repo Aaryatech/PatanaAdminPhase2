@@ -39,7 +39,7 @@
 	<body>
 	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
-
+	<c:url value="/GetAallFrIdName" var="GetAallFrIdName"></c:url>
 
 	<div class="container" id="main-container">
 
@@ -70,6 +70,7 @@
 
 
 
+<input type="hidden" id="apliFr" name="apliFr" value="${message.applicableFr}" >
 			<!-- BEGIN Main Content -->
 			<div class="row">
 				<div class="col-md-12">
@@ -95,7 +96,7 @@
 
 
 
-
+								
 								<input type="hidden" name="mode_add" id="mode_add"
 									value="add_att">
 
@@ -203,6 +204,23 @@
 
 									</div>
 								</div>
+								
+								<div class="form-group" id="frDiv"  >
+											<label class="col-sm-3 col-lg-2 control-label">Franchises:</label>
+											<div class="col-sm-9 col-lg-10 controls">
+												<select data-placeholder="Select Franchise" name="franchise"
+													class="form-control chosen"  id="franchise" multiple="multiple"
+													data-rule-required="true">
+													
+													 	<!-- <option value="volvo">Volvo</option>
+ 														 <option value="saab">Saab</option>
+ 														 <option value="opel">Opel</option>
+ 														 <option value="audi">Audi</option> -->
+                                                   
+												</select>
+												
+											</div>
+								</div>
 
 
 
@@ -238,6 +256,57 @@
 	<!-- END Content -->
 	</div>
 	<!-- END Container -->
+	
+	
+	<script type="text/javascript">
+	$(document).ready (function(){
+	
+	var str=document.getElementById("apliFr").value;
+	var res = str.split(",");
+	
+
+	$.getJSON('${GetAallFrIdName}',
+
+				{
+					ajax : 'true'
+
+				}, function(data) {
+					
+					//alert(JSON.stringify(data))
+					
+					// var html = '<option value="" selected >Select Sub-Category</option>';
+					
+					var len = data.length;
+					for(var j=0;j<res.length;j++){
+						
+							
+						
+					for (var i = 0; i < len; i++) {
+						if(res[j]==data[i].frId){
+							//alert(res[j])
+							 html += '<option class="active-result" selected  value="' +data[i].frId+ '">'
+								+data[i].frName
+								+ '</option>'; 
+						}
+						 html += '<option class="active-result"   value="' +data[i].frId+ '">'
+								+data[i].frName
+								+ '</option>'; 
+				
+					}
+								//	alert(data[i].frName)
+					
+					}
+					
+					$('#franchise').html(html);
+					$("#franchise").trigger("chosen:updated"); 
+					
+				
+					
+				}); 
+		   //alert('ok')
+		})
+	</script>
+	
 
 	<!--basic scripts-->
 	<script

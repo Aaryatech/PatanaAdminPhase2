@@ -4,9 +4,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,10 +26,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,7 +39,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.commons.VpsImageUpload;
+import com.ats.adminpanel.model.AllFrIdName;
+import com.ats.adminpanel.model.AllFrIdNameList;
+import com.ats.adminpanel.model.AllRoutesListResponse;
+import com.ats.adminpanel.model.Franchisee;
+import com.ats.adminpanel.model.Route;
 import com.ats.adminpanel.model.accessright.ModuleJson;
+import com.ats.adminpanel.model.franchisee.FrNameIdByRouteId;
+import com.ats.adminpanel.model.franchisee.FrNameIdByRouteIdResponse;
 import com.ats.adminpanel.model.message.AllMessageResponse;
 import com.ats.adminpanel.model.message.Info;
 import com.ats.adminpanel.model.message.Message;
@@ -50,6 +62,7 @@ public class MessageController {
 
 		ModelAndView mav = null;
 		HttpSession session = request.getSession();
+		
 
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 		com.ats.adminpanel.model.Info view = AccessControll.checkAccess("addNewMessage", "addNewMessage", "1", "0", "0",
@@ -64,9 +77,88 @@ public class MessageController {
 			// ModelAndView model = new ModelAndView("orders/orders");
 			Constants.mainAct = 1;
 			Constants.subAct = 119;
+			try {
+	
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.err.println("Exception Occuerd In /addNewMessage");
+				e.printStackTrace();
+			}
+			
+			
+			
+			
 		}
 		return mav;
 	}
+	
+	
+	//Akhilesh 2021-19-01 To Fetch All Fr Ids And Names
+	@RequestMapping(value="/GetAallFrIdName",method=RequestMethod.GET)
+	public @ResponseBody List<AllFrIdName> getAllFr(){
+		System.err.println("In /GetAallFrIdName");
+		AllFrIdNameList Frlist=new AllFrIdNameList();
+		RestTemplate restTemplate = new RestTemplate();
+		try {
+			Frlist=restTemplate.getForObject(Constants.url+"getAllFrIdName", AllFrIdNameList.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Exception Occuerd In /GetAallFrIdName");
+			e.printStackTrace();
+		}
+		return Frlist.getFrIdNamesList();
+		}
+	
+	
+	//Akhilesh 2021-19-01 To Fetch All Routes
+		@RequestMapping(value="/GetAallRouteIdName",method=RequestMethod.GET)
+		public @ResponseBody List<Route> getAllRoute(){
+			System.err.println("In /GetAallRouteIdName");
+			AllFrIdNameList Frlist=new AllFrIdNameList();
+			RestTemplate restTemplate = new RestTemplate();
+			AllRoutesListResponse allRoutesListResponse =new AllRoutesListResponse();
+			try {
+			allRoutesListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+						AllRoutesListResponse.class);
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.err.println("Exception Occuerd In /GetAallRouteIdName");
+				e.printStackTrace();
+			}
+			return allRoutesListResponse.getRoute();
+			}
+		
+		//Akhilesh 2021-20-01 To Fetch All Franchisees By RouteIds
+		@RequestMapping(value="/getFrByRouteId",method=RequestMethod.GET)
+		public @ResponseBody  List<FrNameIdByRouteId> getFrByRouteId(HttpServletRequest request,HttpServletResponse response) {
+			List<FrNameIdByRouteId> respList=new ArrayList<>();
+			FrNameIdByRouteIdResponse frRes=new FrNameIdByRouteIdResponse();
+			System.err.println("in /getFrByRouteId");
+			RestTemplate restTemplate=new RestTemplate();
+			MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
+			try {
+				String routeIds=request.getParameter("routeId");
+				routeIds = routeIds.substring(1, routeIds.length() - 1);
+				routeIds = routeIds.replaceAll("\"", "");
+				System.err.println(routeIds);
+				map.add("routeId", routeIds);
+				
+				frRes=restTemplate.postForObject(Constants.url+"getFrNameIdByMultiRouteId", map, FrNameIdByRouteIdResponse.class);
+				if(frRes.getFrNameIdByRouteIds().size()<=0) {
+					respList=new ArrayList<>();
+				}else {
+					respList=frRes.getFrNameIdByRouteIds();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.err.println("Exception Occuered In /getFrByRouteId");
+				e.printStackTrace();
+			}
+			
+			return respList;
+		}
+		
+	
 
 	/*
 	 * @RequestMapping(value="/editMessage",method=RequestMethod.GET) public
@@ -112,7 +204,9 @@ public class MessageController {
 	public String addNewMessage(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("msg_image") List<MultipartFile> file) {
 		ModelAndView mav = new ModelAndView("message/addNewMessage");
-
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date dt=new Date();
+		String aplicableFr="";
 		try {
 			String msgFrdt = request.getParameter("msg_frdt");
 			String msgTodt = request.getParameter("msg_todt");
@@ -120,6 +214,13 @@ public class MessageController {
 			String msgHeader = request.getParameter("msg_header");
 			String msgDetails = request.getParameter("msg_details");
 			int isActive = Integer.parseInt(request.getParameter("is_active"));
+			String[] applicableFrArr=request.getParameterValues("franchise");
+			for(int i=0;i<applicableFrArr.length;i++) {
+			System.err.println("Apl-->"+applicableFrArr[i]);
+			aplicableFr=aplicableFr+applicableFrArr[i]+",";
+			}
+			aplicableFr=aplicableFr.substring(0, aplicableFr.length()-1);
+		
 
 			// String msgImage= ImageS3Util.uploadMessageImage(file);
 
@@ -179,6 +280,10 @@ public class MessageController {
 			map.add("msgHeader", msgHeader);
 			map.add("msgDetails", msgDetails);
 			map.add("isActive", isActive);
+			map.add("applicableFrs", aplicableFr);
+			map.add("makerDttime", dateFormat.format(dt));
+			
+			System.err.println("Map--->"+map);
 			Info errorResponse = rest.postForObject(Constants.url + "insertMessage", map, Info.class);
 			// System.out.println(errorResponse.toString());
 
@@ -260,6 +365,9 @@ public class MessageController {
 	public String updateMessage(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("msg_image") List<MultipartFile> file) {
 		System.out.println("HI");
+		String aplicableFr="";
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date dt=new Date();
 		try {
 
 			ModelAndView model = new ModelAndView("message/listMessage");
@@ -272,7 +380,12 @@ public class MessageController {
 			String msgHeader = request.getParameter("msg_header");
 			String msgDetails = request.getParameter("msg_details");
 			int isActive = Integer.parseInt(request.getParameter("is_active"));
-
+			String[] applicableFrArr=request.getParameterValues("franchise");
+			for(int i=0;i<applicableFrArr.length;i++) {
+			System.err.println("Apl-->"+applicableFrArr[i]);
+			aplicableFr=aplicableFr+applicableFrArr[i]+",";
+			}
+			aplicableFr=aplicableFr.substring(0, aplicableFr.length()-1);
 			String msgImage = request.getParameter("prevImage");
 
 			if (!file.get(0).getOriginalFilename().equalsIgnoreCase("")) {
@@ -325,6 +438,8 @@ public class MessageController {
 			map.add("msgDetails", msgDetails);
 			map.add("isActive", isActive);
 			map.add("id", id);
+			map.add("applicableFrs", aplicableFr);
+			map.add("makerDttime", dateFormat.format(dt));
 			System.out.println("Image Url " + Constants.MESSAGE_IMAGE_URL);
 
 			model.addObject("url", Constants.MESSAGE_IMAGE_URL);
