@@ -37,7 +37,9 @@
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<body>
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
-
+<c:url value="/GetAallFrIdName" var="GetAallFrIdName"></c:url>
+<c:url value="/GetAallRouteIdName" var="GetAallRouteIdName"></c:url>
+<c:url value="/getFrByRouteId" var="getFrByRouteId"></c:url>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.Date" %>
 	<div class="container" id="main-container">
@@ -183,6 +185,51 @@
 										</select>
 									</div>
 								</div>
+								<div class="form-group" >
+											<label class="col-sm-3 col-lg-2 control-label">Select Franchises</label>
+											<div class="col-sm-9 col-lg-10 controls">
+												 <label class="radio-inline"> <input type="radio" onclick="changeoptionsRadios1(this.value)"
+													name="is_same_state" id="optionsRadios1" value="1"  /> By Franchise 
+												</label>
+												<label class="radio-inline"> <input type="radio" 
+													name="is_same_state" id="optionsRadios1" value="0" onclick="changeoptionsRadios1(this.value)" >By Route 
+													
+												</label>
+											</div>
+								</div>
+									<div class="form-group" style="display: none;" id="routeDiv">
+											<label class="col-sm-3 col-lg-2 control-label">Route:</label>
+											<div class="col-sm-9 col-lg-10 controls">
+												<select data-placeholder="Select Route" name="routes"  onchange="routeSelected()"
+													class="form-control chosen"  id="routes" multiple="multiple" 
+													>
+													 	<!-- <option value="volvo">Volvo</option>
+ 														 <option value="saab">Saab</option>
+ 														 <option value="opel">Opel</option>
+ 														 <option value="audi">Audi</option> -->
+                                                   
+												</select>
+												
+											</div>
+										</div>
+								
+								
+								<div class="form-group" id="frDiv"  >
+											<label class="col-sm-3 col-lg-2 control-label">Franchises:</label>
+											<div class="col-sm-9 col-lg-10 controls">
+												<select data-placeholder="Select Franchise" name="franchise"
+													class="form-control chosen"  id="franchise" multiple="multiple"
+													data-rule-required="true">
+													
+													 	<!-- <option value="volvo">Volvo</option>
+ 														 <option value="saab">Saab</option>
+ 														 <option value="opel">Opel</option>
+ 														 <option value="audi">Audi</option> -->
+                                                   
+												</select>
+												
+											</div>
+								</div>
 
 
 								<div class="form-group">
@@ -226,7 +273,117 @@
 
 
 	<!-- END Main Content -->
+	<script type="text/javascript">
+function routeSelected(){
+	var routeId=$("#routes").val();
+	//alert(routeId)
+	html=null;
+	$('#franchise').html('');
+	$("#franchise").trigger("chosen:updated");
+	$.getJSON('${getFrByRouteId}',
 
+			{
+				routeId:JSON.stringify(routeId),
+				ajax : 'true'
+
+			},
+			function(data) {
+				//alert(JSON.stringify(data))
+				if(data.length<=0){
+					alert("No Record Found!!!!")
+				}else{
+					
+					var len = data.length;
+					for (var i = 0; i < len; i++) {
+						 html += '<option class="active-result" selected value="' +data[i].frId+ '">'
+								+data[i].frName + data[i].frRouteId
+								+ '</option>'; 
+							//	alert(data[i].frName)
+					}
+					
+					
+					$('#franchise').html(html);
+					$("#franchise").trigger("chosen:updated"); 
+					
+				}
+			});
+}
+	
+	</script>
+<script type="text/javascript">
+function changeoptionsRadios1(val) {
+	//alert(document.getElementById("optionsRadios1").value)
+	//alert(val)
+	var opt=val;
+	if(opt==1){
+		document.getElementById("routeDiv").style.display = "none";
+		//document.getElementById("frDiv").style.display = "block";
+		//$('#franchise').html('');
+		//$("#franchise").trigger("chosen:updated");
+		var	html=null;
+	 	$.getJSON('${GetAallFrIdName}',
+
+				{
+					ajax : 'true'
+
+				}, function(data) {
+					//alert(JSON.stringify(data))
+					
+					// var html = '<option value="" selected >Select Sub-Category</option>';
+
+					var len = data.length;
+					for (var i = 0; i < len; i++) {
+						 html += '<option class="active-result"  value="' +data[i].frId+ '">'
+								+data[i].frName
+								+ '</option>'; 
+							//	alert(data[i].frName)
+					}
+					
+					
+					$('#franchise').html(html);
+					$("#franchise").trigger("chosen:updated"); 
+					
+				
+					
+				}); 
+	}else if(opt==0){
+		document.getElementById("routeDiv").style.display = "block";
+		//document.getElementById("frDiv").style.display = "none";
+		//$('#routes').html('');
+		//$("#routes").trigger("chosen:updated");
+		$('#franchise').html('');
+		$("#franchise").trigger("chosen:updated"); 
+	var	html=null;
+		$.getJSON('${GetAallRouteIdName}',
+				
+				{
+					ajax : 'true'
+
+				}, function(data) {
+					//alert(JSON.stringify(data))
+					
+					// var html = '<option value="" selected >Select Sub-Category</option>';
+
+					var len = data.length;
+					for (var i = 0; i < len; i++) {
+						 html += '<option class="active-result"  value="' +data[i].routeId+ '">'
+								+data[i].routeName
+								+ '</option>'; 
+							//	alert(data[i].frName)
+					}
+					
+					
+					$('#routes').html(html);
+					$("#routes").trigger("chosen:updated"); 
+					
+				
+					
+				});  
+	}
+}
+
+
+</script>
 
 
 	<jsp:include page="/WEB-INF/views/include/copyrightyear.jsp"></jsp:include>
