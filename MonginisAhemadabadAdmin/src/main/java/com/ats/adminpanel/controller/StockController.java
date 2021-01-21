@@ -28,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -165,7 +166,7 @@ public class StockController {
 	@RequestMapping(value = "/getItemListById", method = RequestMethod.GET)
 	public @ResponseBody List<PostFrItemStockDetail> getItems(HttpServletRequest request,
 			HttpServletResponse response) {
-
+try {
 		logger.info("/getItemListById AJAX Call mapping.");
 
 		/*
@@ -206,7 +207,12 @@ public class StockController {
 		detailList = responseEntity.getBody();
 
 		System.out.println("Item List " + detailList.toString());
-
+}
+catch (HttpClientErrorException e) {
+System.err.println("http Cli "+e.getResponseBodyAsString());
+}catch (Exception e) {
+	e.printStackTrace();
+}
 		return detailList;
 	}
 

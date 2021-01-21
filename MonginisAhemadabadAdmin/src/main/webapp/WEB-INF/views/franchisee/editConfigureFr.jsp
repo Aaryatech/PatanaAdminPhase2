@@ -778,8 +778,8 @@ function preferedTest() {
 		
 		
 	$(function() {
-		$('.formgroup2').hide();
-		$('#type1').show();
+		/* $('.formgroup2').hide();
+		$('#type1').show(); */
 		
 	    $('input:radio[name="rate_setting_from"]').change(function() {
 	    	$('.formgroup2').hide();
