@@ -42,6 +42,7 @@ import com.ats.adminpanel.model.Event;
 import com.ats.adminpanel.model.EventNameId;
 import com.ats.adminpanel.model.ExportToExcel;
 import com.ats.adminpanel.model.Info;
+import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.SpCake;
 import com.ats.adminpanel.model.SpCakeResponse;
 import com.ats.adminpanel.model.SpCakeSupplement;
@@ -603,19 +604,22 @@ public class SpecialCakeController {
 			SpecialCake spcakeResponse = rest.postForObject(Constants.url + "insertSpecialCake", map,
 					SpecialCake.class);
 			if (spcakeResponse != null) {
+				RestTemplate restTemplate = new RestTemplate();
+				
+				Setting setting = restTemplate.getForObject(Constants.url + "/getSettingVal", Setting.class);
 
 				SpCakeSupplement spCakeSupplement = new SpCakeSupplement();
 				spCakeSupplement.setId(0);
-				spCakeSupplement.setUomId(uomId);
+				spCakeSupplement.setUomId(5);
 				spCakeSupplement.setSpId(spcakeResponse.getSpId());// add errorMessage in else
-				spCakeSupplement.setSpUom(spUom);
-				spCakeSupplement.setSpHsncd(spHsncd);
-				spCakeSupplement.setSpCess(spCess);
+				spCakeSupplement.setSpUom("Nos");
+				spCakeSupplement.setSpHsncd(String.valueOf(setting.getSettingValue()));
+				spCakeSupplement.setSpCess(0);
 				spCakeSupplement.setDelStatus(0);
 				spCakeSupplement.setIsTallySync(0);
-				spCakeSupplement.setCutSection(cutSection);
+				spCakeSupplement.setCutSection(0);
 
-				RestTemplate restTemplate = new RestTemplate();
+				restTemplate = new RestTemplate();
 
 				Info info = restTemplate.postForObject(Constants.url + "/saveSpCakeSup", spCakeSupplement, Info.class);
 
