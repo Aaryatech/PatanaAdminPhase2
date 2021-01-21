@@ -1011,6 +1011,47 @@ public class FranchiseeController {
 		map.add("itemShow", strItems);
 		map.add("settingId", settingId);
 
+		
+		//Sachin 19-01-2021
+		int rateSettingFrom=Integer.parseInt(request.getParameter("rate_setting_from"));
+		float profitPer=0.0f;
+		int rateSettingType=-1;
+		
+		if(rateSettingFrom==0) {
+			profitPer=Float.parseFloat(request.getParameter("profit_per"));
+		}else {
+			rateSettingType=Integer.parseInt(request.getParameter("rateTypeValue"));
+		}
+		int delDays=Integer.parseInt(request.getParameter("del_date_days"));
+		int prodDays=Integer.parseInt(request.getParameter("prod_date_days"));
+		float discPer=0.0f;
+		int isDiscApp=Integer.parseInt(request.getParameter("is_disc_app"));
+		
+		if(isDiscApp==1) {
+			discPer=Float.parseFloat(request.getParameter("disc_per"));
+		}
+		int grnPer=0;
+		try {
+		grnPer=Integer.parseInt(request.getParameter("grn_per"));
+		}catch (Exception e) {
+			grnPer=0;
+		}
+		
+		//New Fields added
+		map.add("rateSettingFrom", rateSettingFrom);
+		map.add("profitPer", profitPer);
+		map.add("rateSettingType", rateSettingType);
+		
+		map.add("delDays", delDays);
+		map.add("prodDays", prodDays);
+		
+		map.add("isDiscApp", isDiscApp);
+		map.add("discPer", discPer);
+		
+		map.add("grnPer", grnPer);
+		map.add("subCat", 0);
+		//Sachin 21-01-2021 Code end
+		
 		ErrorMessage errorMessage = rest.postForObject(Constants.url + "updateConfFr", map, ErrorMessage.class);
 		if (errorMessage.getError()) {
 			return "redirect:/configureFranchiseesList";

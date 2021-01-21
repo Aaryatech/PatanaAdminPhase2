@@ -618,7 +618,7 @@
 											<label class="col-sm-3 col-lg-2 control-label">Discount Applicable ?</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												<input type="radio" ${franchiseeList.isDiscApp==1 ? 'checked' : ''} id="disc_yes" name="is_disc_app" value="1">Yes
-												<input type="radio" ${franchiseeList.isDiscApp==0 ? 'checked' : ''} checked id="disc_no" name="is_disc_app" value="0">No
+												<input type="radio" ${franchiseeList.isDiscApp==0 ? 'checked' : ''} id="disc_no" name="is_disc_app" value="0">No
 											</div>
 										</div>
 										
@@ -680,87 +680,7 @@
  <script
 	src="${pageContext.request.contextPath}/resources/assets/bootstrap/js/bootstrap.min.js"></script> 
 
-	<%-- <script>
-function preferedTest() {
-    var prefer = document.forms[0].test.value;
-/*     alert("You selected " + prefer);
-*/    
-
-
-
-   if(prefer=="menu1"){
-   <%
-   stArray=new String[1];
-   %>
-   testSelect = document.getElementById('testSelect');
-   var i;
-   for(i = testSelect.options.length - 1 ; i >= 0 ; i--)
-   {
-       testSelect.remove(i);
-   }
-   testSelect.options[testSelect.options.length] = new Option('1 Submenu1', 'Value1'); 
-   testSelect.options[testSelect.options.length] = new Option('1 Submenu2', 'Value2');
-
-}else if(prefer=="menu2"){
-     <%
-        stArray=new String[2];
-        %>
-        testSelect = document.getElementById('testSelect');
-        var i;
-        for(i = testSelect.options.length - 1 ; i >= 0 ; i--)
-        {
-            testSelect.remove(i);
-        }        testSelect.options[testSelect.options.length] = new Option('2 Submenu 1', 'Value1');
-        testSelect.options[testSelect.options.length] = new Option('2 Submenu 2', 'Value2');
-
-}else{
-    
-    <%
-   stArray=new String[2];
-   %>
-   testSelect = document.getElementById('testSelect');
-   var i;
-   for(i = testSelect.options.length - 1 ; i >= 0 ; i--)
-   {
-       testSelect.remove(i);
-   }        testSelect.options[testSelect.options.length] = new Option('3 Submenu 1', 'Value1');
-   testSelect.options[testSelect.options.length] = new Option('3 Submenu 2', 'Value2');
-}
-
-}
-
-
-
-/* function preferedMenu() {
-    var prefer = document.forms[0].menu.value;
-/*     alert("You selected " + prefer);
- */ 
-
- 
- var i;
- for(i = subCat.options.length - 1 ; i >= 0 ; i--)
- {
-	 subCat.remove(i);
- }   
- var myList = new Array();
- 
-/*  <c:forEach items="${allFranchiseeAndMenuList.getSubCategories()}" var="sub" varStatus="loop">
-    myList[${loop.index}] = "${sub}";
-    
- </c:forEach> */
- 
- 
- /* <c:forEach
-	items="${allFranchiseeAndMenuList.allMenu()}"
-	var="Menu">
-	alert("You selected " + var); */
-</c:forEach> */
-
-
-}
-
-
-</script> --%>
+	
 	<script>
 	//Sachin 19-01-2021
 	jQuery('.floatOnlyTwoDots').keyup(function() {
@@ -780,18 +700,28 @@ function preferedTest() {
 	$(function() {
 		/* $('.formgroup2').hide();
 		$('#type1').show(); */
-		
+		var rateSett=${franchiseeList.rateSettingFrom};
+		 if(parseInt(rateSett)==1){
+			 $('.formgroup2').hide();
+		    	$('#type1').show();
+		 }else{
+			 $('.formgroup2').hide();
+		    	$('#type0').show();
+		 }
 	    $('input:radio[name="rate_setting_from"]').change(function() {
 	    	$('.formgroup2').hide();
 	    	$('#type' + $(this).val()).show();
 	    });
-	    
+	    var isDisc=${franchiseeList.isDiscApp};
+	    if(parseInt(isDisc)==1){
+	    	$('#disc_app_div').show();
+	    }
 	    $('input:radio[name="is_disc_app"]').change(function() {
 	    	$('.formgroup3').hide();
 	    	if($(this).val()==1){
 	    	$('#disc_app_div').show();
 	    	}else{
-	    		document.getElementById("disc_per").value=0;
+	    		//document.getElementById("disc_per").value=0;
 	    	}
 	    });
 	});
