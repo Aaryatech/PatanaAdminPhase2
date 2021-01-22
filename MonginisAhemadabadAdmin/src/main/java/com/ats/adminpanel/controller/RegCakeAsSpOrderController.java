@@ -150,7 +150,7 @@ public class RegCakeAsSpOrderController {
 		String toDate = request.getParameter("to_date");
 
 		routeId = request.getParameter("route_id");
-
+		
 		boolean isAllFrSelected = false;
 
 		frIdString = frIdString.substring(1, frIdString.length() - 1);
@@ -216,8 +216,8 @@ public class RegCakeAsSpOrderController {
 			regCakeAsSp = spList.getRegCakeAsSp();
 
 		}
-
-		System.err.println("regCakeAsSp" + regCakeAsSp.toString());
+		regCakeAsSp.get(0).setFromDate(fromDate);
+		regCakeAsSp.get(0).setToDate(toDate);
 
 		return regCakeAsSp;
 	}
@@ -228,6 +228,9 @@ public class RegCakeAsSpOrderController {
 	public void regCakeAsSp(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
 
 		try {
+			String fromDate = null;
+			String toDate = null;
+			
 			Document document = new Document(PageSize.A4);
 
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -391,12 +394,14 @@ public class RegCakeAsSpOrderController {
 							cell.setPaddingRight(2);
 							cell.setPadding(4);
 							table.addCell(cell);
-
+							
+							
 						}
 
 					}
 				}
-
+				fromDate = regCakeAsSp.get(0).getFromDate();
+				toDate = regCakeAsSp.get(0).getToDate();
 				document.open();
 				Paragraph company = new Paragraph(
 						Constants.FACTORYNAME+"\n" + Constants.FACTORYADDRESS,
@@ -412,7 +417,8 @@ public class RegCakeAsSpOrderController {
 				DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
 				String reportDate = DF.format(new Date());
 
-				document.add(new Paragraph(" Date: " + reportDate));
+				//document.add(new Paragraph(" Date: " + reportDate));
+				document.add(new Paragraph(" Date: " + fromDate+" - "+toDate));
 				document.add(new Paragraph("\n"));
 				document.add(table);
 				document.add(new Paragraph("\n"));

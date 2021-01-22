@@ -15,6 +15,9 @@ public class RegCakeAsSpDispatchReport {
 	
 	private Date rspDeliveryDt;
 	
+	private String fromDate;
+	private String toDate;
+	
 
 	private String frName;
 	
@@ -78,11 +81,28 @@ public class RegCakeAsSpDispatchReport {
 		this.itemName = itemName;
 	}
 
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+
 	@Override
 	public String toString() {
 		return "RegCakeAsSpDispatchReport [rspId=" + rspId + ", frId=" + frId + ", itemId=" + itemId
-				+ ", rspDeliveryDt=" + rspDeliveryDt + ", frName=" + frName + ", qty=" + qty + ", itemName=" + itemName
-				+ "]";
+				+ ", rspDeliveryDt=" + rspDeliveryDt + ", fromDate=" + fromDate + ", toDate=" + toDate + ", frName="
+				+ frName + ", qty=" + qty + ", itemName=" + itemName + "]";
 	}
+
 
 }

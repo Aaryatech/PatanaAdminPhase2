@@ -54,7 +54,7 @@
 
 
 						<div class="box-content">
-							<form class="form-horizontal" method="post" id="validation-form">
+							<form class="form-horizontal" target="_blank" method="post" id="validation-form">
 
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">From
@@ -116,7 +116,7 @@
 									<div
 										class="col-sm-25 col-sm-offset-3 col-lg-30 col-lg-offset-0">
 										<input class="btn btn-primary" value="Generate PDF" id="callSubmit"
-											onclick="callSearch()">
+											onclick="callSearch()" type="button">
 									</div>
 									
 								</div>
@@ -225,6 +225,8 @@
 			if(isValid==true){
 			var array = [];
 			var frIds = $("#fr_id").val();
+			
+
 			var fromDate = document.getElementById("dp1").value;
 			var toDate = document.getElementById("dp2").value;
 
@@ -242,6 +244,10 @@
 								ajax : 'true',
 							},
 							function(data) {
+								if(data==null )
+								{
+									alert("No Record Found!")
+								}
 								
 								var form = document.getElementById("validation-form");
 								//alert("form " +form);
