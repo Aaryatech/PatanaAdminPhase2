@@ -207,7 +207,26 @@ th {
 							maxFractionDigits="2" value="${allTotal}" /></b></td>
 			</tr>
 		</tbody>
-	</table>
+	</table><br>
+	
+	<table align="center" border="1" cellspacing="0" cellpadding="1"
+		id="table_grid1" class="table table-bordered">
+		<thead>
+			<tr class="bgpink">
+				<th height="25">Sr.No.</th>
+				<th>Sp Cake Details</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+			<c:forEach items="${spCakeList}" var="spCake" varStatus="count">
+			<tr>
+				<td>${count.index+1}</td>
+				<td>${spCake.spName} - ${spCake.spfName} - ${spCake.noOfKgs} - ${spCake.spBackendRate}</td>
+				</tr>
+			</c:forEach>		
+		</tbody>
+		</table>
 
 	<input type="button"
 		onclick="tableToExcel('table_grid', 'name', 'Stationwise.xls')"

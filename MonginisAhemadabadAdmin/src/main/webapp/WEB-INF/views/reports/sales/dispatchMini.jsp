@@ -20,7 +20,7 @@
 <style type="text/css">
 
 #container {
-    column-count:1;
+    column-count:3;
    
 }
 
@@ -59,8 +59,7 @@ th {
 </style>
 </head>
 <body onload="directPrint()">
-<c:forEach items="${frListSelected}" var="frId" varStatus="ct">
-<h5 align="center">MONGINIS &nbsp;&nbsp;
+<!-- <h5 align="center">MONGINIS &nbsp;&nbsp; -->
 <!-- <p align="center">Patna,Bihar</p>
  -->
 <c:forEach items="${frList}" var="fr" varStatus="count">
@@ -72,7 +71,7 @@ th {
 Production Start Date &nbsp; ${billDate} &nbsp;&nbsp; Dispatch Sheet &nbsp;&nbsp; Route ${routeName} &nbsp;&nbsp;Dispatch Date: ${convertedDate}</h5></div>
 
 <div id="container"  >
-<table  align="center" border="1" cellspacing="0" cellpadding="6" 
+<table  align="center" border="1" cellspacing="0" cellpadding="1" 
 		id="table_grid" class="table table-bordered">
 		<thead>
 			<tr class="bgpink">
@@ -123,7 +122,7 @@ Production Start Date &nbsp; ${billDate} &nbsp;&nbsp; Dispatch Sheet &nbsp;&nbsp
 								<c:choose>
 								<c:when test="${report.itemId==item.id}">
 								<c:choose>
-								<c:when test="${report.frId==fr.frId}"><%-- change here --%>
+								<c:when test="${report.frId==fr.frId}">
 							
 								<c:set var="editQty" value="${report.editQty}"></c:set>
 								 <c:if test="${fr.frRateCat==1}">
@@ -164,7 +163,7 @@ Production Start Date &nbsp; ${billDate} &nbsp;&nbsp; Dispatch Sheet &nbsp;&nbsp
 								<td width="30px" style="text-align:center;"><c:out value="${srNo}" /></td>
 								<c:set var="srNo" value="${srNo+1}"></c:set>
 								<td width="200px" ><c:out value="${item.itemName}" /></td>
-								<td width="50px" style="text-align:center;font-weight: bold;">${editQty}</td> 
+								<td width="50px" style="text-align:center;">${editQty}</td> 
 								<td width="30px" align="right"></td> 
 								<%-- <td width="60px" align="right">${item.itemRate1}</td>
 							 	<td width="60px" align="right"><fmt:formatNumber type="number"
@@ -246,22 +245,20 @@ Production Start Date &nbsp; ${billDate} &nbsp;&nbsp; Dispatch Sheet &nbsp;&nbsp
 			</tr>  --%>
 		</tbody>
 	</table>
-</div>		<div style="page-break-after: always;"></div>
+</div>
 
-
-</c:forEach>
 	<!-- END Main Content -->
 
 </body>
 
-	<!-- <script>
+	<script>
 	 function directPrint()
 	{
 		 
 		window.print();
-		window.close();
+	//	window.close();
 	} 
 	
-	</script> -->
+	</script>
 </body>
 </html>

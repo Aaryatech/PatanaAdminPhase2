@@ -128,6 +128,8 @@
 							target="_blank">PDF</a>
  --%><button class="btn btn-primary" value="PDF" id="PDFButton"
 							onclick="genPdfHTML()">HTML Report</button>
+				<!-- <input type="button" id="expExcel" class="btn btn-primary" value="EXPORT TO Excel" onclick="exportToExcel();" disabled="disabled">
+				 -->							
 					</div>
 
 
@@ -156,6 +158,9 @@
 							&nbsp;
 						<button class="btn btn-primary" value="PDF" id="PDFButton"
 							onclick="genDispatchPdf()">Dispatch PDF</button>
+						
+						<!-- <input type="button" id="expExcel2" class="btn btn-primary" value="EXPORT TO Excel" onclick="exportToExcel2();" disabled="disabled">
+				 -->
 						
 							</div>
 							
@@ -778,6 +783,7 @@
 			
 			window.open('pdfForDisReport?url=pdf/getPDispatchReportPdf/'
 					+ billDate + '/'+routeId+'/'+selectedCat);
+			document.getElementById("expExcel").disabled=false;
 
 		}
 		
@@ -787,6 +793,12 @@
 				window.open("${pageContext.request.contextPath}/exportToExcel");
 						document.getElementById("expExcel").disabled=true;
 			}
+
+			function exportToExcel2()
+			{
+				 
+				window.open("${pageContext.request.contextPath}/exportToExcelNew");						
+			}			
 			function genPdfBill() {
 				var billDate = $("#billDate").val();
 				var routeId = $("#selectRoute").val();
@@ -795,7 +807,8 @@
 				
 				window.open('pdfForDisReport?url=pdf/getDispatchPReportPdfForBill/'
 						+ billDate + '/'+routeId+'/'+selectedCat+'/'+frId);
-
+				
+				document.getElementById("expExcel2").disabled=false;
 			}
 			</script>	
 			<script type="text/javascript">
@@ -803,12 +816,13 @@
 			{
 				var billDate = $("#billDate").val();
 				var routeId = $("#selectRoute").val();
-				var menuId = $("#menuId").val();
-				var selectedCat = $("#selectSubCat").val();//new for pune on 14 feb 19
+				var selectedCat = $("#selectCat").val();
 				var frId = $("#fraId").val();
 				
-				  window.open('pdfForDisReport?url=pdf/getDispatchPReportPdfForDispatch/'
-							+ billDate + '/'+menuId+'/'+routeId+'/'+selectedCat+'/'+frId);
+				window.open('pdfForDisReport?url=pdf/getDispatchPReportPdfForDispatch/'
+						+ billDate + '/'+routeId+'/'+selectedCat+'/'+frId);
+
+				
 			}
 			/* var fld = document.getElementById('fraId');
 			var values = [];

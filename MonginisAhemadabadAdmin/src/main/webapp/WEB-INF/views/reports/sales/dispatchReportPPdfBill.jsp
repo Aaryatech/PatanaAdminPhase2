@@ -50,7 +50,6 @@ th {
 </style>
 </head>
 <body onload="myFunction()">
-<h4 align="center">MONGINIS</h4>
 <p align="center">${Constants.CITY} , ${Constants.STATE}</p>
 <div align="center"> <h5>
 <c:forEach items="${frList}" var="fr" varStatus="count">
@@ -232,7 +231,26 @@ Production Start Date &nbsp; ${billDate} &nbsp;&nbsp; Dispatch Sheet &nbsp;&nbsp
 							maxFractionDigits="2" value="${allTotal}" /></b></td>
 			</tr> 
 		</tbody>
-	</table>
+	</table><br>
+	
+	<table align="center" border="1" cellspacing="0" cellpadding="1"
+		id="table_grid1" class="table table-bordered">
+		<thead>
+			<tr class="bgpink">
+				<th height="25">Sr.No.</th>
+				<th>Sp Cake Details</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+			<c:forEach items="${spCakeList}" var="spCake" varStatus="count">
+			<tr>
+				<td>${count.index+1}</td>
+				<td>${spCake.spName} - ${spCake.spfName} - ${spCake.noOfKgs} - ${spCake.spBackendRate}</td>
+				</tr>
+			</c:forEach>		
+		</tbody>
+		</table>
 
 
 	<!-- END Main Content -->
