@@ -223,7 +223,7 @@
 
 
 
-					<div class="row">
+					<%-- Sac comment<div class="row">
 					<label class=" col-md-1 control-label franchisee_label">Production Date</label>
 						<div class="col-sm-3 col-lg-2 controls">
 										<input class="form-control date-picker" id="date" size="19" placeholder="dd-MM-yyyy"
@@ -233,6 +233,25 @@
 						<div class="col-sm-3 col-lg-2 controls">
 										<input class="form-control date-picker" id="deldate" size="19" placeholder="dd-MM-yyyy"
 											type="text" name="deldate" value="" required />
+									</div>
+						<div class="col-md-offset-6 col-md-1">
+
+							<button class="btn btn-primary"
+								style="margin-right: 5px;" onclick="submitOrder()" id="submitOrder" disabled>Submit</button>
+						</div>
+					</div> --%>
+					
+					
+					<div class="row">
+					<label class=" col-md-1 control-label franchisee_label">From Date</label>
+						<div class="col-sm-3 col-lg-2 controls">
+										<input class="form-control date-picker" id="date" size="19" placeholder="dd-MM-yyyy"
+											type="text" name="date" value="${date}"  required/>
+									</div>
+				<label class=" col-md-1 control-label franchisee_label">To Date</label>
+						<div class="col-sm-3 col-lg-2 controls">
+										<input class="form-control date-picker" id="deldate" size="19" placeholder="dd-MM-yyyy"
+											type="text" name="deldate" value="${date}" required />
 									</div>
 						<div class="col-md-offset-6 col-md-1">
 

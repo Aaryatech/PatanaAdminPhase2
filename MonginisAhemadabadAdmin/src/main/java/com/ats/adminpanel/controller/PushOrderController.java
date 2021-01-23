@@ -40,6 +40,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
+import com.ats.adminpanel.commons.DateConvertor;
+import com.ats.adminpanel.commons.SetOrderDataCommon;
 import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.AllFrIdNameList;
 import com.ats.adminpanel.model.GenerateBill;
@@ -142,7 +144,6 @@ public class PushOrderController {
 
 		selectedFrListAll = allFrIdNameList.getFrIdNamesList();
 
-		// int selectedMainCatId=0;
 		String selectedMenu = request.getParameter("menu_id");
 		menuId = Integer.parseInt(selectedMenu);
 
@@ -188,52 +189,24 @@ public class PushOrderController {
 		}
 		System.out.println("After Rest of Items   and mennu id is  :");
 
-		map = new LinkedMultiValueMap<String, Object>();
-
-		String strFrId = selectedFr;
-		System.out.println("strFrId =" + strFrId.toString());
-		map.add("frIdList", strFrId);
-
-		GetOrderDataForPushOrderList pushOrderDataList = restTemplate
-				.postForObject(Constants.url + "getOrderDataForPushOrder", map, GetOrderDataForPushOrderList.class);
-
-		pushOrderData = pushOrderDataList.getOrderDataForPushOrder();
-
-		// System.out.println("push order data "+pushOrderData.toString());
+		/*
+		 * Sac comm map = new LinkedMultiValueMap<String, Object>();
+		 * 
+		 * String strFrId = selectedFr; System.out.println("strFrId =" +
+		 * strFrId.toString()); map.add("frIdList", strFrId);
+		 * 
+		 * GetOrderDataForPushOrderList pushOrderDataList = restTemplate
+		 * .postForObject(Constants.url + "getOrderDataForPushOrder", map,
+		 * GetOrderDataForPushOrderList.class);
+		 * 
+		 * pushOrderData = pushOrderDataList.getOrderDataForPushOrder();
+		 */
 
 		System.out.println("Item List: " + items.toString());
-
-		// new code start
-
-		// new code
-
-		// setting item Qty of pushed Item
-		/*
-		 * if(pushOrderData !=null) { //for(int l=0;l<selectedFrIdList.size();l++) {
-		 * 
-		 * 
-		 * for (int i=0;i<pushOrderData.size();i++) {
-		 * 
-		 * for (int j=0;j<items.size();j++) {
-		 * 
-		 * if(items.get(j).getId()==pushOrderData.get(i).getItemId()) {
-		 * 
-		 * items.get(j).setDelStatus(pushOrderData.get(i).getOrderQty());
-		 * 
-		 * }
-		 * 
-		 * //System.out.println("item entry new qty "+items.toString());
-		 * 
-		 * }//end of for loop } }//end of if
-		 */
-		// End of setting Item Qty for pushed Item
-
-		// PushOrderList pushOrdeList=new PushOrderList();
 
 		List<GetOrderDataForPushOrder> prevPushOrderList = new ArrayList<GetOrderDataForPushOrder>();
 		GetOrderDataForPushOrder prevOrderData = null;
 		PushOrderList pushOrder = null;
-		int x = 0;
 		for (int j = 0; j < items.size(); j++) {
 
 			System.out.println("Inside First For ");
@@ -243,35 +216,35 @@ public class PushOrderController {
 			pushOrder.setItemId(items.get(j).getId());
 			pushOrder.setItemName(items.get(j).getItemName());
 
-			if (pushOrderData != null) {
-
-				for (int k = 0; k < pushOrderData.size(); k++) {
-
-					prevOrderData = new GetOrderDataForPushOrder();
-
-					if (pushOrderData.get(k).getItemId() == items.get(j).getId()) {
-						x = x + 1;
-						System.out.println("matched " + x);
-
-						prevOrderData.setFrId(pushOrderData.get(k).getFrId());
-						prevOrderData.setItemId(pushOrderData.get(k).getItemId());
-						prevOrderData.setOrderId(pushOrderData.get(k).getOrderId());
-						prevOrderData.setOrderQty(pushOrderData.get(k).getOrderQty());
-
-						System.out.println("prev Order Dat " + prevOrderData.toString());
-
-						prevPushOrderList.add(prevOrderData);
-
-						pushOrder.setGetOrderDataForPushOrder(prevPushOrderList);
-
-						System.out.println("prev Order Dat List " + prevPushOrderList.toString());
-
-					}
-
-				}
-				// pushOrder.setGetOrderDataForPushOrder(prevPushOrderList);
-
-			}
+			/*
+			 * sac comm if (pushOrderData != null) {
+			 * 
+			 * for (int k = 0; k < pushOrderData.size(); k++) {
+			 * 
+			 * prevOrderData = new GetOrderDataForPushOrder();
+			 * 
+			 * if (pushOrderData.get(k).getItemId() == items.get(j).getId()) { x = x + 1;
+			 * System.out.println("matched " + x);
+			 * 
+			 * prevOrderData.setFrId(pushOrderData.get(k).getFrId());
+			 * prevOrderData.setItemId(pushOrderData.get(k).getItemId());
+			 * prevOrderData.setOrderId(pushOrderData.get(k).getOrderId());
+			 * prevOrderData.setOrderQty(pushOrderData.get(k).getOrderQty());
+			 * 
+			 * System.out.println("prev Order Dat " + prevOrderData.toString());
+			 * 
+			 * prevPushOrderList.add(prevOrderData);
+			 * 
+			 * pushOrder.setGetOrderDataForPushOrder(prevPushOrderList);
+			 * 
+			 * System.out.println("prev Order Dat List " + prevPushOrderList.toString());
+			 * 
+			 * }
+			 * 
+			 * } // pushOrder.setGetOrderDataForPushOrder(prevPushOrderList);
+			 * 
+			 * }
+			 */
 
 			pushOrdeList.add(pushOrder);
 
@@ -279,24 +252,6 @@ public class PushOrderController {
 
 		System.out.println("to String push Order List " + pushOrdeList.toString());
 
-		/*
-		 * Ganesh code Comment: String selectedFr = request.getParameter("fr_id_list");
-		 * 
-		 * System.out.println("Selected Franchisee Ids"+selectedFr);
-		 * 
-		 * 
-		 * selectedFr = selectedFr.substring(1, selectedFr.length() - 1); selectedFr =
-		 * selectedFr.replaceAll("\"", "");
-		 * 
-		 * 
-		 * selectedFrList=new ArrayList<>();
-		 * 
-		 * selectedFrList=Arrays.asList(selectedFr.split(","));
-		 * 
-		 * selectedFrIdList=new ArrayList(); List<AllFrIdName>
-		 * allFrList=allFrIdNameList.getFrIdNamesList();
-		 */
-		System.out.println("Selected Franchisee");
 		for (int i = 0; i < allFrList.size(); i++) {
 
 			for (int j = 0; j < selectedFrList.size(); j++) {
@@ -438,63 +393,81 @@ public class PushOrderController {
 			}
 			// for }
 		} // end of if pushItem
+		SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
+		 dateStr=DateConvertor.convertToYMD(dateStr);
+		 delDateStr=DateConvertor.convertToYMD(delDateStr);
 
 		if (pushItem == false) {
-			for (int j = 0; j < items.size(); j++) {
+			System.err.println("Here new");
+			for (java.util.Date d = yydate.parse(dateStr); d.compareTo(yydate.parse(delDateStr)) <= 0;) {
 
-				float discPer = Float.parseFloat(request.getParameter("disc_per" + items.get(j).getId()));
-				// System.out.println(items.get(j).getId());
-				for (int i = 0; i < selectedFrIdList.size(); i++) {
+				for (int j = 0; j < items.size(); j++) {
 
-					System.out.println(items.get(j).getId());
+					float discPer = Float.parseFloat(request.getParameter("disc_per" + items.get(j).getId()));
+					// System.out.println(items.get(j).getId());
+					for (int i = 0; i < selectedFrIdList.size(); i++) {
 
-					String quantity = request
-							.getParameter("itemId" + items.get(j).getId() + "orderQty" + selectedFrIdList.get(i));
-					System.out.println("qtyb    " + quantity);
-					int qty = Integer.parseInt(quantity);
+						System.out.println(items.get(j).getId());
 
-					if (qty != 0) {
-						List<Orders> oList = new ArrayList<>();
+						String quantity = request
+								.getParameter("itemId" + items.get(j).getId() + "orderQty" + selectedFrIdList.get(i));
+						//System.out.println("qtyb    " + quantity);
+						int qty = Integer.parseInt(quantity);
 
-						order.setOrderDatetime(todaysDate);
-						order.setFrId(selectedFrIdList.get(i));
-						order.setRefId(1);
-						order.setItemId(String.valueOf(items.get(j).getId()));
-						order.setOrderQty(qty);
-						order.setEditQty(qty);
-						order.setProductionDate(sqlCurrDate);// date var removed
-						order.setOrderDate(sqlCurrDate);// date var removed
-						order.setDeliveryDate(deliveryDate);
-						order.setOrderSubType(items.get(j).getItemGrp2());
-						// order.setMenuId(0);
-						// order.setGrnType(4);
-						order.setIsPositive(discPer);
-						order.setIsEdit(0);
-						order.setMenuId(menuId);
-						order.setOrderType(selectedMainCatId);
+						if (qty != 0) {
+							List<Orders> oList = new ArrayList<>();
 
-						for (int l = 0; l < selectedFrIdList.size(); l++) {
-							for (int k = 0; k < franchaseeList.size(); k++) {
-								if (selectedFrIdList.get(l) == franchaseeList.get(k).getFrId()) {
-									if (franchaseeList.get(k).getFrRateCat() == 1) {
-										order.setOrderRate(items.get(j).getItemRate1());
-										order.setOrderMrp(items.get(j).getItemMrp1());
-									} else if (franchaseeList.get(k).getFrRateCat() == 3) {
-										order.setOrderRate(items.get(j).getItemRate3());
-										order.setOrderMrp(items.get(j).getItemMrp3());
+							order.setOrderDatetime(todaysDate);
+							order.setFrId(selectedFrIdList.get(i));
+							order.setRefId(1);
+							order.setItemId(String.valueOf(items.get(j).getId()));
+							order.setOrderQty(qty);
+							order.setEditQty(qty);
+							order.setProductionDate(sqlCurrDate);// date var removed
+							order.setOrderDate(sqlCurrDate);// date var removed
+							order.setDeliveryDate(deliveryDate);
+							order.setOrderSubType(items.get(j).getItemGrp2());
+							// order.setMenuId(0);
+							// order.setGrnType(4);
+							order.setIsPositive(discPer);
+							order.setIsEdit(0);
+							order.setMenuId(menuId);
+							order.setOrderType(selectedMainCatId);
+
+							for (int l = 0; l < selectedFrIdList.size(); l++) {
+								for (int k = 0; k < franchaseeList.size(); k++) {
+									if (selectedFrIdList.get(l) == franchaseeList.get(k).getFrId()) {
+										if (franchaseeList.get(k).getFrRateCat() == 1) {
+											order.setOrderRate(items.get(j).getItemRate1());
+											order.setOrderMrp(items.get(j).getItemMrp1());
+										} else if (franchaseeList.get(k).getFrRateCat() == 3) {
+											order.setOrderRate(items.get(j).getItemRate3());
+											order.setOrderMrp(items.get(j).getItemMrp3());
+										}
+										order.setGrnType(franchaseeList.get(k).getGrnTwo());// new
 									}
-									order.setGrnType(franchaseeList.get(k).getGrnTwo());// new
 								}
 							}
-						}
 
-						oList.add(order);
-						PlaceOrder(oList);
-						System.out.println("oList Ganesh = " + oList.toString());
+							String orderDate = sdf1.format(d);
+							SimpleDateFormat ymdSDF = new SimpleDateFormat("yyyy-MM-dd");
+							SimpleDateFormat dmySDF = new SimpleDateFormat("dd-MM-yyyy");
 
-					} // end of if qty!=0
-				}
-			} // end items for loop
+							String convertedDate = ymdSDF.format(d);
+							SetOrderDataCommon setOrdData = new SetOrderDataCommon();
+							order = setOrdData.setOrderData(order, menuId, order.getFrId(), order.getOrderQty(),
+									request, convertedDate);
+							oList.add(order);
+
+							PlaceOrder(oList);
+							System.out.println("oList Ganesh = " + oList.toString());
+						} // end of if qty!=0
+
+					}
+				} // end items for loop
+
+				d.setTime(d.getTime() + 1000 * 60 * 60 * 24);
+			} // End of Date For Loop-Sachin added 23-01-2021
 
 		} // end of not pushItem
 
@@ -504,10 +477,13 @@ public class PushOrderController {
 		return "redirect:/showpushorders";
 	}
 
+	int x = 0;
+
 	void PlaceOrder(List<Orders> oList) {
 		// RestTemplate restTemplate = new RestTemplate();
-		System.out.println("Order list  :   " + oList.toString());
+		x = x + 1;
 
+		System.out.println("Order number  :   " + x);
 		String url = Constants.url + "placePushDumpOrder";
 
 		ObjectMapper mapperObj = new ObjectMapper();
@@ -515,12 +491,12 @@ public class PushOrderController {
 
 		try {
 			jsonStr = mapperObj.writeValueAsString(oList);
-			System.out.println("Converted JSON: " + jsonStr);
+			// System.out.println("Converted JSON: " + jsonStr);
 		} catch (IOException e) {
 			System.out.println("Excep converting java 2 json " + e.getMessage());
 			e.printStackTrace();
 		}
-		System.out.println("Before Order place");
+		// System.out.println("Before Order place");
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
@@ -531,7 +507,7 @@ public class PushOrderController {
 			ResponseEntity<String> orderListResponse = restTemplate.exchange(url, HttpMethod.POST, entity,
 					String.class);
 
-			System.out.println("Place Order Response" + orderListResponse.toString());
+			// System.out.println("Place Order Response" + orderListResponse.toString());
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

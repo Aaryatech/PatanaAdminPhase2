@@ -215,7 +215,7 @@ select {
 														<option value="-1">ALL</option>
                                               <c:forEach items="${configureFrList}"
 															var="menu">
-															<option value="${menu.settingId}">${menu.menuTitle}</option>
+															<option value="${menu.menuId}">${menu.menuTitle}</option>
 
 														</c:forEach>
 												</select>
