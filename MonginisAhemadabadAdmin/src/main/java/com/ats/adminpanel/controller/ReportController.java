@@ -60,6 +60,7 @@ import com.ats.adminpanel.model.franchisee.FrNameIdByRouteId;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteIdResponse;
 import com.ats.adminpanel.model.franchisee.Menu;
 import com.ats.adminpanel.model.item.CategoryListResponse;
+import com.ats.adminpanel.model.item.MCategoryList;
 import com.ats.adminpanel.model.reportv2.CrNoteRegItem;
 import com.ats.adminpanel.model.reportv2.CrNoteRegSp;
 import com.ats.adminpanel.model.reportv2.CrNoteRegisterList;
@@ -1250,7 +1251,7 @@ public class ReportController {
 	public ModelAndView showItemReportBetDate(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("reports/itemReport");
-
+		RestTemplate restTemplate=new RestTemplate();
 		try {
 			ZoneId z = ZoneId.of("Asia/Calcutta");
 
@@ -1258,7 +1259,8 @@ public class ReportController {
 			DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d-MM-uuuu");
 			String todaysDate = date.format(formatters);
 			model.addObject("todaysDate", todaysDate);
-
+			CategoryListResponse mcategories=restTemplate.getForObject(Constants.url+"showAllCategory", CategoryListResponse.class);
+			model.addObject("allCatList", mcategories.getmCategoryList());
 			allFrIdNameList = new AllFrIdNameList();
 			try {
 
@@ -1383,6 +1385,55 @@ public class ReportController {
 
 		return itemReportList;
 	}
+	   
+	
+	//Get Item Report List For Filtering By Category
+	//Akhilesh 2021-01-22
+	@RequestMapping(value = "/getReportItemCatwise", method = RequestMethod.GET)
+	public @ResponseBody List<ItemReport> getReportItemCatwise(HttpServletRequest request, HttpServletResponse response){
+		System.err.println("in /getReportItemCatwise ");
+		List<ItemReport> filertedItem=new ArrayList<>();
+		String catIdstr ="";
+		
+		 catIdstr=request.getParameter("selectedValues");
+		
+			
+			catIdstr = catIdstr.substring(1, catIdstr.length() - 1);
+			catIdstr = catIdstr.replaceAll("\"", "");
+			String[] catIdarr=catIdstr.split(",");
+			
+		
+				List<Integer> catIds=new ArrayList<>();
+				for(int i=0;i<catIdarr.length;i++) {
+					catIds.add(Integer.parseInt(catIdarr[i]));
+					}
+				System.err.println("Cat List-->"+catIds.size());
+				
+				if(catIds.get(0)==-1) {
+					filertedItem=itemReportList;
+				}else {
+					for(int id :catIds) {
+						for(ItemReport item : itemReportList) {
+							if(id==item.getCatId()) {
+								filertedItem.add(item);
+							}
+							
+						}
+						
+					}
+					
+				}
+			
+			
+			
+		
+		
+		
+		
+		return filertedItem;
+	}
+	
+	
 
 	// getCRN Reg Pdf
 	@RequestMapping(value = "/getItemReportPdf/{fromdate}/{todate}", method = RequestMethod.GET)

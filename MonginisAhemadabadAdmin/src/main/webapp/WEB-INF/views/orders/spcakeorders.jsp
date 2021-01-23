@@ -276,13 +276,14 @@ table {
 									<c:set var="dis" value="none" />
 
 									<div class="box-content">
-
+									
 										<div class="clearfix"></div>
 										<div class="table-responsive" style="">
 											<table width="100%" class="table table-advance" id="table1"
 												border="1">
 												<thead style="background-color: #f3b5db;">
 													<tr>
+													
 														<th width="80"  style="text-align: center;"><!-- <input type="checkbox"
 															onClick="selectOrderIdNo(this)" id="all" /> -->Sr. No.</th>
 														<th width="130" style="text-align: center;">Slip No.</th>
@@ -478,7 +479,7 @@ table {
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap-daterangepicker/daterangepicker.js"></script>
 	<script type="text/javascript">
 	$('#from').on('input', function() {
-		 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+		this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
 		});
 	$('#to').on('input', function() {
 		 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
@@ -527,10 +528,11 @@ table {
 									fr_id_list : JSON.stringify(frIds),
 									prod_date : prodDate,
 									route_id : routeIds,
-									spMenuId : spMenuId,
+									spMenuId : 26,
 									ajax : 'true',
 								},
 								function(data) {
+									//alert(JSON.stringify(data));
 									$('#table1 td').remove();
 									$('#loader').hide();
 									if (data == "") {
@@ -567,9 +569,9 @@ table {
 																			.html(
 																					key + 1));
 														}
-														var spImage = (spCakeOrder.spImage)
-																.replace(/ /g,
-																		'%20');
+														var spImage = (spCakeOrder.spImage);
+																/* .replace(/ /g,
+																		'%20'); */
 
 														tr
 																.append($(
@@ -625,7 +627,7 @@ table {
 																.append($(
 																		'<td style="text-align: right;"></td>')
 																		.html(
-																				totalValue));
+																				spCakeOrder.spGrandTotal));
 
 														tr
 																.append($(
@@ -910,9 +912,9 @@ table {
 																			.html(
 																					key + 1));
 														}
-														var spImage = (spCakeOrder.spImage)
-																.replace(/ /g,
-																		'%20');
+														var spImage = (spCakeOrder.spImage);
+																/* .replace(/ /g,
+																		'%20'); */
 														tr
 																.append($(
 																		'<td></td>')

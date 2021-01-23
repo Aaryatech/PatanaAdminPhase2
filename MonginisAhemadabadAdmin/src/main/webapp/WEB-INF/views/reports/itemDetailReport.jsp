@@ -3,10 +3,20 @@
 	uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
 <jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/tableSearch.css">
+
+
+
+<style type="text/css">
+.i-tittle{
+    margin: 3px 0;
+    font-size: 26px;
+}
+
+</style>
+
 <body>
 
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
@@ -68,14 +78,20 @@
 						</div>
 
 						<div class="box-content">
-							<div class="col-md-9"></div>
+							<div class="col-md-9">
+							<div class="i-tittle">
+							${itemDetailList[0].itemName}
+							</div>
+							</div>
 							<label for="search" class="col-md-3" id="search"> <i
 								class="fa fa-search" style="font-size: 20px"></i> <input
 								type="text" id="myInput" onkeyup="myFunction()" style="border-radius: 25px;"
 								placeholder="Search for supplier names.." title="Type in a name">
 							</label>
+							
 							<div class="clearfix"></div>
-
+							
+							
 							<div class="table-responsive" style="border: 0">
 								<table width="100%" class="table table-advance" id="table1">
 									<thead style="background-color: #f3b5db;">
@@ -83,11 +99,11 @@
 											<th width="170" style="text-align: center;">Sr.No.</th>
 											<th width="190" style="text-align: center;">Bill Date</th>
 											<th width="190" style="text-align: center;">Bill No.</th>
-											<th width="190" style="text-align: center;">Item Name</th>
+											
 
 											<th width="200" style="text-align: center;">Order Qty</th>
 											<th width="200" style="text-align: center;">Bill Qty</th>
-
+											<th width="190" style="text-align: center;">Diffrence</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -105,8 +121,8 @@
 												<td  style="text-align: center;"><c:out
 														value="${itemDetailList.invoiceNo}" /></td>
 
-												<td align="left"><c:out
-														value="${itemDetailList.itemName}" /></td>
+												<%-- <td align="left"><c:out
+														value="${itemDetailList.itemName}" /></td> --%>
 												<c:set var="totalOrderQty"
 													value="${totalOrderQty+itemDetailList.orderQty}"></c:set>
 
@@ -118,6 +134,31 @@
 
 												<td style="text-align: right; padding-right: 5%;"><c:out
 														value="${itemDetailList.billQty}" /></td>
+													
+													
+													<c:set value="${itemDetailList.orderQty-itemDetailList.billQty}" var="diff"></c:set>
+													<c:set var="totalDiff" value="${totalDiff+diff}" ></c:set>
+													<c:choose>
+													<c:when test="${diff<0}">
+													<td style="text-align: right; padding-right: 5%;background-color: red;"><c:out
+														value="${diff}" /></td>
+													
+													</c:when>
+													<c:when test="${diff>0}">
+													<td style="text-align: right; padding-right: 5%;background-color: green;"><c:out
+														value="${diff}" /></td>
+													
+													</c:when>
+													<c:otherwise>
+													<td style="text-align: right; padding-right: 5%;"><c:out
+														value="${diff}" /></td>
+													
+													</c:otherwise>
+													
+													
+													</c:choose>
+														
+												
 
 												<c:set var="totalBillQty"
 													value="${totalBillQty+itemDetailList.billQty}"></c:set>
@@ -127,10 +168,10 @@
 										<tr>
 											<td></td>
 											<td></td>
-											<td></td>
 											<td>Total</td>
 											<td style="text-align: right; padding-right: 5%;"><c:out value="${totalOrderQty}" /></td>
 											<td style="text-align: right; padding-right: 5%;"><c:out value="${totalBillQty}" /></td>
+											<td style="text-align: right; padding-right: 5%;"><c:out value="${totalDiff}" /></td>
 
 										</tr>
 

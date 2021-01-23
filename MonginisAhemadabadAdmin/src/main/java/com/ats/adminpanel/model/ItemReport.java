@@ -8,6 +8,8 @@ public class ItemReport {
 	private String itemName;
 	private int billNo;
 	private String invoiceNo;
+	
+	private int catId;
 
 	public int getItemId() {
 		return itemId;
@@ -57,10 +59,20 @@ public class ItemReport {
 		this.invoiceNo = invoiceNo;
 	}
 
+	public int getCatId() {
+		return catId;
+	}
+
+	public void setCatId(int catId) {
+		this.catId = catId;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemReport [itemId=" + itemId + ", billQty=" + billQty + ", orderQty=" + orderQty + ", itemName="
-				+ itemName + ", billNo=" + billNo + ", invoiceNo=" + invoiceNo + "]";
+				+ itemName + ", billNo=" + billNo + ", invoiceNo=" + invoiceNo + ", catId=" + catId + "]";
 	}
+
+
 
 }

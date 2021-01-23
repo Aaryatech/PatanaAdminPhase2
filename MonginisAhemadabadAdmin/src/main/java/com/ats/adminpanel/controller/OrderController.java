@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -598,8 +599,10 @@ public class OrderController {
 				model.addObject("todayDate", new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 				model.addObject("franchiseeList", franchiseeList);
 				
-				List<Menu> allMenuList = restTemplate.getForObject(Constants.url + "getAllMenuList", List.class);
-				model.addObject("frMenuList", allMenuList);
+				AllMenuResponse allMenuList = restTemplate.getForObject(Constants.url + "/getAllMenu", AllMenuResponse.class);
+				System.err.println("All Menus-->"+allMenuList.getMenuConfigurationPage().toString());
+			
+				model.addObject("frMenuList", allMenuList.getMenuConfigurationPage());
 				model.addObject("url", Constants.SPCAKE_IMAGE_URL);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -622,7 +625,8 @@ public class OrderController {
 		if (view.getError() == true) {
 
 			model = new ModelAndView("accessDenied");
-
+			
+			
 		} else {
 			model = new ModelAndView("orders/regularsporders");
 			Constants.mainAct = 4;
@@ -632,6 +636,11 @@ public class OrderController {
 				RestTemplate restTemplate = new RestTemplate();
 				AllFranchiseeList allFranchiseeList = restTemplate.getForObject(Constants.url + "getAllFranchisee",
 						AllFranchiseeList.class);
+				//All Menu list Akhilesh 2021-01-22
+				AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url + "getAllMenu",
+						AllMenuResponse.class);
+				
+				System.err.println("Menulis-->"+allMenuResponse);
 
 				// franchiseeList= new ArrayList<FranchiseeList>();
 				franchiseeList = allFranchiseeList.getFranchiseeList();
@@ -642,6 +651,7 @@ public class OrderController {
 
 				routeList = allRouteListResponse.getRoute();
 				model.addObject("routeList", routeList);
+				model.addObject("allMenuList",allMenuResponse.getMenuConfigurationPage());
 
 				model.addObject("todayDate", new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 				model.addObject("franchiseeList", franchiseeList);
@@ -668,6 +678,7 @@ public class OrderController {
 
 		String frIdString = request.getParameter("fr_id_list");
 		String prodDate = request.getParameter("prod_date");
+		//System.err.println("prod Date-->"+prodDate);
 		int routeId = Integer.parseInt(request.getParameter("route_id"));
 		int spMenuId = Integer.parseInt(request.getParameter("spMenuId"));
 		List<String> franchIds = new ArrayList();
@@ -723,10 +734,13 @@ public class OrderController {
 			System.out.println("all fr selected");
 
 			map.add("prodDate", prodDate);
-			map.add("spMenuId", spMenuId);
+			//map.add("spMenuId", spMenuId);
+			try {
 			orderListResponse = restTemplate1.postForObject(Constants.url + "getAllFrSpCakeOrderList", map,
 					SpCakeOrdersBeanResponse.class);
-
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 			spCakeOrderList = orderListResponse.getSpCakeOrdersBean();
 
 			System.out.println("order list is" + spCakeOrderList.toString());
@@ -818,8 +832,18 @@ public class OrderController {
 
 		model = new ModelAndView("orders/regularsporders");
 		model.addObject("isDelete", 0);
-
+		String menuIdStr="";
+		String[] menuIds= {};
+		List<Integer> selectedMenuIds=new ArrayList<>();
 		try {
+			
+			 menuIds=request.getParameterValues("menu_ids");
+			for(int i=0;i<menuIds.length;i++) {
+				menuIdStr=menuIdStr+menuIds[i]+",";
+				selectedMenuIds.add(Integer.parseInt(menuIds[i]));
+			}
+			System.err.println("Selected Menus-->"+selectedMenuIds.toString());
+			menuIdStr=menuIdStr.substring(0, menuIdStr.length()-1);
 			frIds = request.getParameterValues("fr_id[]");
 			System.out.println("frIds:" + frIds);
 			routeId = Integer.parseInt(request.getParameter("selectRoute"));
@@ -870,7 +894,14 @@ public class OrderController {
 			} catch (Exception e) {
 				System.out.println(" Exc in Reg Sp Order:order Controller" + e.getMessage());
 
-			}
+			}    
+			
+			
+			
+			//All Menu list Akhilesh 2021-01-22
+			AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url + "getAllMenu",
+					AllMenuResponse.class);
+			
 			AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
 					AllRoutesListResponse.class);
 
@@ -882,7 +913,8 @@ public class OrderController {
 			model.addObject("todayDate", prodDate);
 			model.addObject("frIdList", selectedFrList);
 			model.addObject("franchiseeList", remFrList);
-
+			model.addObject("allMenuList",allMenuResponse.getMenuConfigurationPage());
+			model.addObject("selectedMenu", selectedMenuIds);
 			if (routeId != 0) {
 
 				MultiValueMap<String, Object> mvm = new LinkedMultiValueMap<String, Object>();
@@ -911,7 +943,7 @@ public class OrderController {
 
 				map.add("frId", strFrId);
 				map.add("prodDate", prodDate);
-
+				
 				RestTemplate restTemp = new RestTemplate();
 
 				regOrderListResponse = restTemp.postForObject(Constants.url + "getRegSpCkOrderList", map,
@@ -925,15 +957,23 @@ public class OrderController {
 			} else if (frIds[0].toString().equals("0")) {
 				System.out.println("all fr selected");
 				model.addObject("frIdList", franchiseeList);
-
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
 				map.add("prodDate", prodDate);
-
+				map.add("menuId", menuIdStr);
 				RestTemplate restTemplate1 = new RestTemplate();
 
-				regOrderListResponse = restTemplate1.postForObject(Constants.url + "getAllFrRegSpCakeOrders", map,
-						RegularSpCkOrdersResponse.class);
+				try {
+					regOrderListResponse = restTemplate1.postForObject(Constants.url + "getAllFrRegSpCakeOrders", map,
+							RegularSpCkOrdersResponse.class);
+					System.err.println("Resp-->"+regOrderListResponse.getRegularSpCkOrdersList());
+				} catch (HttpClientErrorException e) {
+					System.err.println("in /getAllFrRegSpCakeOrders"+e.getResponseBodyAsString());
+					// TODO: handle exception
+				}
+				
+				
 
 				List<RegularSpCkOrder> regularSpCkOrderList = new ArrayList<RegularSpCkOrder>();
 				regularSpCkOrderList = regOrderListResponse.getRegularSpCkOrdersList();
@@ -950,7 +990,7 @@ public class OrderController {
 
 				map.add("frId", strFrId);
 				map.add("prodDate", prodDate);
-
+				map.add("menuId", menuIdStr);
 				RestTemplate restTemp = new RestTemplate();
 
 				regOrderListResponse = restTemp.postForObject(Constants.url + "getRegSpCkOrderList", map,

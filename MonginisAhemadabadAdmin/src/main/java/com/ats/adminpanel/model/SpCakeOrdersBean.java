@@ -20,6 +20,13 @@ public class SpCakeOrdersBean {
 	private float spSelectedWeight;
     private String spBookedForName;
 	private int isAllocated;
+	////Akhilesh 2021-01-22 
+	private String spInstructions;
+	private float spGrandTotal;
+	///////////////////////
+	
+	
+	
 	private int isBillGenerated;
 	private int slipNo;
 	  private String spImage;
@@ -166,15 +173,35 @@ public class SpCakeOrdersBean {
         this.itemId = itemId;
     }
 
+	public String getSpInstructions() {
+		return spInstructions;
+	}
+
+	public void setSpInstructions(String spInstructions) {
+		this.spInstructions = spInstructions;
+	}
+
+	public float getSpGrandTotal() {
+		return spGrandTotal;
+	}
+
+	public void setSpGrandTotal(float spGrandTotal) {
+		this.spGrandTotal = spGrandTotal;
+	}
+
 	@Override
 	public String toString() {
 		return "SpCakeOrdersBean [spOrderNo=" + spOrderNo + ", spCode=" + spCode + ", spName=" + spName + ", spfName="
 				+ spfName + ", spEvents=" + spEvents + ", spDeliveryDate=" + spDeliveryDate + ", spPrice=" + spPrice
 				+ ", spTotalAddRate=" + spTotalAddRate + ", frName=" + frName + ", itemId=" + itemId
 				+ ", spSelectedWeight=" + spSelectedWeight + ", spBookedForName=" + spBookedForName + ", isAllocated="
-				+ isAllocated + ", isBillGenerated=" + isBillGenerated + ", slipNo=" + slipNo + ", spImage=" + spImage
-				+ "]";
+				+ isAllocated + ", spInstructions=" + spInstructions + ", spGrandTotal=" + spGrandTotal
+				+ ", isBillGenerated=" + isBillGenerated + ", slipNo=" + slipNo + ", spImage=" + spImage + "]";
 	}
+
+	
+
+
 
 	
 }

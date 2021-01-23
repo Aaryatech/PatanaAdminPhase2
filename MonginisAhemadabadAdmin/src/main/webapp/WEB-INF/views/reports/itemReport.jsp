@@ -9,6 +9,7 @@
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 
 	<c:url var="getBillList" value="/getReportItemwise"></c:url>
+	<c:url value="/getReportItemCatwise" var="getReportItemCatwise"></c:url>
 
 
 
@@ -102,16 +103,47 @@
 							</select>
 
 						</div>
-						<div class="col-md-4">
-							<button class="btn btn-primary" onclick="searchReport()">Search </button>
-							<button class="btn btn-primary" value="PDF" id="PDFButton"
-								onclick="genPdf()">PDF</button>
+						
+						<label class="col-sm-3 col-lg-2 control-label">Select
+							Category:</label>
+							<div class="col-sm-6 col-lg-4">
+						
+							<select data-placeholder="Choose Category" onchange="selectCat()"
+								class="form-control chosen" tabindex="6" id="selectCat"
+								name="selectCat" multiple="multiple">
+
+								<option value="-1"><c:out value="All" /></option>
+
+							
+								<c:forEach items="${allCatList}" var="cat"
+									varStatus="count">
+									<option value="${cat.catId}"><c:out value="${cat.catName}" /></option>
+								</c:forEach>
+							</select>
+
 						</div>
+						
 
 						<!-- <div class="col-sm-9 col-lg-5 controls">
  -->
 					</div>
 				</div>
+				<br>
+				<div class="row">
+					<div class="form-group">
+						
+					<div class="col-md-4 left">
+							<button class="btn btn-primary" onclick="searchReport()">Search </button>
+							<button class="btn btn-primary" value="PDF" id="PDFButton"
+								onclick="genPdf()">PDF</button>
+						</div>
+						
+					</div>
+				
+					</div>
+					
+				
+				
 				<br>
 
 
@@ -153,6 +185,7 @@
 										<th style="text-align: center;">Item Name</th>
 										<th style="text-align: center;">Order Qty</th>
 										<th style="text-align: center;">Bill Qty</th>
+										<th style="text-align: center;">DIFFRENCE</th>
 										<th style="text-align: center;">Action</th>
 
 									</tr>
@@ -186,7 +219,153 @@
 
 	<a id="btn-scrollup" class="btn btn-circle btn-lg" href="#"><i
 		class="fa fa-chevron-up"></i></a>
+		
 
+		
+<script type="text/javascript">
+function selectCat() {
+	 var selectedValues = [];    
+	    $("#selectCat :selected").each(function(){
+	        selectedValues.push($(this).val()); 
+	    });
+	    //alert(selectedValues.length);
+	   if(selectedValues.length==0){
+		   selectedValues[0]=-1;
+		   //alert(selectedValues);
+	   }
+	    $('#loader').show();
+
+		$
+				.getJSON(
+						'${getReportItemCatwise}',
+
+						{
+
+							selectedValues :JSON.stringify(selectedValues),
+							ajax : 'true'
+
+						},
+						function(data) {
+
+							//alert(JSON.stringify(data));
+
+							$('#table_grid td').remove();
+							
+							$('#loader').hide();
+
+							if (data == "") {
+								//alert("No records found !!");
+								document.getElementById("expExcel").disabled = true;
+							}
+
+							var totalBillQty = 0;
+							var totalOrderQty = 0;
+
+							$
+									.each(
+											data,
+											function(key, report) {
+
+												document
+														.getElementById("expExcel").disabled = false;
+												document
+														.getElementById('range').style.display = 'block';
+												var index = key + 1;
+												//var tr = "<tr>";
+
+												var tr = $('<tr></tr>');
+
+												tr.append($('<td></td>')
+														.html(key + 1));
+
+												tr
+														.append($(
+																'<td style="text-align:left; padding-left: 5%;"></td>')
+																.html(
+																		report.itemName));
+
+												tr
+														.append($(
+																'<td  style="text-align:right; padding-right: 5%;"></td>')
+																.html(
+																		report.orderQty));
+												
+												tr
+												.append($(
+														'<td  style="text-align:right; padding-right: 5%;"></td>')
+														.html(
+																report.billQty));
+												diff=report.orderQty-report.billQty;
+												if(diff<0){
+													tr
+													.append($(
+															'<td style="text-align:right; padding-right: 5%; background-color: red;"></td>')
+															.html(
+																	diff));
+													
+												}else if(diff>0) {
+													tr
+													.append($(
+															'<td  style="text-align:right; padding-right: 5%; background-color: green"></td>')
+															.html(
+																	diff));
+												}else{
+												
+														tr
+														.append($(
+																'<td  style="text-align:right; padding-right: 5%;"></td>')
+																.html(
+																		diff));
+												
+												}
+												
+												
+												
+												
+												totalBillQty = totalBillQty
+														+ report.billQty;
+												totalOrderQty = totalOrderQty
+														+ report.orderQty;
+
+												var acButton = '<a href="#" class="action_btn" onclick="callEdit('
+														+ report.itemId
+														+ ','
+
+														+ ')" style="color:black"><i class="fa fa-list"></i></a>'
+
+												tr
+														.append($(
+																'<td  style="text-align:center;"></td>')
+																.html(
+																		acButton));
+
+												$('#table_grid tbody')
+														.append(tr);
+
+											})
+
+							var tr = $('<tr></tr>');
+
+							tr.append($('<td></td>').html(" "));
+
+							tr.append($('<td></td>').html("Total"));
+
+							tr.append($(
+									'<td  style="text-align:right; padding-right: 5%;"></td>')
+									.html(totalOrderQty));
+
+							tr.append($(
+									'<td  style="text-align:right; padding-right: 5%;"></td>')
+									.html(totalBillQty));
+
+							$('#table_grid tbody').append(tr);
+
+						});
+	  
+		
+}
+
+</script>
 
 	<script type="text/javascript">
 		function searchReport() {
@@ -195,7 +374,7 @@
 			var from_date = $("#fromDate").val();
 			var to_date = $("#toDate").val();
 			var selectFr = $("#selectFr").val();
-
+			
 			$('#loader').show();
 
 			$
@@ -212,13 +391,14 @@
 							},
 							function(data) {
 
-								//alert(data);
+								//alert(JSON.stringify(data));
 
 								$('#table_grid td').remove();
+								
 								$('#loader').hide();
 
 								if (data == "") {
-									alert("No records found !!");
+									//alert("No records found !!");
 									document.getElementById("expExcel").disabled = true;
 								}
 
@@ -255,10 +435,33 @@
 																			report.orderQty));
 
 													tr
+													.append($(
+															'<td  style="text-align:right; padding-right: 5%;"></td>')
+															.html(
+																	report.billQty));
+													diff=report.orderQty-report.billQty;
+													if(diff<0){
+														tr
+														.append($(
+																'<td style="text-align:right; padding-right: 5%; background-color: red;"></td>')
+																.html(
+																		diff));
+														
+													}else if(diff>0) {
+														tr
+														.append($(
+																'<td  style="text-align:right; padding-right: 5%; background-color: green"></td>')
+																.html(
+																		diff));
+													}else{
+													
+															tr
 															.append($(
 																	'<td  style="text-align:right; padding-right: 5%;"></td>')
 																	.html(
-																			report.billQty));
+																			diff));
+													
+													}
 													totalBillQty = totalBillQty
 															+ report.billQty;
 													totalOrderQty = totalOrderQty
@@ -285,7 +488,7 @@
 
 								tr.append($('<td></td>').html(" "));
 
-								tr.append($('<td>Total</td>').html());
+								tr.append($('<td></td>').html("Total"));
 
 								tr.append($(
 										'<td  style="text-align:right; padding-right: 5%;"></td>')
@@ -314,7 +517,7 @@
 			if (selectedFr == "" || selectedFr == null) {
 
 				if (selectedRoute == "" || selectedRoute == null) {
-					alert("Please Select atleast one ");
+					//alert("Please Select atleast one ");
 					isValid = false;
 				}
 				//alert("Please select Franchise/Route");

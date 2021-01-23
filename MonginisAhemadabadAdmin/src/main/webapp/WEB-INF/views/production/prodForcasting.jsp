@@ -37,7 +37,7 @@
   border:1px solid #ddd;
 }
  </style>
-<body>
+<body >
  <jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 
 <c:url var="findItemsByCategory" value="/getItemsByCategory"></c:url>
@@ -270,6 +270,16 @@
 		<!-- END Content -->
 	</div>
 	<!-- END Container -->
+	<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function() {
+		//alert("Hiiii")
+		$('#datepicker5').prop('disabled',true);
+		$('#datepicker2').prop('disabled',true);
+		$('#datepicker3').prop('disabled',true);
+		//alert("Hiiii")
+		});
+	</script>
+
 
 	<!--basic scripts-->
 	<script
@@ -337,6 +347,10 @@
 
 <script type="text/javascript">
 		function searchItemsByCategory() {
+			$('#datepicker5').prop('disabled',false);
+			$('#datepicker2').prop('disabled',false);
+			$('#datepicker3').prop('disabled',false);
+			
 			
 			var catId = $("#catId").val();
 	 		document.getElementById("selectedCatId").value =catId;

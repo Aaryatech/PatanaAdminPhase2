@@ -193,9 +193,53 @@
 											id="dp2" size="16" type="text" name="prod_date"
 											id="prod_date" required />
 									</div>
+		   							<label class="col-sm-3 col-lg-2 control-label">Select Menu
+									</label>
+									<div class="col-sm-6 col-lg-4 controls">
+
+										<select data-placeholder="Select Menu"
+											class="form-control chosen" multiple="multiple" tabindex="6"
+											name="menu_ids" id="Menu_ids" onchange="disableRoute()" >
+
+											
+
+											<option value="0">All</option>
+											<c:forEach items="${allMenuList}" var="menu">
+											<c:set var="flag" value="0"></c:set>
+											<c:forEach items="${selectedMenu}" var="selM">
+											<c:if test="${menu.menuId==selM}">
+												<c:set var="flag" value="1"></c:set>
+											</c:if>
+											</c:forEach>
+											<c:choose>
+												<c:when test="${flag==1}">
+												<option  selected="selected" value="${menu.menuId}">${menu.menuTitle}</option>
+												</c:when>
+												<c:otherwise>
+												<option value="${menu.menuId}">${menu.menuTitle}</option>
+												</c:otherwise>
+											
+											</c:choose>
+												
+
+
+											</c:forEach>
+											<%-- <c:forEach items="${frIdList}" var="franchiseeList">
+												<option value="${franchiseeList.frId}" selected>${franchiseeList.frName}</option>
+
+
+											</c:forEach> --%>
+
+										</select>
+									</div>
+									
 								<!-- </div>
 
 								<div class="form-group"> -->
+									
+								</div>
+								<br>
+								<div class="form-group">
 									<div class="col-sm-9 col-sm-offset-2 col-lg-2 col-lg-offset-1">
 										<button type="button"  class="btn btn-primary" onclick="onSearchClick()">
 											<i class="fa fa-check"></i> Search
@@ -228,10 +272,10 @@
 														<th width="208" align="left">Delivery Date</th>
 														<th width="159" align="left"><span
 															style="width: 130px;">Name</span></th>
-														<th width="130" align="left">Event</th>
-														<th width="105" align="left">Rate</th>
+														<!-- <th width="130" align="left">Event</th>
+														<th width="105" align="left">Rate</th> -->
 														<th width="75" align="left">Quantity</th>
-														<th width="91" align="left">Total</th>
+														<!-- <th width="91" align="left">Total</th> -->
 														<th width="87" align="left">View</th>
 														<th width="87" align="left">PDF</th>
 														<th width="87" align="left">Action</th>
@@ -251,19 +295,19 @@
 															<td align="left"><c:out
 																	value="${spCakeOrderList.itemName}"></c:out></td>
 
-															<td align="left"><c:out
-																	value="${spCakeOrderList.rspEvents}"></c:out></td>
+														<%-- 	<td align="left"><c:out
+																	value="${spCakeOrderList.rspEvents}"></c:out></td> --%>
 
-															<td align="left"><c:out
+															<%-- <td align="left"><c:out
 																	value="${spCakeOrderList.rate}"></c:out></td>
-
+ --%>
 															<td align="left"><c:out
 																	value="${spCakeOrderList.qty}"></c:out></td>
 															<c:set var="qty" value="${spCakeOrderList.qty}" />
 															<c:set var="rate" value="${spCakeOrderList.rate}" />
 
 
-															<td align="left"><c:out value="${rate * qty}"></c:out></td>
+														<%-- 	<td align="left"><c:out value="${rate * qty}"></c:out></td> --%>
 
 															<c:choose>
 																<c:when test="${isView eq '1'}">
