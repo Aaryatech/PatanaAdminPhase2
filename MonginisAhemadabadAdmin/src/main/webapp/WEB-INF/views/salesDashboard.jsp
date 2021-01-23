@@ -333,6 +333,103 @@
 					</div>
 				</div>
 			</div>
+			
+			<div class="row">
+				<div class="col-md-6 table-responsive">
+					<div
+						style="overflow: scroll; height: 100%; width: 100%; overflow: auto">
+
+						<table class="table table-bordered table-striped fill-head "
+							style="width: 100%" id="table_grid1">
+							<thead style="background-color: #ec268f;">
+								<tr>
+									<th style="text-align: center;">Sr.No.</th>
+									<th style="text-align: center;">Franchise Name</th>
+									<th style="text-align: center;">FDA Expiry Date</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:set var="count" value="0" scope="page" />
+								<c:forEach items="${frFdaList}" var="frFdaList">																
+								<c:if test="${frFdaList.currFdaDateDiff le 10 && frFdaList.currFdaDateDiff ge 1}"> 
+								<c:set var="count" value="${count + 1}" scope="page"/>	
+									<tr>
+										<td>${count}</td>
+										<td style="text-align: left;">${frFdaList.frName} - ${frFdaList.frCode}</td>
+										<td style="text-align: center;">${frFdaList.fdaExpiryDate}</td>
+									</tr>
+								 </c:if> 
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					<table class="table table-bordered table-striped fill-head "
+							style="width: 100%" id="table_grid2">
+							<thead style="background-color: #ec268f;">
+								<tr>
+									<th style="text-align: center;">Sr.No.</th>
+									<th style="text-align: center;">Franchise Name</th>
+									<th style="text-align: center;">Owner's Birthday</th>
+								</tr>
+							</thead>
+							<tbody>
+							<c:set var="count" value="0" scope="page" />
+								<c:forEach items="${frFdaList}" var="frFdaList">	
+										
+								<c:if test="${frFdaList.dayDiffDob le 10 && frFdaList.dayDiffDob ge 1}"> 
+									<c:set var="count" value="${count + 1}" scope="page"/>							
+									<tr>
+										<td>${count}</td>
+										<td style="text-align: left;">${frFdaList.frName} - ${frFdaList.frCode}</td>
+										<td style="text-align: center;">${frFdaList.ownerBirthDate}</td>
+									</tr>
+										
+								 </c:if> 
+								 
+								</c:forEach>
+							</tbody>
+						</table>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-6 table-responsive">
+					<div
+						style="overflow: scroll; height: 100%; width: 100%; overflow: auto">
+
+						<table class="table table-bordered table-striped fill-head "
+							style="width: 100%" id="table_grid1">
+							<thead style="background-color: #ec268f;">
+								<tr>
+									<th style="text-align: center;">Sr.No.</th>
+									<th style="text-align: center;">Franchise Name</th>
+									<th style="text-align: center;">Agreement Date</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:set var="count" value="0" scope="page" />
+								<c:forEach items="${frFdaList}" var="frFdaList">																
+								<c:if test="${frFdaList.currAgrmntDateDiff le 10 && frFdaList.currAgrmntDateDiff ge 1}"> 
+								<c:set var="count" value="${count + 1}" scope="page"/>	
+									<tr>
+										<td>${count}</td>
+										<td style="text-align: left;">${frFdaList.frName} - ${frFdaList.frCode}</td>
+										<td style="text-align: center;">${frFdaList.frAgreementDate}</td>
+									</tr>
+								 </c:if> 
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					
+				</div>
+			</div>
 
 			
 

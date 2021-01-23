@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -41,6 +42,7 @@ import com.ats.adminpanel.model.OrderCountsResponse;
 
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.billing.Company;
+import com.ats.adminpanel.model.dashboard.FrFdaOwnerDtl;
 import com.ats.adminpanel.model.ggreports.GrnGvnReportByGrnType;
 import com.ats.adminpanel.model.login.UserResponse;
 import com.ats.adminpanel.model.salesdashboard.CatWiseAllData;
@@ -361,6 +363,36 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("salesDashboard");
 
 		try {
+			
+			FrFdaOwnerDtl[] frFda = restTemplate
+					.getForObject(Constants.url + "getFrFdaDtl", FrFdaOwnerDtl[].class);
+			List<FrFdaOwnerDtl> frFdaList = new ArrayList<FrFdaOwnerDtl>(Arrays.asList(frFda));
+			
+			
+			for (int i = 0; i < frFdaList.size(); i++) {
+				
+				int currYear = Calendar.getInstance().get(Calendar.YEAR);
+				
+				Date date = new Date();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy"); 
+				
+				String currDate = sdf.format(date);
+				String dobDate = frFdaList.get(i).getOwnerBirthDate();
+				
+				String[] parts = dobDate.split("-");
+				String dpart = parts[0]; 
+				String mpart = parts[1]; 
+				String ypart = parts[2];
+				
+				String nextDob = dpart+"-"+mpart+"-"+currYear;
+				
+				long dateDiff = DateConvertor.findDifference(currDate, nextDob);
+				
+				frFdaList.get(i).setDayDiffDob(dateDiff);
+			}
+			
+			mav.addObject("frFdaList", frFdaList);
+			System.out.println("Fr Fda Dtl>>>>>>>>>>>"+frFdaList);
 
 			int radioVal = 1;
 			if (request.getParameter("rdDate") != null) {
@@ -513,8 +545,7 @@ public class HomeController {
 				radioFrRouteChart = Integer.parseInt(request.getParameter("rdSale"));
 			}
 			mav.addObject("radioFrRoute", radioFrRouteChart);
-			
-
+					
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
