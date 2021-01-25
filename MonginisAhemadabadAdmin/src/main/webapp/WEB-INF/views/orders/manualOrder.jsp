@@ -341,7 +341,7 @@ to {
 												type="radio" name="typename" class="type" value="1" id="t2"
 												onchange="checkOrderByStatus()"> <label for="t2">By
 													MRP</label>
-											</label>
+						 					</label>
 										</div>
 										<div class="form-group">
 											<div id="singleOrder">
