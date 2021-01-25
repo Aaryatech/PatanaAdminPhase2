@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sound.midi.Synthesizer;
 
+import org.junit.runner.Request;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -248,9 +249,140 @@ public class NewProdRejectRetuController {
 			System.out.println(e.getMessage());
 		}
 
-		return "redirect:/showRejectiontionHeaderDetail";
+		return "redirect:/showRejectionList";
 
 	}
+	
+	@RequestMapping(value="/showRejectionList",method=RequestMethod.GET)
+	public ModelAndView showRejectionList(HttpServletRequest request,HttpServletResponse response) {
+		ModelAndView model=new ModelAndView();
+		RestTemplate restTemplate=new RestTemplate();
+		HttpSession session= request.getSession();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showFinishedGoodStock", "showFinishedGoodStock", "1", "0", "0", "0",
+					newModuleList);
+			if(view.getError() == true) {
+				model=new ModelAndView("rejection/ShowRejectionList");
+			}else {
+				model=new ModelAndView("rejection/ShowRejectionList");
+				RejectionHeader[]	headerArr	=restTemplate.getForObject(Constants.url+"getAllRejctHeader", RejectionHeader[].class);
+				List<RejectionHeader>  headerList=new ArrayList<>(Arrays.asList(headerArr));
+				model.addObject("headList", headerList);
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Exception In /showRejectionList");
+			e.printStackTrace();
+		}
+		return model;
+	}
+	List<RejectionDetail> detailList=new ArrayList<>();
+	RejectionHeader editRejHead=new RejectionHeader();
+	@RequestMapping(value="/updateRejHead",method=RequestMethod.GET)
+	public ModelAndView updateRejHead(HttpServletRequest request,HttpServletResponse response) {
+	System.err.println("in /updateRejHead");
+		ModelAndView model=new ModelAndView("rejection/editRejectionHeader");
+		RestTemplate restTemplate=new RestTemplate();
+		MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
+		try {
+			int rejctId=Integer.parseInt(request.getParameter("rejId"));
+			System.err.println("reject Header Id-->"+rejctId);
+			map.add("rejectId", rejctId);
+			editRejHead=restTemplate.postForObject(Constants.url+"getRejectionHeaderById", map, RejectionHeader.class);
+			detailList=editRejHead.getDetailList();
+			model.addObject("rHead", editRejHead);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Exception Occured in /updateRejHead");
+			e.printStackTrace();
+		}
+	
+	return model;
+	}
+	
+	
+	@RequestMapping(value="/editRejectionHeader",method=RequestMethod.POST)
+	public String editRejectionHeader(HttpServletRequest request,HttpServletResponse response) {
+		System.err.println("in /editRejectionHeader");
+		RestTemplate restTemplate=new RestTemplate();
+	String	model="redirect:/showRejectionList";
+	try {
+		
+		int rejectId=Integer.parseInt(request.getParameter("rejectId"));
+		int remarkId=Integer.parseInt(request.getParameter("remarkId"));
+		String remark=request.getParameter("remark2");
+		//System.err.println("Remaks==>"+remarkId+remark);
+		for(RejectionDetail detail : detailList) {
+			int qty=Integer.parseInt(request.getParameter(String.valueOf(detail.getRejDetailId())));
+			detail.setQty(qty);
+			detail.setExVar2("");
+			
+		}
+		//System.err.println("Detail List-->"+detailList);
+		RejectionHeader Rheader=new RejectionHeader();
+		Rheader.setRejectId(rejectId);//editRejHead
+		Rheader.setMakerDate(editRejHead.getMakerDate());
+		Rheader.setType(editRejHead.getType());
+		Rheader.setRemarkId(remarkId);
+		Rheader.setRemark(remark);
+		Rheader.setEmpId(editRejHead.getEmpId());
+		Rheader.setUserId(editRejHead.getUserId());
+		Rheader.setDelStatus(editRejHead.getDelStatus());
+		Rheader.setExInt1(0);
+		Rheader.setExInt2(0);
+		Rheader.setDetailList(detailList);
+		
+		RejectionHeader res=restTemplate.postForObject(Constants.url +"addNewRejectionHeader",Rheader,RejectionHeader.class); 
+		
+		if(res.getRejectId()>0) {
+			System.err.println("Rejection Header Updated Successfully");
+			
+		}else {
+			System.err.println("Rejection Header Unbale To Update");
+		}
+		
+		
+		
+		
+	} catch (Exception e) {
+		// TODO: handle exception
+		System.err.println("Exception Occuerd In /editRejectionHeader");
+		e.printStackTrace();
+	}
+	
+	return model;
+	}
+	
+	
+	@RequestMapping(value="/deleteRejHead",method=RequestMethod.GET)
+	public String deleteRejHead(HttpServletRequest request,HttpServletResponse response) {
+		System.err.println("in /deleteRejHead");
+		RestTemplate restTemplate=new RestTemplate();
+		String model="redirect:/showRejectionList";
+		MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
+			try {
+				int rejectId=Integer.parseInt(request.getParameter("rejId"));
+				System.err.println("Reject Id-->"+rejectId);
+				map.add("rejectId", rejectId);
+				Info info=restTemplate.postForObject(Constants.url+"deleteRejection", map, Info.class);
+				if(info.getError()) {
+					System.err.println("Unable to Delete Rejection Header");
+				}else {
+					System.err.println("Rejection Header Deleted");
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.err.println("Exception Occuered in /deleteRejHead");
+				e.printStackTrace();
+			}
+			return model;
+		
+	}
+	
 	
 	
 	

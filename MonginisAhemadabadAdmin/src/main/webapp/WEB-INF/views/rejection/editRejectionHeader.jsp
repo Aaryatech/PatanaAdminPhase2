@@ -61,13 +61,13 @@ table {
 								<input type="hidden" id="selectedCatId" name="selectedCatId" />
 
 							</form>
-							<form action="insertRejectiontionHeaderDetail" method="post"
+							<form action="${pageContext.request.contextPath}/editRejectionHeader" method="post"
 								id="validation-form">
 
 								<div class="box">
 									<div class="box-title">
 										<h3>
-											<i class="fa fa-bars"></i> Add Rejection Qty!!!
+											<i class="fa fa-bars"></i> Edit Rejection!!!
 
 										</h3>
 										<div class="box-tool">
@@ -92,63 +92,9 @@ table {
 												style="color: green;"><b>Date:</b> </label>
 											<div class="col-sm-6 col-lg-2 controls date_select">
 												<input class="form-control date-picker" id="fromDate"
-													name="fromDate" size="30" type="text" value="${todaysDate}" />
+													name="fromDate" size="30" type="text" value="${rHead.makerDate}" />
 											</div>
-
-
-
-
-											<label class="col-sm-2 col-lg-1 control-label">Category</label>
-											<div class="col-sm-6 col-lg-2 controls">
-												<select data-placeholder="Select Category"
-													class="form-control chosen" name="item_grp1" tabindex="-1"
-													id="item_grp1" data-rule-required="true">
-													<option selected>Select Group 1</option>
-
-													<c:forEach items="${catList}" var="mCategoryList">
-
-
-														<option value="${mCategoryList.catId}"><c:out
-																value="${mCategoryList.catName}"></c:out></option>
-													</c:forEach>
-
-
-												</select>
-											</div>
-
-											<label class="col-sm-2 col-lg-1 control-label">Sub
-												Category</label>
-											<div class="col-sm-6 col-lg-2 controls">
-												<select data-placeholder="Select Sub Category"
-													class="form-control chosen-select" name="item_grp2"
-													id="item_grp2" onchange="getItemsForSelectSubCat()" tabindex="-1"
-													data-rule-required="true">
-												</select>
-											</div>
-
-
 											<label class="col-sm-2 col-lg-1 control-label">Select
-												Status</label>
-											<div class="col-sm-6 col-lg-2 controls">
-												<select data-placeholder="Select Category"
-													class="form-control chosen" name="status" tabindex="-1"
-													id="status" data-rule-required="true">
-
-
-													<option value="0" Selected>All</option>
-													<option value="1">Rejected</option>
-													<option value="2">Return</option>
-
-												</select>
-											</div>
-
-
-
-
-										</div>
-										<br>
-										<div class="form-group">
-										<label class="col-sm-2 col-lg-1 control-label">Select
 												Remark</label>
 											<div class="col-sm-6 col-lg-2 controls">
 												<select data-placeholder="Select Remark"
@@ -157,73 +103,78 @@ table {
 
 
 													<option value="0" Selected>All</option>
-													<option value="1">Remark1</option>
-													<option value="2">Remark2</option>
+													<c:choose>
+														<c:when test="${rHead.remarkId==1}">
+														<option selected="selected" value="1">Remark1</option>
+														<option value="2">Remark2</option>
+														</c:when>
+														<c:otherwise>
+														<option  value="1">Remark1</option>
+														<option selected="selected" value="2">Remark2</option>
+														</c:otherwise>
+													
+													</c:choose>
+													
+													
 
 												</select>
 											</div>
 											
-											
-											<label class="col-sm-2 col-lg-1 control-label">Enter
-												Remark</label>
 											<div class="col-sm-6 col-lg-2 controls">
-											<input type="text" name="remark2" id="remark2" placeholder="Enter Remark" class="form-control" data-rule-required="true" value="" autocomplete="off">
+											<input type="text" name="remark2" id="remark2" placeholder="Enter Remark" class="form-control" data-rule-required="true" value="${rHead.remark}" autocomplete="off">
 											</div>
 											
+
+										</div>
+										<br>
+										<div class="form-group">
+										
 											
 											
 										
 										</div>
 										
 										<br>
-										<div class="form-group">
-										<label class="col-sm-2 col-lg-1 control-label">Select
-												Item</label>
-											<div class="col-sm-6 col-lg-2 controls">
-												<select data-placeholder="Select Item"
-													class="form-control chosen" name="Selcteditem" tabindex="-1"
-													id="Selcteditem" data-rule-required="true">
-
-
-												<!-- 	<option value="0" Selected>All</option>
-													<option value="1">Rejected</option>
-													<option value="2">Return</option> -->
-
-												</select>
-											</div>
-											<label class="col-sm-2 col-lg-1 control-label">Enter
-												Qty</label>
-											<div class="col-sm-2 col-lg-2 controls">
-											<input type="text" name="itemQty" id="itemQty" placeholder="Enter QTY" class="form-control" data-rule-required="true" value="" autocomplete="off">
-											</div>
-											
-											
-											<input type="button" value="Add"  onclick="getSelctedItems()">
-									</div>
+									
 											
 										<br />
 										<jsp:include page="/WEB-INF/views/include/tableSearch.jsp"></jsp:include>
 
 										<div class="clearfix"></div>
 										<div id="table-scroll" class="table-scroll">
-
-											<div id="faux-table" class="faux-table" aria="hidden">
+											<input type="hidden" id="rejectId" name="rejectId" value="${rHead.rejectId}">
+											<div id="faux-table" class="" aria="hidden">
 												<table id="table2" class="table table-advance">
 													<thead>
 														<tr class="bgpink">
 															<th class="col-md-1" style="text-align: center;">Sr No</th>
 															<th class="col-md-2" style="text-align: center;">Item Name</th>
 															<th class="col-md-2" style="text-align: center;">Rejected Qty</th>
-															<th class="col-md-2" style="text-align: center;">Return Qty</th>
+															<!-- <th class="col-md-2" style="text-align: center;">Return Qty</th> -->
 
 														</tr>
 													</thead>
+													<tbody>
+														<c:forEach items="${rHead.detailList}" var="deTail"
+															varStatus="count">
+															<tr>
+																<td><c:out value="${count.index+1}"></c:out></td>
+																<td style="padding-left: 5%;"><c:out value="${deTail.exVar2}"></c:out></td>
+																<td><input type=text class=form-control
+																	id="${deTail.rejDetailId}" value="${deTail.qty}" name="${deTail.rejDetailId}"  style="text-align: right;">
+															</td>
+														
+														</tr>
+														</c:forEach>
+													
+													
+													</tbody>
 												</table>
 
 											</div>
 											<div class="table-wrap">
 
-												<table id="table1" class="table table-advance">
+												<%-- <table id="table1" class="table table-advance">
 													<thead>
 														<tr class="bgpink">
 															<th class="col-md-1" style="text-align: center;">Sr No</th>
@@ -249,7 +200,7 @@ table {
 														</c:forEach>
 
 													</tbody>
-												</table>
+												</table> --%>
 											</div>
 										</div>
 
@@ -260,7 +211,7 @@ table {
 										<div
 											class="col-sm-25 col-sm-offset-3 col-lg-30 col-lg-offset-0">
 											<input type="submit" class="btn btn-primary" value="Submit"
-												id="submitBtn" disabled="disabled">
+												id="submitBtn" >
 
 
 										</div>
@@ -352,113 +303,106 @@ table {
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 
+
 <script type="text/javascript">
 function getSelctedItems(){
 	//alert("In Get Selcted Items");
 	var qty=document.getElementById("itemQty").value;
 	var itemId=document.getElementById("Selcteditem").value;
-	var remark=document.getElementById("remark2").value;
-	if(remark== ""){
-	alert("Enter Remark");	
-	}else{
-//		alert(qty)
-		$
-		.getJSON(
-				'${getselItemByid}',
-				{
+//	alert(qty)
+	$
+	.getJSON(
+			'${getselItemByid}',
+			{
 
-					qty :qty,
-					itemIds : itemId,
-					ajax : 'true'
+				qty :qty,
+				itemIds : itemId,
+				ajax : 'true'
 
-				},
-				function(data) {
-					document.getElementById("itemQty").value="";
-					//alert(JSON.stringify(data))
-					$('#table1 td').remove();
+			},
+			function(data) {
+				//alert(JSON.stringify(data))
+				$('#table1 td').remove();
 
-					document.getElementById("submitBtn").disabled = false;
+				document.getElementById("submitBtn").disabled = false;
 
-					$('#loader').hide();
-					if (data == "") {
-						//alert("No records found !!");
+				$('#loader').hide();
+				if (data == "") {
+					//alert("No records found !!");
 
-						document.getElementById("submitBtn").disabled = true;
-					}
-					//alert(data.length);
+					document.getElementById("submitBtn").disabled = true;
+				}
+				//alert(data.length);
 
-					$
-							.each(
-									data,
-									function(key, item) {
+				$
+						.each(
+								data,
+								function(key, item) {
 
-										var index = key + 1;
+									var index = key + 1;
 
-										var tr = $('<tr ></tr>');
+									var tr = $('<tr ></tr>');
 
-										tr.append($('<td ></td>')
-												.html(index));
-										tr
-												.append($(
-														'<td ></td>')
-														.html(
-																item.itemName));
-										tr
-												.append($('<td align=center ><input type=number  class=form-control style="height:26px; text-align: right;"  id= qty1'+ item.id+' value='+item.minQty+' name=qty1'+item.id+'  required></td>'));
-										/* tr
-												.append($('<td align=center ><input type=number  class=form-control style="height:26px; text-align: right;"  id= qty2'+ item.id+ ' value='+0+' name=qty2'+item.id+'  required></td>')); */
+									tr.append($('<td ></td>')
+											.html(index));
+									tr
+											.append($(
+													'<td ></td>')
+													.html(
+															item.itemName));
+									tr
+											.append($('<td align=center ><input type=number  class=form-control style="height:26px; text-align: right;"  id= qty1'+ item.id+' value='+item.minQty+' name=qty1'+item.id+'  required></td>'));
+									/* tr
+											.append($('<td align=center ><input type=number  class=form-control style="height:26px; text-align: right;"  id= qty2'+ item.id+ ' value='+0+' name=qty2'+item.id+'  required></td>')); */
 
-										$('#table1 tbody').append(
-												tr);
-										$("#myInput").focus();
+									$('#table1 tbody').append(
+											tr);
+									$("#myInput").focus();
 
-										/* 		
-												var index = "<td>&nbsp;&nbsp;&nbsp;"
-														+ index
-														+ "</td>";
+									/* 		
+											var index = "<td>&nbsp;&nbsp;&nbsp;"
+													+ index
+													+ "</td>";
 
-												var itemName = "<td>&nbsp;&nbsp;&nbsp;"
-														+ item.itemName
-														+ "</td>";
-														
-										
-										
-											    	var qty1 = "<td align=center ><input type=number  class=form-control  id= qty1"+ item.itemId+ " value="+item.opT1+" name=qty1"+item.itemId+"  required></td>"; 
+											var itemName = "<td>&nbsp;&nbsp;&nbsp;"
+													+ item.itemName
+													+ "</td>";
 													
-													var qty2 = "<td align=center ><input type=number  class=form-control  id= qty2"+ item.itemId+ " value="+item.opT2+" name=qty2"+item.itemId+"  required></td>";
+									
+									
+										    	var qty1 = "<td align=center ><input type=number  class=form-control  id= qty1"+ item.itemId+ " value="+item.opT1+" name=qty1"+item.itemId+"  required></td>"; 
+												
+												var qty2 = "<td align=center ><input type=number  class=form-control  id= qty2"+ item.itemId+ " value="+item.opT2+" name=qty2"+item.itemId+"  required></td>";
 
-													var qty3 = "<td align=center ><input type=number  class=form-control  id= qty3"+ item.itemId+ " value="+item.opT3+" name=qty3"+item.itemId+"  required></td>";
-											    	
-											var trclosed = "</tr>";
+												var qty3 = "<td align=center ><input type=number  class=form-control  id= qty3"+ item.itemId+ " value="+item.opT3+" name=qty3"+item.itemId+"  required></td>";
+										    	
+										var trclosed = "</tr>";
 
-												$('#table1 tbody')
-														.append(tr);
-												$('#table1 tbody')
-														.append(index);
-												$('#table1 tbody')
-														.append(itemName);
-												$('#table1 tbody')
-														.append(
-																qty1);
+											$('#table1 tbody')
+													.append(tr);
+											$('#table1 tbody')
+													.append(index);
+											$('#table1 tbody')
+													.append(itemName);
+											$('#table1 tbody')
+													.append(
+															qty1);
+									
+											$('#table1 tbody')
+													.append(qty2);
 										
-												$('#table1 tbody')
-														.append(qty2);
+											$('#table1 tbody')
+													.append(
+															qty3);
 											
-												$('#table1 tbody')
-														.append(
-																qty3);
-												
-												
-												$('#table1 tbody')
-														.append(
-																trclosed);  */
+											
+											$('#table1 tbody')
+													.append(
+															trclosed);  */
 
-									})
+								})
 
-				});
-		
-	}
-
+			});
 }
 </script>
 

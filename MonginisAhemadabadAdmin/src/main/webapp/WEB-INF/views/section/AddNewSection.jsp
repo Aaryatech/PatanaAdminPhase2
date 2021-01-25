@@ -130,14 +130,15 @@
 												<select data-placeholder="Select Menu Ids" name="section_mid"
 													class="form-control chosen"  id="section_mid" multiple="multiple"
 													data-rule-required="true">
-													<c:set var="selct" value="0" ></c:set>
+													
 													
 													<c:forEach items="${frConfigList}" var="frConfig">
 													<c:forEach items="${menuIds}" var="menu">
+													<c:set var="selct" value="0" ></c:set>
 													<c:if test="${frConfig.menuId==menu}">
 													<c:set var="selct" value="1" ></c:set>
 													</c:if>
-													</c:forEach>
+													
 													<c:choose>
 													<c:when test="${selct==1}">
 													<option selected="selected" value="${frConfig.menuId}">${frConfig.menuTitle}</option>
@@ -147,7 +148,7 @@
 													</c:otherwise>
 													</c:choose>
 													
-													
+													</c:forEach>
 													
 													
 													
