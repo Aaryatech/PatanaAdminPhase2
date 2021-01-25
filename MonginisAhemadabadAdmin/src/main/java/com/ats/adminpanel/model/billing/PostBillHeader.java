@@ -70,6 +70,7 @@ public class PostBillHeader {
 	
 	private String exVarchar2;//new on 2 july
 	
+	private int pendingBill; //new on 23 Jan 2021
 	
 	List<PostBillDetail> postBillDetailsList;
 		
@@ -288,6 +289,14 @@ public class PostBillHeader {
 		this.exVarchar2 = exVarchar2;
 	}
 
+	public int getPendingBill() {
+		return pendingBill;
+	}
+
+	public void setPendingBill(int pendingBill) {
+		this.pendingBill = pendingBill;
+	}
+
 	@Override
 	public String toString() {
 		return "PostBillHeader [billNo=" + billNo + ", taxApplicable=" + taxApplicable + ", invoiceNo=" + invoiceNo
@@ -297,7 +306,7 @@ public class PostBillHeader {
 				+ ", cgstSum=" + cgstSum + ", igstSum=" + igstSum + ", billDateTime=" + billDateTime + ", partyName="
 				+ partyName + ", partyGstin=" + partyGstin + ", partyAddress=" + partyAddress + ", vehNo=" + vehNo
 				+ ", billTime=" + billTime + ", exVarchar1=" + exVarchar1 + ", exVarchar2=" + exVarchar2
-				+ ", postBillDetailsList=" + postBillDetailsList + "]";
+				+ ", pendingBill=" + pendingBill + ", postBillDetailsList=" + postBillDetailsList + "]";
 	}
     
 }
