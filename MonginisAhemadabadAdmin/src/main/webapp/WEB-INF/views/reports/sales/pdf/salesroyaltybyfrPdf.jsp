@@ -84,7 +84,7 @@ th {
 			<c:forEach items="${report}" var="report" varStatus="count">
 				<tr>
 					<td><c:out value="${count.index+1}" /></td>
-					<td><c:out value="${report.frName}" /></td>
+					<td><c:out value="${report.frName} ${report.frCode}" /></td>
 					<td><c:out value="${report.frCity}" /></td>
 					<td align="right"><fmt:formatNumber type="number"
 								maxFractionDigits="2" value="${report.tBillTaxableAmt}" /></td>

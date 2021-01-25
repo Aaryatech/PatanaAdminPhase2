@@ -91,6 +91,11 @@ import com.ats.adminpanel.model.billing.GetBillDetailPrint;
 import com.ats.adminpanel.model.billing.GetBillDetailsResponse;
 import com.ats.adminpanel.model.billing.GetBillHeader;
 import com.ats.adminpanel.model.billing.GetBillHeaderResponse;
+import com.ats.adminpanel.model.billing.PendingBillCreditNote;
+import com.ats.adminpanel.model.billing.PendingBillDetail;
+import com.ats.adminpanel.model.billing.PendingBillHeader;
+import com.ats.adminpanel.model.billing.PendingBills;
+import com.ats.adminpanel.model.billing.PendingBillsAndCreditNotesList;
 import com.ats.adminpanel.model.billing.PostBillDataCommon;
 import com.ats.adminpanel.model.billing.PostBillDetail;
 import com.ats.adminpanel.model.billing.PostBillHeader;
@@ -408,6 +413,7 @@ public class BillController {
 						header.setPartyGstin(gBill.getPartyGstin());// new
 						header.setPartyAddress(gBill.getPartyAddress());// new
 						header.setTaxApplicable((int) (gBill.getItemTax1() + gBill.getItemTax2()+gBill.getCessPer()));
+						header.setPendingBill(1); //1=Yes, 0=No
 						header.setExVarchar1(sectionId);
 					}
 
@@ -3259,4 +3265,163 @@ public class BillController {
 	  } 
 	  return info;
 	  }
+	
+	@RequestMapping(value = "/showPendingBills")
+	public ModelAndView showPendingBills(HttpServletRequest request, HttpServletResponse response) {
+
+		logger.info("/showPendingBills request mapping.");
+
+		ModelAndView model = null;
+		HttpSession session = request.getSession();
+
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("showPendingBills", "showPendingBills", "1", "0", "0", "0",
+				newModuleList);
+
+		if (view.getError() == true) {
+
+			model = new ModelAndView("accessDenied");
+
+		} else {
+			model = new ModelAndView("billing/frPendingBill");
+			try {
+				RestTemplate restTemplate = new RestTemplate();
+				franchiseeAndMenuList = restTemplate.getForObject(Constants.url + "getFranchiseeAndMenu",
+						FranchiseeAndMenuList.class);
+
+				logger.info("Franchisee Response " + franchiseeAndMenuList.getAllFranchisee());
+
+				model.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
+				
+			} catch (Exception e) {
+
+				System.out.println("Exc in show showPendingBills " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+
+		return model;
+	}
+	
+	List<PendingBills> billList = new ArrayList<PendingBills>();
+	List<PendingBillCreditNote> crNoteList = new ArrayList<PendingBillCreditNote>();
+	@RequestMapping(value = "/getPendingBills", method = RequestMethod.GET)
+	  public @ResponseBody PendingBillsAndCreditNotesList getPendingBillsCrNote(HttpServletRequest request, HttpServletResponse response) {
+			
+		PendingBillsAndCreditNotesList billCrList = new PendingBillsAndCreditNotesList();
+		try {
+			
+			RestTemplate restTemplate = new RestTemplate();
+			int frId = Integer.parseInt(request.getParameter("frId"));
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			
+			map.add("frId", frId);
+			PendingBills[] pendingBills = restTemplate.postForObject(Constants.url + "getPendingBillsByFrId", map,
+					PendingBills[].class);
+			
+			billList = new ArrayList<PendingBills>(Arrays.asList(pendingBills));
+			
+			map.add("frId", frId);
+			PendingBillCreditNote[] pendingCrNote = restTemplate.postForObject(Constants.url + "getPendingCrNoteByFrId", map,
+					PendingBillCreditNote[].class);
+			
+			crNoteList = new ArrayList<PendingBillCreditNote>(Arrays.asList(pendingCrNote));
+			
+			billCrList.setBillList(billList);
+			billCrList.setCrNoteList(crNoteList);		
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+				
+		return billCrList;		
+	}//
+		
+	@RequestMapping(value = "/insertPendingBills", method = RequestMethod.POST)
+	public String insertPendingBills(HttpServletRequest request, HttpServletResponse response) {
+
+		
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		DateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DateFormat DF = new SimpleDateFormat("yyyy-MM-dd");
+		Date billDate = new Date();
+		
+		float taxable = Float.parseFloat(request.getParameter("calTaxable"));
+		float tax = Float.parseFloat(request.getParameter("calTax"));
+		float grandTotal = Float.parseFloat(request.getParameter("calGrandTotal"));
+		
+		int frId = Integer.parseInt(request.getParameter("fr_id"));
+		
+		PendingBillHeader billHeader = new PendingBillHeader();
+		List<PendingBillDetail> billDetailList = new ArrayList<PendingBillDetail>();
+
+		for (int i = 0; i < billList.size(); i++) {
+
+			if (request.getParameter("chk" + billList.get(i).getBillNo()) != null) {
+				PendingBillDetail dtl = new PendingBillDetail();
+
+				dtl.setBillDetailId(0);
+				dtl.setBillId(0);
+
+				dtl.setBilNoCrnId(Integer.parseInt(request.getParameter("billNo" + billList.get(i).getBillNo())));
+				dtl.setInvoiceNoCrnNo(request.getParameter("invoice" + billList.get(i).getBillNo()));
+				dtl.setType(Integer.parseInt(request.getParameter("typeBill")));
+				dtl.setTaxableAmt(Float.parseFloat(request.getParameter("taxable" + billList.get(i).getBillNo())));
+				dtl.setTaxAmt(Float.parseFloat(request.getParameter("tax" + billList.get(i).getBillNo())));
+				dtl.setTotalAmt(Float.parseFloat(request.getParameter("total" + billList.get(i).getBillNo())));
+				
+				dtl.setDelStatus(0);
+				dtl.setInsertDatetime(dfs.format(billDate));
+				dtl.setExInt1(0);
+				dtl.setExInt2(0);
+				dtl.setExVar1("NA");
+				dtl.setExVar2("NA");
+
+				billDetailList.add(dtl);
+			}
+		}
+		for (int j = 0; j < crNoteList.size(); j++) {
+			if (request.getParameter("crnChk" + crNoteList.get(j).getCrnId()) != null) {
+				PendingBillDetail dtl = new PendingBillDetail();
+				dtl.setBilNoCrnId(Integer.parseInt(request.getParameter("crnChk" + crNoteList.get(j).getCrnId())));
+				dtl.setInvoiceNoCrnNo(request.getParameter("crno" + crNoteList.get(j).getCrnId()));
+				dtl.setType(Integer.parseInt(request.getParameter("typeCrn")));
+				dtl.setTaxableAmt(Float.parseFloat(request.getParameter("crnTaxable" + crNoteList.get(j).getCrnId())));
+				dtl.setTaxAmt(Float.parseFloat(request.getParameter("crnTax" + crNoteList.get(j).getCrnId())));
+				dtl.setTotalAmt(Float.parseFloat(request.getParameter("crnTotal" + crNoteList.get(j).getCrnId())));
+
+				dtl.setDelStatus(0);
+				dtl.setInsertDatetime(dfs.format(billDate));
+				dtl.setExInt1(0);
+				dtl.setExInt2(0);
+				dtl.setExVar1("NA");
+				dtl.setExVar2("NA");
+				
+				billDetailList.add(dtl);
+			}
+		}
+		
+		billHeader.setBillId(0);
+		billHeader.setBillDetailList(billDetailList);		
+		billHeader.setFrId(frId);
+		billHeader.setGrandTotal(grandTotal);
+		billHeader.setPaymentMode(Integer.parseInt(request.getParameter("paymentmode")));
+		billHeader.setProcessDate(DF.format(billDate));		
+		billHeader.setTaxableAmt(taxable);
+		billHeader.setTaxAmt(tax);
+		billHeader.setRemark(request.getParameter("remark"));
+		billHeader.setStatus(1);
+		billHeader.setExInt1(0);
+		billHeader.setExInt2(0);
+		billHeader.setExVar1("NA");
+		billHeader.setExVar2("NA");
+		billHeader.setInsertDatetime(dfs.format(billDate));
+		
+			
+		PendingBillHeader savePendingBills = restTemplate.postForObject(Constants.url + "insertPendingBillData", billHeader,
+				PendingBillHeader.class);		
+		
+		return "redirect:/showPendingBills";
+	}
 }

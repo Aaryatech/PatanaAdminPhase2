@@ -3173,7 +3173,7 @@ public class SalesReportController {
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 			RestTemplate restTemplate = new RestTemplate();
-
+			System.out.println(selectedFr+" "+fromDate+" "+toDate);
 			map.add("frIdList", selectedFr);
 			map.add("fromDate", fromDate);
 			map.add("toDate", toDate);
@@ -3181,8 +3181,9 @@ public class SalesReportController {
 			ParameterizedTypeReference<List<SalesReportRoyaltyFr>> typeRef = new ParameterizedTypeReference<List<SalesReportRoyaltyFr>>() {
 			};
 			ResponseEntity<List<SalesReportRoyaltyFr>> responseEntity = restTemplate.exchange(
-					Constants.url + "getSalesReportRoyaltyFr", HttpMethod.POST, new HttpEntity<>(map), typeRef);
-
+					Constants.url + "getFrSalesReportRoyalty", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+			//getSalesReportRoyaltyFr
+			
 			royaltyFrList = new ArrayList<>();
 			royaltyFrList = responseEntity.getBody();
 
@@ -3231,7 +3232,7 @@ public class SalesReportController {
 			rowData = new ArrayList<String>();
 
 			rowData.add("" + i + 1);
-			rowData.add(royaltyFrList.get(i).getFrName());
+			rowData.add(royaltyFrList.get(i).getFrName()+" "+royaltyFrList.get(i).getFrCode());
 			rowData.add(royaltyFrList.get(i).getFrCity());
 			rowData.add("" + royaltyFrList.get(i).gettBillTaxableAmt());
 			rowData.add("" + royaltyFrList.get(i).gettGrnTaxableAmt());
@@ -4616,7 +4617,12 @@ public class SalesReportController {
 		try {
 			System.out.println("Inside get Dispatch Report");
 			String billDate = request.getParameter("bill_date");
-			String routeId = request.getParameter("route_id");
+			String routeIds = request.getParameter("route_id");
+			
+			routeIds = routeIds.substring(1, routeIds.length() - 1);
+			routeIds = routeIds.replaceAll("\"", "");
+			System.err.println(routeIds);
+			
 			String selectedCat = request.getParameter("cat_id_list");
 
 			boolean isAllCatSelected = false;
@@ -4636,7 +4642,7 @@ public class SalesReportController {
 
 			RestTemplate restTemplate = new RestTemplate();
 
-			map.add("routeId", routeId);
+			map.add("routeId", routeIds);
 
 			FrNameIdByRouteIdResponse frNameId = restTemplate.postForObject(Constants.url + "getFrNameIdByRouteId", map,
 					FrNameIdByRouteIdResponse.class);

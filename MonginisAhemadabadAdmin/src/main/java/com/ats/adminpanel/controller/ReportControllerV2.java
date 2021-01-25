@@ -175,7 +175,6 @@ public class ReportControllerV2 {
 			List<String> rowData = new ArrayList<String>();
 
 			rowData.add("Sr. No.");
-			rowData.add("Party Code");
 			rowData.add("Party Name");
 			rowData.add("Sales");
 			rowData.add("G.V.N");
@@ -199,8 +198,7 @@ public class ReportControllerV2 {
 				expoExcel = new ExportToExcel();
 				rowData = new ArrayList<String>();
 				rowData.add("" + (i + 1));
-				rowData.add("" + saleReportList.get(i).getFrCode());
-				rowData.add("" + saleReportList.get(i).getFrName());
+				rowData.add("" + saleReportList.get(i).getFrName()+" "+saleReportList.get(i).getFrCode());
 				rowData.add("" + roundUp(saleReportList.get(i).getSaleValue()));
 				rowData.add("" + roundUp(saleReportList.get(i).getGvnValue()));
 				float netVal1 = (saleReportList.get(i).getSaleValue()) - (saleReportList.get(i).getGvnValue());
@@ -233,7 +231,6 @@ public class ReportControllerV2 {
 			expoExcel = new ExportToExcel();
 			rowData = new ArrayList<String>();
 
-			rowData.add("");
 			rowData.add("Total");
 			rowData.add("");
 
@@ -383,7 +380,7 @@ public class ReportControllerV2 {
 				totalInLac = totalInLac + inLac;
 				// totalRetPer = totalRetPer + retPer;
 
-				cell = new PdfPCell(new Phrase(String.valueOf(saleReportList.get(j).getFrName()), headFont));
+				cell = new PdfPCell(new Phrase(String.valueOf(saleReportList.get(j).getFrName()+" "+saleReportList.get(j).getFrCode()), headFont));
 				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell.setPaddingRight(8);

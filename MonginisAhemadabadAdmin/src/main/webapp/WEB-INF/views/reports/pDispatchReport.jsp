@@ -13,10 +13,10 @@
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 	
 	<c:url var="getBillList" value="/getPDispatchReportByRoute"></c:url>
-   	<c:url var="getFranchisees" value="/getFranchiseByRoute"></c:url>
+   	<%-- <c:url var="getFranchisees" value="/getFranchiseByRoute"></c:url> --%>
    	
 	<c:url var="routListByAbcType" value="/routListByAbcType"></c:url>
-   	<%-- <c:url var="getFranchisees" value="/getFranchiseByRouteMul"></c:url> --%>
+   	<c:url var="getFranchisees" value="/getFrByRouteId"></c:url> 
    	<c:url var="getSubCatByCatId" value="/getSubCatByCatId"></c:url>
    	<c:url var="getAllMenusForDisp" value="/getAllMenusForDisp"></c:url>
    	
@@ -78,11 +78,11 @@
 								name="billDate" size="30" type="text" value="${todaysDate}" />
 						</div>
                     <label class="col-sm-3 col-lg-2 control-label">Select
-							Route</label>
+                    	Route</label>
 						<div class="col-sm-6 col-lg-4 controls">
 							<select data-placeholder="Select Route"
 								class="form-control chosen" name="selectRoute" id="selectRoute"
-								 onchange="getFranchise(this.value)">
+								 onchange="getFranchise()" multiple="multiple">
 								<option value="0">Select Route</option>
 								<c:forEach items="${routeList}" var="route" varStatus="count">
 									<option value="${route.routeId}"><c:out value="${route.routeName}"/> </option>
@@ -247,11 +247,13 @@
 
 <script type="text/javascript">
 
-			function getFranchise(routeId) {
+			function getFranchise() {
+				
+			var routeId = $("#selectRoute").val();
 			
 				$.getJSON('${getFranchisees}', {
 					
-					routeId :routeId ,
+					routeId : JSON.stringify(routeId) ,
 					ajax : 'true'
 				}, function(data) {
 				 	var html = '<option value="">Select Franchisee</option>';
@@ -351,7 +353,7 @@
 
 							{
 								bill_date : billDate,
-								route_id : routeId,
+								route_id : JSON.stringify(routeId),
 								cat_id_list : JSON.stringify(selectedCat),
 								routeName : routeName,
 								ajax : 'true'
@@ -900,39 +902,7 @@
 	<script src="${pageContext.request.contextPath}/resources/js/flaty.js"></script>
 	<script
 		src="${pageContext.request.contextPath}/resources/js/flaty-demo-codes.js"></script>
-		<script type="text/javascript">
-
-			function getFranchise(routeId) {
-			
-				$.getJSON('${getFranchisees}', {
-					
-					routeId : routeId,
-					ajax : 'true'
-				}, function(data) {
-				 	var html = '<option value="">Select Franchisee</option>';
-				
-					var len = data.length;
-					
-					$('#fraId')
-				    .find('option')
-				    .remove()
-				    .end()
-				    
-				 $("#fraId").append(
-                                $("<option></option>").attr(
-                                    "value", 0).text("Select Franchisee")
-                            );
-					
-					for ( var i = 0; i < len; i++) {
-                        $("#fraId").append(
-                                $("<option></option>").attr(
-                                    "value", data[i].frId).text(data[i].frName)
-                            );
-					}
-					   $("#fraId").trigger("chosen:updated");
-				}); 
-			}
-</script>
+		
 		<script type="text/javascript">
 			function searchReport1() {
 				//	var isValid = validate();

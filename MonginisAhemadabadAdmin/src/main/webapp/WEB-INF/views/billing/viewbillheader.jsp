@@ -436,6 +436,7 @@
 	<input type="button" id="btn_submit" class="btn btn-primary" onclick="submitBill()"	value="BillDetail" />
 
 									</div>
+									</div>
 							</form>
 						</div>
 					</div></div>
@@ -451,7 +452,7 @@
 				class="fa fa-chevron-up"></i></a>
 		</div>
 		<!-- END Content -->
-	</div>
+	
 	<!-- END Container -->
 
 	<!--basic scripts-->

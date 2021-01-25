@@ -159,7 +159,7 @@
 							style="width: 100%" id="table_grid">
 							<thead style="background-color: #f3b5db;">
 								<tr>
-									<th style="text-align: center;">Party Code</th>
+									<th style="text-align: center;">Sr. No.</th>
 									<th style="text-align: center;">Party Name</th>
 									<th style="text-align: center;">Sales</th>
 									<th style="text-align: center;">GVN</th>
@@ -261,8 +261,8 @@
 														var index = key + 1;
 														//var tr = "<tr>";
 														var tr = $('<tr></tr>');
-													  	tr.append($('<td></td>').html(report.frCode));
-													  	tr.append($('<td></td>').html(report.frName));
+													  	tr.append($('<td></td>').html(index));
+													  	tr.append($('<td></td>').html(report.frName+" "+report.frCode));
 													  	var netVal1=parseFloat(report.saleValue)-parseFloat(report.gvnValue);
 														var netVal2=parseFloat(netVal1)-(report.grnValue);
 														var inLac=(parseFloat(netVal2)/100000);
