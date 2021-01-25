@@ -121,10 +121,10 @@
 
 
 
-								<c:forEach items="${unSelectedFrList}" var="fr"
+								<%-- <c:forEach items="${unSelectedFrList}" var="fr"
 									varStatus="count">
 									<option value="${fr.frId}"><c:out value="${fr.frName}"/></option>
-								</c:forEach>
+								</c:forEach> --%>
 
 
 
@@ -271,7 +271,49 @@
 	<a id="btn-scrollup" class="btn btn-circle btn-lg" href="#"><i
 		class="fa fa-chevron-up"></i></a>
 
-
+<script type="text/javascript">
+/* $(document.body).on('input',"#selectMenu",function (e) {
+alert("OOO");
+var optVal= $("#selectMenu option:selected").val();
+	}); */
+	$(function() {
+	    $("#selectMenu").change(function() {
+	    	  $('#loader').show();
+	    	var fd = new FormData();
+	    	fd.append('menuId', $('option:selected', this).val());
+	    	$
+	    	.ajax({
+	    	url : '${pageContext.request.contextPath}/getAllFrIdNameByMenuIdConfigured',
+	    	type : 'post',
+	    	dataType : 'json',
+	    	data : fd,
+	    	contentType : false,
+	    	processData : false,
+	    	success : function(resData) {
+	    		var html = '<option value="-1"></option>';
+	    		var len = resData.length;
+	    		if(len==0){
+	    			 $('#loader').hide();
+	    			 alert("No Assigned Franchise found with selected menu");
+	    		}
+	    		 $('#selectFr')
+	    		.find('option')
+	    	    .remove()
+	    	    .end();
+	    		for ( var i = 0; i < len; i++) {
+	    			$("#selectFr").append(
+	                           $("<option ></option>").attr(
+	                               "value", resData[i].frId).text(resData[i].frName)
+	                       );
+	    		} 
+	    		$("#selectFr").trigger("chosen:updated");
+	    		  $('#loader').hide();
+	    	},
+	    	});
+	    });
+	    $('#loader').hide();
+	});
+</script>
 	<script type="text/javascript">
 	
 		function searchItem() {

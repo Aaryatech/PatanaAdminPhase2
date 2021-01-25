@@ -48,6 +48,7 @@ import com.ats.adminpanel.model.GenerateBill;
 import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.Order;
 import com.ats.adminpanel.model.Orders;
+import com.ats.adminpanel.model.Section;
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.franchisee.AllFranchiseeList;
 import com.ats.adminpanel.model.franchisee.AllMenuResponse;
@@ -92,35 +93,52 @@ public class PushOrderController {
 
 			RestTemplate restTemplate = new RestTemplate();
 
-			AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url + "getAllMenu",
-					AllMenuResponse.class);
+			/*
+			 * AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url +
+			 * "getAllMenu", AllMenuResponse.class);
+			 * 
+			 * menuList = allMenuResponse.getMenuConfigurationPage(); allFrIdNameList = new
+			 * AllFrIdNameList(); try {
+			 * 
+			 * selectedMenuList = new ArrayList<Menu>();
+			 * 
+			 * for (int i = 0; i < menuList.size(); i++) {
+			 * 
+			 * if (menuList.get(i).getMainCatId() != 5) {
+			 * selectedMenuList.add(menuList.get(i)); } }
+			 * 
+			 * } catch (Exception e) { System.out.println("Exception in getAllFrIdName" +
+			 * e.getMessage()); e.printStackTrace();
+			 * 
+			 * }
+			 */
+			// allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName",
+			// AllFrIdNameList.class);
 
-			menuList = allMenuResponse.getMenuConfigurationPage();
-			allFrIdNameList = new AllFrIdNameList();
-			try {
+			allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName",
+					AllFrIdNameList.class);
 
-				allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName", AllFrIdNameList.class);
-
-			} catch (Exception e) {
-				System.out.println("Exception in getAllFrIdName" + e.getMessage());
-				e.printStackTrace();
-
-			}
 			List<AllFrIdName> selectedFrListAll = new ArrayList();
 
-			selectedMenuList = new ArrayList<Menu>();
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("sectionId", Constants.PUSH_ORDER_SECTION_ID);
+			Section section = restTemplate.postForObject(Constants.url + "getSingleSection", map, Section.class);
+			String mId = section.getMenuIds();
+			String[] menuId = mId.split(",");
 
-			for (int i = 0; i < menuList.size(); i++) {
-				/*
-				 * if (menuList.get(i).getMenuId() == 26 || menuList.get(i).getMenuId() == 66 ||
-				 * menuList.get(i).getMenuId() == 33 || menuList.get(i).getMenuId() == 34 ||
-				 * menuList.get(i).getMenuId() == 81) { selectedMenuList.add(menuList.get(i)); }
-				 */
-
-				if (menuList.get(i).getMainCatId() != 5) {
-					selectedMenuList.add(menuList.get(i));
-				}
+			List<Integer> menuIds = new ArrayList<>();
+			for (int i = 0; i < menuId.length; i++) {
+				menuIds.add(Integer.parseInt(menuId[i]));
 			}
+
+			map = new LinkedMultiValueMap<String, Object>();
+			map.add("menuIds", mId);
+			AllMenuResponse menuResponse = restTemplate.postForObject(Constants.url + "getMenuListByMenuIds", map,
+					AllMenuResponse.class);
+
+			selectedMenuList = new ArrayList<Menu>();
+			selectedMenuList = menuResponse.getMenuConfigurationPage();
+
 			System.out.println(" Fr " + allFrIdNameList.getFrIdNamesList());
 			java.util.Date utilDate = new java.util.Date();
 			model.addObject("unSelectedMenuList", selectedMenuList);
@@ -130,6 +148,21 @@ public class PushOrderController {
 		return model;
 	}
 
+	// Sachin 25-01-2021
+	@RequestMapping(value = "/getAllFrIdNameByMenuIdConfigured", method = RequestMethod.POST)
+	public @ResponseBody List<AllFrIdName> getAllFrIdNameByMenuIdConfigured(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		map.add("menuId", request.getParameter("menuId"));
+
+		allFrIdNameList = restTemplate.postForObject(Constants.url + "getAllFrIdNameByMenuIdConfigured",
+				map,AllFrIdNameList.class);
+		return allFrIdNameList.getFrIdNamesList();
+
+	}
 	// Ajax call
 
 	@RequestMapping(value = "/getItemList", method = RequestMethod.GET)
@@ -394,8 +427,9 @@ public class PushOrderController {
 			// for }
 		} // end of if pushItem
 		SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
-		 dateStr=DateConvertor.convertToYMD(dateStr);
-		 delDateStr=DateConvertor.convertToYMD(delDateStr);
+		dateStr = DateConvertor.convertToYMD(dateStr);
+		delDateStr = DateConvertor.convertToYMD(delDateStr);
+		SimpleDateFormat ymdSDF = new SimpleDateFormat("yyyy-MM-dd");
 
 		if (pushItem == false) {
 			System.err.println("Here new");
@@ -411,7 +445,7 @@ public class PushOrderController {
 
 						String quantity = request
 								.getParameter("itemId" + items.get(j).getId() + "orderQty" + selectedFrIdList.get(i));
-						//System.out.println("qtyb    " + quantity);
+						// System.out.println("qtyb " + quantity);
 						int qty = Integer.parseInt(quantity);
 
 						if (qty != 0) {
@@ -449,9 +483,6 @@ public class PushOrderController {
 								}
 							}
 
-							String orderDate = sdf1.format(d);
-							SimpleDateFormat ymdSDF = new SimpleDateFormat("yyyy-MM-dd");
-							SimpleDateFormat dmySDF = new SimpleDateFormat("dd-MM-yyyy");
 
 							String convertedDate = ymdSDF.format(d);
 							SetOrderDataCommon setOrdData = new SetOrderDataCommon();

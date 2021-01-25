@@ -221,7 +221,7 @@
 
 
 
-					<div class="row" align="center">
+					<!-- <div class="row" align="center">
 					<label class=" col-md-1 control-label franchisee_label">Production Date</label>
 						<div class="col-sm-3 col-lg-2 controls">
 										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="date" size="19"
@@ -229,6 +229,24 @@
 									</div>
 				<label class=" col-md-1 control-label franchisee_label">Delivery Date</label>
 						<div class="col-sm-3 col-lg-2 controls">
+										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="deldate" size="19"
+											type="text" name="deldate" value="" required />
+									</div>
+						<div class="col-md-offset-0 col-md-1" align="center">
+
+							<button class="btn btn-primary"
+								style="margin-right: 5px;" onclick="submitOrder()" id="submitOrder" disabled>Submit</button>
+						</div>
+					</div> -->
+					
+					<div class="row" align="center">
+					<label class=" col-md-1 control-label franchisee_label">Order Date</label>
+						<div class="col-sm-3 col-lg-2 controls">
+										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="date" size="19"
+											type="text" name="date" value="" required />
+									</div>
+				<label class=" col-md-1 control-label franchisee_label" style="display:none;">Delivery Date</label>
+						<div class="col-sm-3 col-lg-2 controls"  style="display:none;">
 										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="deldate" size="19"
 											type="text" name="deldate" value="" required />
 									</div>
@@ -259,6 +277,7 @@
 					 
 					$.getJSON('${getNonOrderFrList}', {
 						menu_id : $("#selectMenu").val(),
+						//menu_id : 99,
 						ajax : 'true'
 					}, function(data) {
 						//alert(data);

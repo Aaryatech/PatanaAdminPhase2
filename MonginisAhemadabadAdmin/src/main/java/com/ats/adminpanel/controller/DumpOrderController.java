@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
+import com.ats.adminpanel.commons.SetOrderDataCommon;
 import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.AllFrIdNameList;
 import com.ats.adminpanel.model.ConfigureFrBean;
@@ -45,6 +46,7 @@ import com.ats.adminpanel.model.GetDumpOrderList;
 import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.OrderData;
 import com.ats.adminpanel.model.Orders;
+import com.ats.adminpanel.model.Section;
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.franchisee.AllFranchiseeList;
 import com.ats.adminpanel.model.franchisee.AllMenuResponse;
@@ -90,43 +92,33 @@ public class DumpOrderController {
 			RestTemplate restTemplate = new RestTemplate();
 			try {
 
-				AllMenuResponse allMenuResponse = restTemplate.getForObject(Constants.url + "getAllMenu",
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+				map.add("sectionId", Constants.DUMP_ORDER_SECTION_ID);
+				Section section = restTemplate.postForObject(Constants.url + "getSingleSection", map, Section.class);
+				String mId = section.getMenuIds();
+				String[] menuId = mId.split(",");
+
+				List<Integer> menuIds = new ArrayList<>();
+				for (int i = 0; i < menuId.length; i++) {
+					menuIds.add(Integer.parseInt(menuId[i]));
+				}
+
+				map = new LinkedMultiValueMap<String, Object>();
+				map.add("menuIds", mId);
+				AllMenuResponse menuResponse = restTemplate.postForObject(Constants.url + "getMenuListByMenuIds", map,
 						AllMenuResponse.class);
-
-				menuList = allMenuResponse.getMenuConfigurationPage();
-
-				allFrIdNameList = new AllFrIdNameList();
-
-				// System.out.println(orderDate);
+				menuList = menuResponse.getMenuConfigurationPage();
 
 			} catch (Exception e) {
 				System.out.println("Exception in getAllFrIdName" + e.getMessage());
 				e.printStackTrace();
 
 			}
-			// List<AllFrIdName> selectedFrListAll=new ArrayList();
-			selectedMenuList = new ArrayList<Menu>();
-
-			for (int i = 0; i < menuList.size(); i++) {
-			/*	if (menuList.get(i).getMenuId() == 26 || menuList.get(i).getMenuId() == 31
-						|| menuList.get(i).getMenuId() == 33 || menuList.get(i).getMenuId() == 34
-						|| menuList.get(i).getMenuId() == 66 || menuList.get(i).getMenuId() == 67
-						|| menuList.get(i).getMenuId() == 68) {
-					selectedMenuList.add(menuList.get(i));
-				}*/
-				if (menuList.get(i).getMainCatId()!=5)
-				{
-					selectedMenuList.add(menuList.get(i));
-				}
-				
-			}
-
-			System.out.println(" Fr " + allFrIdNameList.getFrIdNamesList());
 
 			model.addObject("todayDate", new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
-			model.addObject("unSelectedMenuList", selectedMenuList);
-			model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
+			model.addObject("unSelectedMenuList", menuList);
+			//model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
 		}
 		return model;
 	}
@@ -294,14 +286,10 @@ public class DumpOrderController {
 		java.sql.Date sqlCurrDate = new java.sql.Date(udate.getTime());
 		java.sql.Date deliveryDate = new java.sql.Date(udeldate.getTime());
 		System.err.println("deliveryDate" + deliveryDate + "sqlCurrDate" + sqlCurrDate);
-		//-----------------------------------------------------------------
-		//java.util.Date utilDate = new java.util.Date();
-		//System.out.println(dateFormat.format(utilDate)); // 2016/11/16 12:08:43
-
-		//java.sql.Date date = new java.sql.Date(utilDate.getTime());
-		//java.sql.Date deliveryDate = new java.sql.Date(tomarrow().getTime());
-        //------------------------------------------------------------------
-		// get all Franchisee details
+		
+		SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date orderDateSel=yydate.parse(dateStr);
+		
 		RestTemplate restTemplate = new RestTemplate();
 
 		System.out.println("Before Fr Rest call");
@@ -311,7 +299,7 @@ public class DumpOrderController {
 		System.out.println("Aftr Fr Rest call");
 		List<FranchiseeList> franchaseeList = new ArrayList<FranchiseeList>();
 		franchaseeList = allFranchiseeList.getFranchiseeList();
-
+		SimpleDateFormat ymdSDF = new SimpleDateFormat("yyyy-MM-dd");
 		System.out.println("Items   " + items.toString());
 		for (int j = 0; j < items.size(); j++) {
 			System.out.println("Items   " + items.get(j).getItemName());
@@ -364,7 +352,10 @@ public class DumpOrderController {
 							}
 						}
 					}
-
+					String orderDateSelected = ymdSDF.format(orderDateSel);
+					SetOrderDataCommon setOrdData = new SetOrderDataCommon();
+					order = setOrdData.setOrderData(order, menuId, order.getFrId(), order.getOrderQty(),
+							request, orderDateSelected);
 					oList.add(order);
 					PlaceOrder(oList);
 
