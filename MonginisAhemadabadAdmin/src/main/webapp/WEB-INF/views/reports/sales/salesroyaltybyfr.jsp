@@ -289,7 +289,7 @@
 					totalGvnValue = totalGvnValue + report.tGvnTaxableAmt;
 
 					tr.append($('<td></td>').html(srNo));
-					tr.append($('<td></td>').html(report.frName));
+					tr.append($('<td></td>').html(report.frName+" "+report.frCode));
 					tr.append($('<td></td>').html(report.frCity));
 					tr.append($('<td style="text-align:right;"></td>').html(
 							addCommas(report.tBillTaxableAmt.toFixed(2))));
