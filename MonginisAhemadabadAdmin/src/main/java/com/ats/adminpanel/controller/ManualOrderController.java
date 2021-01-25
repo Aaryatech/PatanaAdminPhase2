@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,11 +40,13 @@ import com.ats.adminpanel.model.ItemForMOrder;
 import com.ats.adminpanel.model.ManualOrderMenuAndDate;
 import com.ats.adminpanel.model.Order;
 import com.ats.adminpanel.model.Orders;
+import com.ats.adminpanel.model.Section;
 import com.ats.adminpanel.model.SectionMaster;
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.billing.PostBillDataCommon;
 import com.ats.adminpanel.model.billing.PostBillDetail;
 import com.ats.adminpanel.model.billing.PostBillHeader;
+import com.ats.adminpanel.model.franchisee.AllMenuResponse;
 import com.ats.adminpanel.model.franchisee.FranchiseeAndMenuList;
 import com.ats.adminpanel.model.franchisee.FranchiseeList;
 import com.ats.adminpanel.model.franchisee.Menu;
@@ -101,11 +104,13 @@ public class ManualOrderController {
 				model.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
 				model.addObject("billNo", billNo);
 				billNo = "0";
-
-				SectionMaster[] sectionMasterArray = restTemplate.getForObject(Constants.url + "/getSectionListOnly",
-						SectionMaster[].class);
-				List<SectionMaster> sectionList = new ArrayList<SectionMaster>(Arrays.asList(sectionMasterArray));
+List<Section> sectionList=new ArrayList<>();
+				
+				Section[] secArr=restTemplate.getForObject(Constants.url+"getAllSection", Section[].class);
+				sectionList=new ArrayList<>(Arrays.asList(secArr));
+				System.err.println(" sectionList " +sectionList);
 				model.addObject("sectionList", sectionList);
+				
 
 			} catch (Exception e) {
 				System.out.println("Franchisee Controller Exception " + e.getMessage());
@@ -152,6 +157,31 @@ public class ManualOrderController {
 		return confMenuList;
 	}
 
+	@RequestMapping(value = "/getMenuForManualOrder", method = RequestMethod.POST)
+	public @ResponseBody List<Menu> getMenuListByFrAndSectionId(HttpServletRequest request, HttpServletResponse response) {
+		List<Menu> confMenuList = new ArrayList<Menu>();
+		try {
+		RestTemplate restTemplate = new RestTemplate();
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		map.add("frId", Integer.parseInt(request.getParameter("frId")));
+		map.add("sectionId", Integer.parseInt(request.getParameter("sectionId")));
+		
+		AllMenuResponse menuResponse = restTemplate.postForObject(Constants.url + "getMenuListByFrAndSectionId", map,
+				AllMenuResponse.class);
+
+		
+		confMenuList=menuResponse.getMenuConfigurationPage();
+		}catch (HttpClientErrorException e) {
+			System.err.println("Exc getMenuForManualOrder " +e.getResponseBodyAsString());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return confMenuList;
+	}
+	
+	
+	
 	// ----------------------------------------END--------------------------------------------
 	@RequestMapping(value = "/getItemsOfMenuId", method = RequestMethod.GET)
 	public @ResponseBody List<Orders> commonItemById(@RequestParam(value = "menuId", required = true) int menuId,

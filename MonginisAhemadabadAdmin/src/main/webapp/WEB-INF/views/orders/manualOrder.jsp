@@ -252,7 +252,7 @@ to {
 												type="radio" name="ordertype" class="order" value="1"
 												id="or2" onchange="checkCheckedStatus()"> <label
 												for="or2"> Manual Bill </label>
-											</label> <label class="col-sm-3 col-lg-2 control-label"> <input
+											</label> <label style="display: none;" class="col-sm-3 col-lg-2 control-label"> <input
 												type="radio" name="ordertype" class="order" value="2"
 												id="or3" onchange="checkCheckedStatus()"> <label
 												for="or3"> Multiple FR Bill </label>
@@ -264,7 +264,7 @@ to {
 
 										<div class="form-group" id="singleFr">
 											<label class="col-sm-3 col-lg-2 control-label">Franchisee</label>
-											<div class="col-sm-9 col-lg-5 controls">
+											<div class="col-sm-9 col-lg-4 controls">
 												<select data-placeholder="Select Franchisee" name="fr_id"
 													class="form-control chosen" tabindex="-1" id="fr_id"
 													onchange="findFranchiseeData(this.value)">
@@ -290,9 +290,9 @@ to {
 													<c:forEach
 														items="${allFranchiseeAndMenuList.getAllFranchisee()}"
 														var="franchiseeList">
-														<c:if test="${franchiseeList.frRateCat==1}">
+														<%-- <c:if test="${franchiseeList.frRateCat==1}"> --%>
 															<option value="${franchiseeList.frId}">${franchiseeList.frName}</option>
-														</c:if>
+														<%-- </c:if> --%>
 
 													</c:forEach>
 
@@ -301,20 +301,9 @@ to {
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">Menu</label>
-											<div class="col-sm-9 col-lg-5 controls">
-												<select data-placeholder="Select Menu" name="menu"
-													class="form-control chosen" tabindex="-1" id="menu"
-													data-rule-required="true"
-													onchange="onCatIdChangeForManOrder(this.value)">
-													<option value="0">Select Menu</option>
-
-
-												</select>
-											</div>
 											<label class="col-sm-3 col-lg-2	 control-label">Select
 												Section</label>
-											<div class="col-sm-6 col-lg-3 controls date_select">
+											<div class="col-sm-6 col-lg-4 controls date_select">
 												<select data-placeholder="Choose Menu"
 													class="form-control chosen" id="sectionId" name="sectionId">
 
@@ -328,6 +317,19 @@ to {
 
 												</select>
 											</div>
+											
+											<label class="col-sm-3 col-lg-2 control-label">Menu</label>
+											<div class="col-sm-9 col-lg-4 controls">
+												<select data-placeholder="Select Menu" name="menu"
+													class="form-control chosen" tabindex="-1" id="menu"
+													data-rule-required="true"
+													onchange="onCatIdChangeForManOrder(this.value)">
+													<option value="0">Select Menu</option>
+
+
+												</select>
+											</div>
+										
 										</div>
 										<div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">Order</label>
@@ -578,6 +580,57 @@ to {
 	<!-- END Container -->
 	<script
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap/js/bootstrap.min.js"></script>
+		<!-- Sachin 25-01-2021 -->
+		<script>
+		$(function() {
+	    $("#sectionId").change(function() {
+	    	var frId= $("#fr_id").val();
+	    	var sectionId= $("#sectionId").val();
+	    	if(frId<1){
+	    	}else if(sectionId<1){
+	    	}
+	    	else{
+	    		alert("Ok Else")
+	    	var fd = new FormData();
+	    	 $('#loader').show();
+	    	fd.append('frId', $("#fr_id").val());
+	    	fd.append('sectionId', $("#sectionId").val());
+	    	$
+	    	.ajax({
+	    	url : '${pageContext.request.contextPath}/getMenuForManualOrder',
+	    	type : 'post',
+	    	dataType : 'json',
+	    	data : fd,
+	    	contentType : false,
+	    	processData : false,
+	    	success : function(resData) {
+	    		alert("data " +resData)
+	    		var html = '<option value="-1"></option>';
+	    		var len = resData.length;
+	    		if(len==0){
+	    			 $('#loader').hide();
+	    			 alert("No one Assigned  with selected Fr");
+	    		}
+	    		 $('#menu')
+	    		.find('option')
+	    	    .remove()
+	    	    .end();
+	    		for ( var i = 0; i < len; i++) {
+	    			$("#menu").append(
+	                           $("<option ></option>").attr(
+	                               "value", resData[i].menuId).text(resData[i].menuTitle)
+	                       );
+	    		} 
+	    		$("#menu").trigger("chosen:updated");
+	    		  $('#loader').hide();
+	    	},
+	    	});
+	    	}
+	    });
+	    $('#loader').hide();
+	});
+	</script>	
+		
 	<script>
 		$(function() {
 			$('#typeselector').change(function() {
@@ -650,7 +703,7 @@ to {
 																		'<td style="text-align: right;" ></td>')
 																		.html(
 																				item.minQty
-																						+ '<input type="hidden" value='+item.minQty+'	id=minqty'+item.itemId+""+item.frId+'/>'));
+																						+ '<input type="hidden" value='+item.minQty+'	id=minqty'+item.itemId+""+item.frId+' />'));
 														if (ordertype == 1) {
 															tr
 																	.append($(
@@ -935,12 +988,13 @@ to {
 
 	<script type="text/javascript">
 		function onChange(rate, id, frId) {
-
+			alert("OKKK")
 			//calculate total value  
 			var qty = $('#qty' + id + '' + frId).val();
 
 			var minqty = $('#minqty' + id + '' + frId).val();
-
+			alert("qty" +qty +"minqty " +minqty)
+			/alert(qty % minqty)
 			if (qty % minqty == 0) {
 				var total = rate * qty;
 
@@ -958,13 +1012,14 @@ to {
 	</script>
 	<script type="text/javascript">
 		function onChangeBill(rate, id, frId) {
-
+alert("Ok")
 			//calculate total value  
 			var qty = $('#qty' + id + '' + frId).val();
 			var discper = $('#discper' + id + '' + frId).val();
 
 			var minqty = $('#minqty' + id + '' + frId).val();
-
+	alert("qty" +qty +"minqty " +minqty)
+	alert(qty % minqty)
 			if (qty % minqty == 0) {
 				var total = rate * qty;
 				var disc = (total * discper) / 100;
@@ -1163,7 +1218,7 @@ $(document).ready(function() {
 																											'<td style="text-align:right;"></td>')
 																											.html(
 																													item.orderRate
-																															+ '<input type="hidden" value='+item.minQty+' id=minqty'+item.itemId+' />'));
+																															+ '<input type="hidden" value='+item.minQty+' id=minqty'+item.itemId+""+item.frId+' />'));
 																							var total = item.orderQty
 																									* item.orderRate;
 																							tr
