@@ -4616,7 +4616,12 @@ public class SalesReportController {
 		try {
 			System.out.println("Inside get Dispatch Report");
 			String billDate = request.getParameter("bill_date");
-			String routeId = request.getParameter("route_id");
+			String routeIds = request.getParameter("route_id");
+			
+			routeIds = routeIds.substring(1, routeIds.length() - 1);
+			routeIds = routeIds.replaceAll("\"", "");
+			System.err.println(routeIds);
+			
 			String selectedCat = request.getParameter("cat_id_list");
 
 			boolean isAllCatSelected = false;
@@ -4636,7 +4641,7 @@ public class SalesReportController {
 
 			RestTemplate restTemplate = new RestTemplate();
 
-			map.add("routeId", routeId);
+			map.add("routeId", routeIds);
 
 			FrNameIdByRouteIdResponse frNameId = restTemplate.postForObject(Constants.url + "getFrNameIdByRouteId", map,
 					FrNameIdByRouteIdResponse.class);

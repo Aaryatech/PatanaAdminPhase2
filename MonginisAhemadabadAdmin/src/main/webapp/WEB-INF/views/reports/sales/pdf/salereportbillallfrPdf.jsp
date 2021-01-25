@@ -82,7 +82,7 @@ th {
 					<td><c:out value="${count.index+1}" /></td>
 					<td width="100"><c:out value="${report.invoiceNo}" /></td>
 					<td width="150"><c:out value="${report.billDate}" /></td>
-					<td width="200"><c:out value="${report.frName}" /></td>
+					<td width="200"><c:out value="${report.frName} ${report.frCode}" /></td>
 					<td width="100"><c:out value="${report.frCity}" /></td>
 					<td width="100"><c:out value="${report.frGstNo}" /></td>
 					<td width="100"><c:out value="${report.itemHsncd}" /></td>

@@ -287,7 +287,7 @@
 					tr.append($('<td></td>').html(key + 1));
 					tr.append($('<td></td>').html(report.invoiceNo));
 					tr.append($('<td></td>').html(report.billDate));
-					tr.append($('<td></td>').html(report.frName));
+					tr.append($('<td></td>').html(report.frName+" "+report.frCode));
 					/* tr.append($('<td></td>').html(report.frCity)); */
 					tr.append($('<td></td>').html(report.frGstNo));
 					tr.append($('<td></td>').html(report.itemHsncd));
