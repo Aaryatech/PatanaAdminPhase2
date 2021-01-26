@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.commons.DateConvertor;
+import com.ats.adminpanel.commons.SetOrderDataCommon;
 import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.GenerateBill;
 import com.ats.adminpanel.model.Info;
@@ -104,13 +105,12 @@ public class ManualOrderController {
 				model.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
 				model.addObject("billNo", billNo);
 				billNo = "0";
-List<Section> sectionList=new ArrayList<>();
-				
-				Section[] secArr=restTemplate.getForObject(Constants.url+"getAllSection", Section[].class);
-				sectionList=new ArrayList<>(Arrays.asList(secArr));
-				System.err.println(" sectionList " +sectionList);
+				List<Section> sectionList = new ArrayList<>();
+
+				Section[] secArr = restTemplate.getForObject(Constants.url + "getAllSection", Section[].class);
+				sectionList = new ArrayList<>(Arrays.asList(secArr));
+				System.err.println(" sectionList " + sectionList);
 				model.addObject("sectionList", sectionList);
-				
 
 			} catch (Exception e) {
 				System.out.println("Franchisee Controller Exception " + e.getMessage());
@@ -158,30 +158,28 @@ List<Section> sectionList=new ArrayList<>();
 	}
 
 	@RequestMapping(value = "/getMenuForManualOrder", method = RequestMethod.POST)
-	public @ResponseBody List<Menu> getMenuListByFrAndSectionId(HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody List<Menu> getMenuListByFrAndSectionId(HttpServletRequest request,
+			HttpServletResponse response) {
 		List<Menu> confMenuList = new ArrayList<Menu>();
 		try {
-		RestTemplate restTemplate = new RestTemplate();
+			RestTemplate restTemplate = new RestTemplate();
 
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("frId", Integer.parseInt(request.getParameter("frId")));
-		map.add("sectionId", Integer.parseInt(request.getParameter("sectionId")));
-		
-		AllMenuResponse menuResponse = restTemplate.postForObject(Constants.url + "getMenuListByFrAndSectionId", map,
-				AllMenuResponse.class);
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("frId", Integer.parseInt(request.getParameter("frId")));
+			map.add("sectionId", Integer.parseInt(request.getParameter("sectionId")));
 
-		
-		confMenuList=menuResponse.getMenuConfigurationPage();
-		}catch (HttpClientErrorException e) {
-			System.err.println("Exc getMenuForManualOrder " +e.getResponseBodyAsString());
-		}catch (Exception e) {
+			AllMenuResponse menuResponse = restTemplate.postForObject(Constants.url + "getMenuListByFrAndSectionId",
+					map, AllMenuResponse.class);
+
+			confMenuList = menuResponse.getMenuConfigurationPage();
+		} catch (HttpClientErrorException e) {
+			System.err.println("Exc getMenuForManualOrder " + e.getResponseBodyAsString());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return confMenuList;
 	}
-	
-	
-	
+
 	// ----------------------------------------END--------------------------------------------
 	@RequestMapping(value = "/getItemsOfMenuId", method = RequestMethod.GET)
 	public @ResponseBody List<Orders> commonItemById(@RequestParam(value = "menuId", required = true) int menuId,
@@ -308,7 +306,7 @@ List<Section> sectionList=new ArrayList<>();
 
 	// Anmol------->6/12/2019-----------------------
 	@RequestMapping(value = "/getItemsOfMenuIdWithDate", method = RequestMethod.GET)
-	public @ResponseBody ManualOrderMenuAndDate getItemsOfMenuIdWithDate(
+	public @ResponseBody ManualOrderMenuAndDate getItemsOfMenuIdWithDate(HttpServletRequest request,
 			@RequestParam(value = "menuId", required = true) int menuId,
 			@RequestParam(value = "frId", required = true) int frId,
 			@RequestParam(value = "by", required = true) int by,
@@ -320,7 +318,7 @@ List<Section> sectionList=new ArrayList<>();
 			orderList = new ArrayList<Orders>();
 			RestTemplate restTemplate = new RestTemplate();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+			SimpleDateFormat ymdSDF = new SimpleDateFormat("yyyy-MM-dd");
 			Date today = new Date();
 			Date tomorrow = new Date(today.getTime() + (1000 * 60 * 60 * 24));
 			java.sql.Date sqlCurrDate = new java.sql.Date(today.getTime());
@@ -422,6 +420,11 @@ List<Section> sectionList=new ArrayList<>();
 				order.setOrderSubType(item.getItemGrp2());
 				order.setProductionDate(sqlCurrDate);
 				// order.setRefId(item.getId());
+
+				String convertedDate = ymdSDF.format(today);
+				SetOrderDataCommon setOrdData = new SetOrderDataCommon();
+				order = setOrdData.setOrderData(order, menuId, order.getFrId(), order.getOrderQty(), request,
+						convertedDate);
 				orderList.add(order);
 
 			}
@@ -462,6 +465,8 @@ List<Section> sectionList=new ArrayList<>();
 		return result;
 	}
 
+	// This Call Replaced with getItemsOfMenuIdForMulFr
+	// below.getItemsOfMenuIdForMulFr 25-01-2021
 	@RequestMapping(value = "/getItemsByCatIdManOrder", method = RequestMethod.GET)
 	public @ResponseBody List<ItemForMOrder> getItemsByCatIdManOrder(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -641,6 +646,12 @@ List<Section> sectionList=new ArrayList<>();
 				order.setProductionDate(sqlCurrDate);
 				// order.setRefId(item.getId());
 				System.err.println("flagForItem" + flagForItem);
+
+				String convertedDate = formatter.format(today);
+				SetOrderDataCommon setOrdData = new SetOrderDataCommon();
+				order = setOrdData.setOrderData(order, menuId, order.getFrId(), order.getOrderQty(), request,
+						convertedDate);
+
 				if (flagForItem == 0) {
 					orderList.add(order);
 				}
@@ -670,6 +681,7 @@ List<Section> sectionList=new ArrayList<>();
 	public @ResponseBody List<Orders> insertItem(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 			int itemId = Integer.parseInt(request.getParameter("itemId"));
 			// System.out.println("itemId"+itemId);
@@ -773,6 +785,10 @@ List<Section> sectionList=new ArrayList<>();
 			order.setProductionDate(sqlCurrDate);
 			order.setRefId(itemId);
 
+			String convertedDate = formatter.format(today);
+			SetOrderDataCommon setOrdData = new SetOrderDataCommon();
+			order = setOrdData.setOrderData(order, menuId, order.getFrId(), order.getOrderQty(), request,
+					convertedDate);
 			orderList.add(order);
 
 			// System.out.println("orderListinserted:"+orderList.toString());
@@ -908,7 +924,7 @@ List<Section> sectionList=new ArrayList<>();
 						PostBillHeader header = new PostBillHeader();
 						header.setFrId(Integer.parseInt(frId));
 
-						float sumTaxableAmt = 0, sumTotalTax = 0, sumGrandTotal = 0,totalCessRs=0;
+						float sumTaxableAmt = 0, sumTotalTax = 0, sumGrandTotal = 0, totalCessRs = 0;
 						float sumDiscAmt = 0;
 
 						for (int j = 0; j < tempGenerateBillList.size(); j++) {
@@ -930,7 +946,7 @@ List<Section> sectionList=new ArrayList<>();
 							Float tax2 = (float) gBill.getItemTax2();
 							Float tax3 = (float) gBill.getItemTax3();
 							float cessPer = (float) gBill.getCessPer();
-							Float baseRate = (orderRate * 100) / (100 + (tax1 + tax2+cessPer));
+							Float baseRate = (orderRate * 100) / (100 + (tax1 + tax2 + cessPer));
 							baseRate = roundUp(baseRate);
 
 							Float taxableAmt = (float) (baseRate * Integer.parseInt(billQty));
@@ -942,14 +958,14 @@ List<Section> sectionList=new ArrayList<>();
 							float cgstRs = (taxableAmt * tax2) / 100;
 							float igstRs = (taxableAmt * tax3) / 100;
 							float cessRs = (taxableAmt * cessPer) / 100;
-							Float totalTax = sgstRs + cgstRs+cessRs;
+							Float totalTax = sgstRs + cgstRs + cessRs;
 							float discAmt = 0;
 							if (billQty == null || billQty == "") {// new code to handle hidden records
 								billQty = "0";
 							}
 
 							if (gBill.getIsSameState() == 1) {
-								baseRate = (orderRate * 100) / (100 + (tax1 + tax2+cessPer));
+								baseRate = (orderRate * 100) / (100 + (tax1 + tax2 + cessPer));
 								taxableAmt = (float) (baseRate * Integer.parseInt(billQty));
 								// ----------------------------------------------------------
 								discAmt = ((taxableAmt * discPer) / 100); // new row added
@@ -963,12 +979,12 @@ List<Section> sectionList=new ArrayList<>();
 								cessRs = (taxableAmt * cessPer) / 100;
 
 								igstRs = 0;
-								totalTax = sgstRs + cgstRs+cessRs;
+								totalTax = sgstRs + cgstRs + cessRs;
 
 							}
 
 							else {
-								baseRate = (orderRate * 100) / (100 + (tax3+cessPer));
+								baseRate = (orderRate * 100) / (100 + (tax3 + cessPer));
 								taxableAmt = (float) (baseRate * Integer.parseInt(billQty));
 								// ----------------------------------------------------------
 								discAmt = ((taxableAmt * discPer) / 100); // new row added
@@ -981,7 +997,7 @@ List<Section> sectionList=new ArrayList<>();
 								cgstRs = 0;
 								igstRs = (taxableAmt * tax3) / 100;
 								cessRs = (taxableAmt * cessPer) / 100;
-								totalTax = igstRs+cessRs;
+								totalTax = igstRs + cessRs;
 							}
 
 							sgstRs = roundUp(sgstRs);
@@ -1023,9 +1039,9 @@ List<Section> sectionList=new ArrayList<>();
 							billDetail.setSgstRs(sgstRs);
 							billDetail.setCgstPer(tax2);
 							billDetail.setCgstRs(cgstRs);
-							billDetail.setCessPer(cessPer);// --changed  while add bill
+							billDetail.setCessPer(cessPer);// --changed while add bill
 							billDetail.setCessRs(cessRs);// --changed while add bill
-							
+
 							billDetail.setIgstPer(tax3);
 							billDetail.setIgstRs(igstRs);
 							billDetail.setTotalTax(totalTax);
@@ -1038,7 +1054,7 @@ List<Section> sectionList=new ArrayList<>();
 							header.setSgstSum(header.getSgstSum() + billDetail.getSgstRs());
 							header.setCgstSum(header.getCgstSum() + billDetail.getCgstRs());
 							header.setIgstSum(header.getIgstSum() + billDetail.getIgstRs());
-							totalCessRs=totalCessRs+cessRs;
+							totalCessRs = totalCessRs + cessRs;
 							int itemShelfLife = gBill.getItemShelfLife();
 
 							String deliveryDate = gBill.getDeliveryDate();
@@ -1070,7 +1086,7 @@ List<Section> sectionList=new ArrayList<>();
 							header.setTaxApplicable((int) (gBill.getItemTax1() + gBill.getItemTax2()));
 
 						}
-						header.setExVarchar2(""+roundUp(totalCessRs));// for cessAmt change
+						header.setExVarchar2("" + roundUp(totalCessRs));// for cessAmt change
 						header.setBillDate(new Date());// hardcoded curr Date
 						header.setTaxableAmt(roundUp(sumTaxableAmt));
 						header.setGrandTotal(roundUp(sumGrandTotal));
@@ -1105,7 +1121,7 @@ List<Section> sectionList=new ArrayList<>();
 						header.setBillTime(sdf1.format(calender.getTime()));
 						header.setVehNo("-");
 						header.setExVarchar1(sectionId);
-						
+
 						postBillHeaderList.add(header);
 						postBillDataCommon.setPostBillHeadersList(postBillHeaderList);
 
@@ -1133,7 +1149,8 @@ List<Section> sectionList=new ArrayList<>();
 	// --------ORDER PREVIEW--------------------------------------------
 
 	@RequestMapping(value = "/generateManualBillPreview", method = RequestMethod.POST)
-	public @ResponseBody List<Orders> generateManualBillPreview(HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody List<Orders> generateManualBillPreview(HttpServletRequest request,
+			HttpServletResponse response) {
 
 		System.err.println("---------------generateManualBillPreview-------------");
 
@@ -1149,8 +1166,6 @@ List<Section> sectionList=new ArrayList<>();
 			int frId = Integer.parseInt(request.getParameter("fr_id"));
 			frIdList.add("" + frId);
 
-		
-
 			System.err.println("FR LIST -------------- " + frIdList);
 
 			try {
@@ -1160,7 +1175,7 @@ List<Section> sectionList=new ArrayList<>();
 
 						int qty = Integer
 								.parseInt(request.getParameter("qty" + orderList.get(i).getItemId() + "" + frId));
-						
+
 						orderList.get(i).setEditQty(qty);
 						orderList.get(i).setOrderQty(qty);
 
