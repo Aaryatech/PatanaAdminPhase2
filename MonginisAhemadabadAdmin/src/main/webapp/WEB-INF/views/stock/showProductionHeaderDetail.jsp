@@ -304,7 +304,7 @@ table {
 			if (subCatId == 0) {
 				subCatId = catId;
 			}
-			alert("Items For Sub Category - " + subCatName);
+		//	alert("Items For Sub Category - " + subCatName);
 			$('#loader').show();
 
 			$

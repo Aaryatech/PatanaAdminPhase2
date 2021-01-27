@@ -943,6 +943,7 @@ public class OrderController {
 
 				map.add("frId", strFrId);
 				map.add("prodDate", prodDate);
+				map.add("menuId", menuIdStr);
 				
 				RestTemplate restTemp = new RestTemplate();
 

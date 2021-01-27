@@ -153,7 +153,7 @@ table {
 
 											<option value="0">All</option>
 											<c:forEach items="${franchiseeList}" var="franchiseeList">
-												<option value="${franchiseeList.frId}">${franchiseeList.frName}</option>
+												<option value="${franchiseeList.frId}">${franchiseeList.frName} ${franchiseeList.frCode}</option>
 
 
 											</c:forEach>
