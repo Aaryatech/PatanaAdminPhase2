@@ -291,7 +291,7 @@ root
 																	value="${billHeadersList.billDate}" /></td>
 
 															<td class="col-md-2"><c:out
-																	value="${billHeadersList.frName}" /></td>
+																	value="${billHeadersList.frName} ${billHeadersList.frCode}" /></td>
 															<td class="col-md-2" style="text-align:right;"><c:out
 																	value="${billHeadersList.taxableAmt}" /></td>
 															<td class="col-sm-1" style="text-align:right;"><c:out
@@ -562,7 +562,7 @@ form.submit();
                                                     tr.append($('<td class="col-sm-1"></td>').html(key + 1));
                                                     tr.append($('<td class="col-md-1"></td>').html(bill.invoiceNo));
                                                     tr.append($('<td class="col-md-1"></td>').html(bill.billDate));
-													tr.append($('<td class="col-md-2"></td>').html(bill.frName));
+													tr.append($('<td class="col-md-2"></td>').html(bill.frName+" "+bill.frCode));
 													tr.append($('<td class="col-md-2" style="text-align:right;"></td>').html(bill.taxableAmt.toFixed(2)));
 													tr.append($('<td class="col-sm-1" style="text-align:right;"></td>').html(bill.totalTax.toFixed(2)));
 													tr.append($('<td class="col-md-1" style="text-align:right;"></td>').html(bill.grandTotal.toFixed(2)));
@@ -582,7 +582,7 @@ form.submit();
 	                                                    tr.append($('<td class="col-sm-1"></td>').html(key + 1));
 	                                                    tr.append($('<td class="col-md-1"></td>').html(bill.invoiceNo));
 	                                                    tr.append($('<td class="col-md-1"></td>').html(bill.billDate));
-														tr.append($('<td class="col-md-2"></td>').html(bill.frName));
+														tr.append($('<td class="col-md-2"></td>').html(bill.frName+" "+bill.frCode));
 														tr.append($('<td class="col-md-2" style="text-align:right;"></td>').html(bill.taxableAmt.toFixed(2)));
 														tr.append($('<td class="col-sm-1" style="text-align:right;"></td>').html(bill.totalTax.toFixed(2)));
 														tr.append($('<td class="col-md-1" style="text-align:right;"></td>').html(bill.grandTotal.toFixed(2)));

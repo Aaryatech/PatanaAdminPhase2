@@ -700,7 +700,7 @@
 															.append($(
 																	'<td class="col-md-2"></td>')
 																	.html(
-																			bill.frName));
+																			bill.frName+" "+bill.frCode));
 
 													tr
 															.append($(
