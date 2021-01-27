@@ -96,7 +96,7 @@
 									     <c:forEach items="${selFranchise}" var="selFr"	varStatus="count2">
 										   <c:choose>
 														<c:when test="${selFr==fr.frId}">
-															<option selected value="${fr.frId}"><c:out value="${fr.frName}"/></option>
+															<option selected value="${fr.frId}"><c:out value="${fr.frName} ${fr.frCode}"/></option>
 																<c:set var="flag" value="1"></c:set>
 														</c:when>
 														<c:otherwise>  
@@ -105,7 +105,7 @@
 												</c:forEach> 		
 													<c:choose>
 												<c:when test="${flag==0}">
-												 <option value="${fr.frId}"><c:out value="${fr.frName}"/></option>
+												 <option value="${fr.frId}"><c:out value="${fr.frName} ${fr.frCode}"/></option>
 												</c:when>
 												</c:choose>
 										   </c:forEach>
@@ -114,7 +114,7 @@
 										   <option value="-1" selected>All</option>
 								 
 								  <c:forEach items="${franchiseeList}" var="franchiseeList" >
-									<option value="${franchiseeList.frId}"><c:out value="${franchiseeList.frName}"/></option>
+									<option value="${franchiseeList.frId}"><c:out value="${franchiseeList.frName} ${franchiseeList.frCode}"/></option>
 								</c:forEach>   
 										   </c:otherwise></c:choose>
 							</select>
