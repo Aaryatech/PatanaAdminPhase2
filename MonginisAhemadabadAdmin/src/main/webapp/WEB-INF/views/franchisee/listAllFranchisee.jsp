@@ -169,7 +169,7 @@
 														<tr>
 															<td><c:out value="${count.index+1}"></c:out></td>
 															<td style="text-align: left; padding-left: 5%;"><c:out
-																	value="${franchiseeList.frName}" /></td>
+																	value="${franchiseeList.frName} ${franchiseeList.frCode}" /></td>
 															<td  style="text-align: center;"><img
 																src="${url}${franchiseeList.frImage}" height="80"
 																width="80"
