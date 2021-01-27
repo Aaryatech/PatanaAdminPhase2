@@ -896,12 +896,20 @@ public class ManualOrderController {
 					System.err.println("ORDER LIST SAVE -------------------- " + orderListSave);
 
 					if (submitorder != null) {
+						try {
 						orderListResponse = restTemplate.postForObject(Constants.url + "placeManualOrder",
 								orderListSave, GenerateBill[].class);
+						}catch (HttpClientErrorException e) {
+							System.err.println("placeManualOrder  issue " +e.getResponseBodyAsString());
+						}
 					} else {// placeManualOrderNew --- not updates prev avail item order -each time new
 							// entry
+						try {
 						orderListResponse = restTemplate.postForObject(Constants.url + "placeManualOrderNew",
 								orderListSave, GenerateBill[].class);
+						}catch (HttpClientErrorException e) {
+							System.err.println("placeManualOrderNew  issue " +e.getResponseBodyAsString());
+						}
 
 					}
 

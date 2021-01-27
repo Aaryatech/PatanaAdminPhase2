@@ -471,16 +471,16 @@ to {
 
 											<div class="form-group">
 												<div id="singleOrder">
-													<label class="col-md-2  control-label">Production
+													<label class="col-md-2  control-label" style="display: none">Production
 														Date</label>
-													<div class="col-md-2 controls">
+													<div class="col-md-2 controls" style="display: none">
 														<input class="form-control date-picker" id="prodDate"
 															name="prodDate" size="30" type="text" required="required" />
 
 													</div>
-													<label class="col-md-2  control-label">Delivery
+													<label class="col-md-2  control-label" style="display: none" >Delivery
 														Date</label>
-													<div class="col-md-2  controls">
+													<div class="col-md-2  controls" style="display: none">
 														<input class="form-control date-picker" id="deliveryDate"
 															name="deliveryDate" size="30" type="text"
 															required="required" />
@@ -590,7 +590,7 @@ to {
 	    	}else if(sectionId<1){
 	    	}
 	    	else{
-	    		alert("Ok Else")
+	    		//alert("Ok Else")
 	    	var fd = new FormData();
 	    	 $('#loader').show();
 	    	fd.append('frId', $("#fr_id").val());
@@ -604,7 +604,7 @@ to {
 	    	contentType : false,
 	    	processData : false,
 	    	success : function(resData) {
-	    		alert("data " +resData)
+	    		//alert("data " +resData)
 	    		var html = '<option value="-1"></option>';
 	    		var len = resData.length;
 	    		if(len==0){
@@ -988,13 +988,13 @@ to {
 
 	<script type="text/javascript">
 		function onChange(rate, id, frId) {
-			alert("OKKK")
+			//alert("OKKK")
 			//calculate total value  
 			var qty = $('#qty' + id + '' + frId).val();
 
 			var minqty = $('#minqty' + id + '' + frId).val();
-			alert("qty" +qty +"minqty " +minqty)
-			/alert(qty % minqty)
+			//alert("qty" +qty +"minqty " +minqty)
+			//alert(qty % minqty)
 			if (qty % minqty == 0) {
 				var total = rate * qty;
 
@@ -1012,14 +1012,14 @@ to {
 	</script>
 	<script type="text/javascript">
 		function onChangeBill(rate, id, frId) {
-alert("Ok")
+//alert("Ok")
 			//calculate total value  
 			var qty = $('#qty' + id + '' + frId).val();
 			var discper = $('#discper' + id + '' + frId).val();
 
 			var minqty = $('#minqty' + id + '' + frId).val();
-	alert("qty" +qty +"minqty " +minqty)
-	alert(qty % minqty)
+	//alert("qty" +qty +"minqty " +minqty)
+	//alert(qty % minqty)
 			if (qty % minqty == 0) {
 				var total = rate * qty;
 				var disc = (total * discper) / 100;
@@ -1077,11 +1077,12 @@ $(document).ready(function() {
 		$(document)
 				.ready(
 						function() {
-							$('#fr_id')
+							$('#fr_id1')
 									.change(
 
 											function() {
 												$('#table_grid td').remove();
+												alert("Ub")
 												$
 														.getJSON(
 																'${findAllMenus}',
