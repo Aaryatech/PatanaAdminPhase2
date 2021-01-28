@@ -185,7 +185,7 @@
 												</tr>
 												</thead>
 												<tbody>
-		<c:forEach items="${itemList}" var="item"
+												<c:forEach items="${itemList}" var="item"
 																	varStatus="count">
 
 																	<c:set var="id" value="${item.itemId}" />
@@ -201,7 +201,6 @@
 
 																		</td>
 
-
 																		<c:forEach items="${item.stockDetails}"
 																			var="stDetails" varStatus="count">
 																			<td align="left"><input type="hidden"
@@ -216,10 +215,10 @@
 																						data-rule-required="true" style="width: 65px"
 																						value="${stDetails.minQty}" />
 																				</div>
-
-																				<div align="center"
+																			<div style="display: none;">
+																			 <div align="center"
 																					class="col-sm-9 col-lg-10 controls">
-																					Max <input type="text"
+																					Max <input type="hidden"
 																						name="${item.itemId}max${count.index}"
 																						id="${item.itemId}max${count.index}"
 																						placeholder="Max" class="form-control"
@@ -230,14 +229,15 @@
 
 																				<div align="center"
 																					class="col-sm-9 col-lg-10 controls">
-																					Reorder <input type="text"
+																					Reorder <input type="hidden"
 																						name="${item.itemId}reorder${count.index}"
 																						id="${item.itemId}reorder${count.index}"
 																						placeholder="reorder" class="form-control"
 																						data-rule-required="true" style="width: 65px"
 																						value="${stDetails.reorderQty}"
 																						onblur="enableSubmit(${item.itemId},${count.index});" />
-																				</div></td>
+																				</div></div>
+																			</td>
 
 
 																		</c:forEach>
@@ -353,7 +353,7 @@
 														<div
 															class="col-sm-25 col-sm-offset-3 col-lg-30 col-lg-offset-5">
 															<input type="submit" class="btn btn-primary"
-																value="Submit" id="callSubmit" style="display: none;" />
+																value="Submit" id="callSubmit" style="display: block;" />
 														</div>
 													</div>
 
@@ -436,7 +436,7 @@
 		return isSubmit;
 		
 	}
-		function enableSubmit(itemId,index){
+	/* 	function enableSubmit(itemId,index){
 			 document.getElementById("callSubmit").style.display="none";
 
 			var flag=validateReOrder(itemId,index);
@@ -452,7 +452,7 @@
 				 document.getElementById("callSubmit").style.display="block";
 				
 			}
-		}
+		} */
 	
 	</script>
 

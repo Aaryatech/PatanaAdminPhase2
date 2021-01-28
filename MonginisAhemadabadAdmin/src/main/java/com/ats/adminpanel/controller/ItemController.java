@@ -388,24 +388,155 @@ public class ItemController {
 
 	}
 
+//	@RequestMapping(value = "/getItemsbyCatIdProcess", method = RequestMethod.GET)
+//	public String getItemsbyCatIdProcess(HttpServletRequest request, HttpServletResponse response) {
+//
+//		ModelAndView model = new ModelAndView("items/itemConfig");
+//		try {
+//
+//			String catIds = request.getParameter("cat_name");
+//			if (catIds == null || catIds == "") {
+//				catId = catId;
+//			} else {
+//				catId = Integer.parseInt(catIds);
+//			}
+//			System.out.println("cat Id " + catId);
+//
+//			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+//
+//			// MultiValueMap<String, Object> mapItemList = new LinkedMultiValueMap<String,
+//			// Object>();
+//
+//			map.add("itemGrp1", catId);
+//
+//			RestTemplate restTemplate = new RestTemplate();
+//
+//			Item[] item = restTemplate.postForObject(Constants.url + "getItemsByCatId", map, Item[].class);
+//
+//			ArrayList<Item> tempItemList = new ArrayList<Item>(Arrays.asList(item));
+//
+//			StringBuilder stringBuilder = new StringBuilder();
+//
+//			String itemId;
+//
+//			for (int i = 0; i < tempItemList.size(); i++) {
+//
+//				itemId = (tempItemList.get(i).getId()) + ",";
+//				stringBuilder.append(itemId);
+//
+//			}
+//
+//			String itemIds = stringBuilder.toString();
+//			itemIds = itemIds.substring(0, itemIds.length() - 1);
+//
+//			System.out.println("itemId :" + itemIds);
+//
+//			map = new LinkedMultiValueMap<String, Object>();
+//
+//			map.add("itemId", itemIds);
+//
+//			getPrevItemStockResponsesList = new ArrayList<GetPrevItemStockResponse>();
+//
+//			ParameterizedTypeReference<List<GetPrevItemStockResponse>> typeRef = new ParameterizedTypeReference<List<GetPrevItemStockResponse>>() {
+//			};
+//
+//			ResponseEntity<List<GetPrevItemStockResponse>> responseEntity = restTemplate
+//					.exchange(Constants.url + "getAllFrItemConfPost", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+//
+//			getPrevItemStockResponsesList = responseEntity.getBody();
+//
+//			if (getPrevItemStockResponsesList.size() < tempItemList.size()) {
+//
+//				List<GetPrevItemStockResponse> tempPrevItemStockList = new ArrayList<GetPrevItemStockResponse>();
+//
+//				for (int i = 0; i < tempItemList.size(); i++) {
+//
+//					Item tempItem = tempItemList.get(i);
+//
+//					GetPrevItemStockResponse tempItemStockResponse = new GetPrevItemStockResponse();
+//
+//					tempItemStockResponse.setItemId(tempItem.getId());
+//					tempItemStockResponse.setItemName(tempItem.getItemName());
+//
+//					List<StockDetail> stockDetailsList = new ArrayList<StockDetail>();
+//
+//					for (int j = 1; j <= settingValue; j++) {
+//
+//						StockDetail stockDetail = new StockDetail();
+//
+//						stockDetail.setFrStockId(0);
+//						stockDetail.setMaxQty(0);
+//						stockDetail.setMinQty(0);
+//						stockDetail.setType(j);
+//						stockDetail.setReorderQty(0);
+//						stockDetailsList.add(stockDetail);
+//
+//					}
+//
+//					tempItemStockResponse.setStockDetails(stockDetailsList);
+//
+//					for (int j = 0; j < getPrevItemStockResponsesList.size(); j++) {
+//
+//						if (getPrevItemStockResponsesList.get(j).getItemId() == tempItemList.get(i).getId()) {
+//
+//							tempItemStockResponse = getPrevItemStockResponsesList.get(j);
+//						}
+//
+//					}
+//
+//					tempPrevItemStockList.add(tempItemStockResponse);
+//
+//				}
+//
+//				System.out.println("\n\n ####### Updated Stock List is: " + tempPrevItemStockList.toString());
+//
+//				getPrevItemStockResponsesList = new ArrayList<GetPrevItemStockResponse>();
+//
+//				getPrevItemStockResponsesList = tempPrevItemStockList;
+//			}
+//
+//			itemList = new ArrayList<Item>(Arrays.asList(item));
+//
+//			System.out.println(" item Stock response  List " + getPrevItemStockResponsesList.toString());
+//			System.out.println("item list size= " + getPrevItemStockResponsesList.size());
+//
+//			model.addObject("catId", catId);
+//			model.addObject("itemList", getPrevItemStockResponsesList);
+//
+//		} catch (Exception e) {
+//
+//			System.out.println("exe in item get By CatId frItemConf " + e.getMessage());
+//			e.printStackTrace();
+//		}
+//
+//		return "redirect:/showFrItemConfiguration";
+//
+//	}
+	
 	@RequestMapping(value = "/getItemsbyCatIdProcess", method = RequestMethod.GET)
 	public String getItemsbyCatIdProcess(HttpServletRequest request, HttpServletResponse response) {
 
+		//ModelAndView model = new ModelAndView("items/itemlist");
 		ModelAndView model = new ModelAndView("items/itemConfig");
+		
+		//Constants.mainAct = 4;
+		//Constants.subAct = 44;
+
 		try {
 
-			String catIds = request.getParameter("cat_name");
-			if (catIds == null || catIds == "") {
-				catId = catId;
-			} else {
-				catId = Integer.parseInt(catIds);
-			}
-			System.out.println("cat Id " + catId);
+			
+			
+		String	catIds = request.getParameter("cat_name");
+		if(catIds==null || catIds=="") {
+			catId=catId;
+		}else {
+			catId=Integer.parseInt(catIds);
+		}
+			System.out.println("cat Id "+catId);
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
-			// MultiValueMap<String, Object> mapItemList = new LinkedMultiValueMap<String,
-			// Object>();
+			//MultiValueMap<String, Object> mapItemList = new LinkedMultiValueMap<String, Object>();
 
 			map.add("itemGrp1", catId);
 
@@ -432,7 +563,7 @@ public class ItemController {
 			System.out.println("itemId :" + itemIds);
 
 			map = new LinkedMultiValueMap<String, Object>();
-
+			
 			map.add("itemId", itemIds);
 
 			getPrevItemStockResponsesList = new ArrayList<GetPrevItemStockResponse>();
@@ -440,12 +571,17 @@ public class ItemController {
 			ParameterizedTypeReference<List<GetPrevItemStockResponse>> typeRef = new ParameterizedTypeReference<List<GetPrevItemStockResponse>>() {
 			};
 
-			ResponseEntity<List<GetPrevItemStockResponse>> responseEntity = restTemplate
-					.exchange(Constants.url + "getAllFrItemConfPost", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+			ResponseEntity<List<GetPrevItemStockResponse>> responseEntity = restTemplate.exchange(
+					Constants.url + "getAllFrItemConfPost", HttpMethod.POST, new HttpEntity<>(map), typeRef);
 
 			getPrevItemStockResponsesList = responseEntity.getBody();
-
+			
+			System.out.println("getPrevItemStockResponsesList--------------: " + getPrevItemStockResponsesList);
+			
+			
 			if (getPrevItemStockResponsesList.size() < tempItemList.size()) {
+				
+			
 
 				List<GetPrevItemStockResponse> tempPrevItemStockList = new ArrayList<GetPrevItemStockResponse>();
 
@@ -474,12 +610,37 @@ public class ItemController {
 					}
 
 					tempItemStockResponse.setStockDetails(stockDetailsList);
+					
+					
 
 					for (int j = 0; j < getPrevItemStockResponsesList.size(); j++) {
 
 						if (getPrevItemStockResponsesList.get(j).getItemId() == tempItemList.get(i).getId()) {
 
-							tempItemStockResponse = getPrevItemStockResponsesList.get(j);
+							//tempItemStockResponse = getPrevItemStockResponsesList.get(j);
+							
+							List<StockDetail> details=tempItemStockResponse.getStockDetails();
+							
+							
+							for(int k=0;k<details.size();k++) {
+								
+								for(int m=0;m<getPrevItemStockResponsesList.get(j).getStockDetails().size();m++) {
+									
+									if(details.get(k).getType()==getPrevItemStockResponsesList.get(j).getStockDetails().get(m).getType()) {
+										
+										details.get(k).setFrStockId(getPrevItemStockResponsesList.get(j).getStockDetails().get(m).getFrStockId());
+										details.get(k).setMaxQty(getPrevItemStockResponsesList.get(j).getStockDetails().get(m).getMaxQty());
+										details.get(k).setMinQty(getPrevItemStockResponsesList.get(j).getStockDetails().get(m).getMinQty());
+										details.get(k).setType(getPrevItemStockResponsesList.get(j).getStockDetails().get(m).getType());
+										details.get(k).setReorderQty(getPrevItemStockResponsesList.get(j).getStockDetails().get(m).getReorderQty());
+										
+										break;
+									}
+									
+								}
+								
+							}
+							
 						}
 
 					}
@@ -487,6 +648,11 @@ public class ItemController {
 					tempPrevItemStockList.add(tempItemStockResponse);
 
 				}
+				
+				
+			
+				
+				
 
 				System.out.println("\n\n ####### Updated Stock List is: " + tempPrevItemStockList.toString());
 
@@ -509,9 +675,13 @@ public class ItemController {
 			e.printStackTrace();
 		}
 
+		
+		
+		
 		return "redirect:/showFrItemConfiguration";
-
+		//return getPrevItemStockResponsesList.toString();
 	}
+	
 
 	@RequestMapping(value = "/frItemStockConfInsert", method = RequestMethod.POST)
 	public String frItemStockConfInsert(HttpServletRequest request, HttpServletResponse response) {
