@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -1025,9 +1026,13 @@ public class SpecialCakeController {
 
 			// System.out.println("sp name is "+name);
 			// System.out.println("type 2 value in update event"+type2app);
-
-			SpecialCake cakeResponse = restTemplate.postForObject(Constants.url + "updateSpecialCake", map,
+			SpecialCake cakeResponse =null;
+			try {
+			 cakeResponse = restTemplate.postForObject(Constants.url + "updateSpecialCake", map,
 					SpecialCake.class);
+		}catch (HttpClientErrorException e) {
+			System.err.println("updateSpecialCake ex" +e.getResponseBodyAsString());
+		}
 
 			try {
 

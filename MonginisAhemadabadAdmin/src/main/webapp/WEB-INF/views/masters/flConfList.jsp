@@ -26,6 +26,15 @@
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
 }
+
+.txtbox{
+ height: 34px;  padding: 6px 12px;  font-size: 14px;line-height: 1.428571429;  color: #555;  vertical-align: middle;background-color: #fff;    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;" 
+}
  
  </style>
 <jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
@@ -100,12 +109,13 @@
 								<thead>
 									<tr class="bgpink">
 										<th class="col-md-1">Sr.No.</th>
-										<th class="col-md-4">Sp Name</th>
-										<th class="col-md-3">Flavour Name</th>
-										<th class="col-md-3">Mrp</th>
-										<th class="col-md-3">Rate</th>
+										<th class="col-md-2">Sp Name</th>
+										<th class="col-md-2">Flavour Name</th>
+										<th class="col-md-2">Mrp 1</th>
+										<th class="col-md-2">MRP 2</th>
+										<th class="col-md-2">MRP 3</th>
 										
-										 <th class="col-md-3">Action</th> 
+										 <th class="col-md-1">Action</th> 
 									</tr>
 								</thead>
 								<tbody>
@@ -147,20 +157,15 @@
 							</c:forEach> 
 										</td>
 
-										<td align="left" class="col-md-1"><input type="text" style="height: 34px;  padding: 6px 12px;  font-size: 14px;line-height: 1.428571429;  color: #555;  vertical-align: middle;background-color: #fff;    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;" oninput='return calcRate(this.value,${flList.flavId})' onchange="updateFlavourConf(${flList.flavId})"  name="mrp${flList.flavId}" id="mrp${flList.flavId}" value="${flList.mrp}" /></td>
-											<%-- <td align="left"><c:out value="-" /></td> --%>
-<td align="left" class="col-md-1"><input type="text" style="height: 34px;  padding: 6px 12px;  font-size: 14px;line-height: 1.428571429;  color: #555;  vertical-align: middle;background-color: #fff;    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;" name="rate${flList.flavId}" id="rate${flList.flavId}" onchange="updateFlavourConf(${flList.flavId})"   value="${flList.rate}" /></td>
-	<td> <a href="${pageContext.request.contextPath}/deleteFlavourConf/${flList.flavId}"
+<%-- <td align="left" class="col-md-1"><input type="text" class="txtbox" oninput='return calcRate(this.value,${flList.flavId})' onchange="updateFlavourConf(${flList.flavId})"  name="mrp${flList.flavId}" id="mrp${flList.flavId}" value="${flList.mrp}" /></td>
+<td align="left" class="col-md-1"><input type="text" class="txtbox" name="rate${flList.flavId}" id="rate${flList.flavId}" onchange="updateFlavourConf(${flList.flavId})"   value="${flList.rate}" /></td>
+ --%>
+ 
+ <td align="left" id="mrp1_tr${flList.spFlavConfId}" class="col-md-1"><input type="text" class="txtbox" onchange="updateFlavourConf(${flList.spFlavConfId},1)"  name="mrp1${flList.spFlavConfId}" id="mrp1${flList.spFlavConfId}" value="${flList.mrp1}" /></td>
+ <td align="left" id="mrp2_tr${flList.spFlavConfId}" class="col-md-1"><input type="text" class="txtbox" onchange="updateFlavourConf(${flList.spFlavConfId},2)"  name="mrp2${flList.spFlavConfId}" id="mrp2${flList.spFlavConfId}" value="${flList.mrp2}" /></td>
+  <td align="left" id="mrp3_tr${flList.spFlavConfId}" class="col-md-1"><input type="text" class="txtbox" onchange="updateFlavourConf(${flList.spFlavConfId},3)"  name="mrp3${flList.spFlavConfId}" id="mrp3${flList.spFlavConfId}" value="${flList.mrp3}" /></td>
+ 
+ 	<td> <a href="${pageContext.request.contextPath}/deleteFlavourConf/${flList.spFlavConfId}"
 			onClick="return confirm('Are you sure want to delete this record');"><span
 			class="glyphicon glyphicon-remove"></span></a></td>
 
@@ -185,26 +190,38 @@
 	</div>
 	<!-- END Container -->
   <script type="text/javascript">
-       function updateFlavourConf(flavId) {
-    		var rate=document.getElementById("rate"+flavId).value;
-    		var mrp=document.getElementById("mrp"+flavId).value;
+       function updateFlavourConf(spFlavConfId,valueNo) {
+    	
+
+    		//var rate=document.getElementById("rate"+flavId).value;
+    		var mrp1=document.getElementById("mrp1"+spFlavConfId).value;
+    		var mrp2=document.getElementById("mrp2"+spFlavConfId).value;
+    		var mrp3=document.getElementById("mrp3"+spFlavConfId).value;
     	   on();
 				$.getJSON('${updateFlavourConf}', {
-					flavId:flavId,
-					rate:rate,
-					mrp:mrp,
+					spFlavConfId:spFlavConfId,
+					mrp1:mrp1,
+					mrp2:mrp2,
+					mrp3:mrp3,
 					ajax : 'true'
 				}, function(data) {
 					off();
 					if(data.error==false)
 						{
 						alert("Value Updated Successfully.");
+						if(parseInt(valueNo)==1){
+				    		document.getElementById('mrp1_tr'+spFlavConfId).style.backgroundColor='green';
+						}else if(parseInt(valueNo)==2){
+				    		document.getElementById('mrp2_tr'+spFlavConfId).style.backgroundColor='green';
+						}else{
+				    		document.getElementById('mrp3_tr'+spFlavConfId).style.backgroundColor='green';
+						}
 						}else
 							{
 							alert("Value Not Updated.");
 							}
-					
 				});
+			
 			}
      </script>
 	<!--basic scripts-->

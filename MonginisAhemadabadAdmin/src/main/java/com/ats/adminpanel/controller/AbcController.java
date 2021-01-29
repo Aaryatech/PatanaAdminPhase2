@@ -388,7 +388,7 @@ public class AbcController {
 
 			float spBackendRate = spWeight * flavourConf.getRate();
 			int rateType=Integer.parseInt(request.getParameter("sel_rate"));
-			float	spGrandTotal=spWeight * flavourConf.getMrp();
+			float	spGrandTotal=spWeight * flavourConf.getMrp1();
 			
 			
 			

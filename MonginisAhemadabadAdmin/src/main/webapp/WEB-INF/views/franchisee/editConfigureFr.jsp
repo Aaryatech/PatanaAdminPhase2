@@ -563,15 +563,35 @@
 											</div>
 										</div>
 
-<div class="form-group">
+									<div id="type1" class="form-group" style="display: none">
 											<label class="col-sm-3 col-lg-2 control-label">Rate Setting From</label>
 											<div class="col-sm-9 col-lg-10 controls">
-												<input type="radio" ${franchiseeList.rateSettingFrom==0 ? 'checked' : ''} id="profi_per" name="rate_setting_from" value="0">Profit %
-												<input type="radio" ${franchiseeList.rateSettingFrom==1 ? 'checked' : ''}  id="rate_type" name="rate_setting_from" value="1">Rate Type
+												<input type="radio" ${franchiseeList.rateSettingFrom==0 ? 'checked' : ''} id="profi_per" name="rate_setting_from" value="0">Master
+												<input type="radio" ${franchiseeList.rateSettingFrom==1 ? 'checked' : ''}  id="rate_type" name="rate_setting_from" value="1">Flavor Conf
 											</div>
 										</div>
 										
-										<div id="type0" class="formgroup2" style="display: none">
+										
+										
+										<div id="type3" class="formgroup2">
+											<label class="col-sm-3 col-lg-2 control-label">Rate Type</label>
+											<div class="col-sm-9 col-lg-10 controls">
+												<select data-placeholder="Select Rate Type" name="rateTypeValue"
+													class="form-control chosen" tabindex="-1"
+													 id="rateTypeValue">
+													<optgroup label="Rate Type Applicable">
+														<option value=""></option>
+														<option ${franchiseeList.rateSettingType==1 ? 'selected' : ''}  value="1">Regular Rate (MRP 1)</option>
+														<option ${franchiseeList.rateSettingType==2 ? 'selected' : ''} value="2">Special Rate (MRP 2)</option>
+														<option ${franchiseeList.rateSettingType==3 ? 'selected' : ''} value="3">Local Rate (MRP 3)</option>
+													</optgroup>
+
+												</select>
+												
+											</div>
+										</div>
+											<div class="form-group"></div>
+										<div  class="formgroup2">
 											<label class="col-sm-3 col-lg-2 control-label">Profit %</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												
@@ -580,23 +600,6 @@
 										    </div>
 										</div>
 										
-										<div id="type1" class="formgroup2" style="display: none">
-											<label class="col-sm-3 col-lg-2 control-label">Rate Type</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<select data-placeholder="Select Rate Type" name="rateTypeValue"
-													class="form-control chosen" tabindex="-1"
-													 id="rateTypeValue">
-													<optgroup label="Rate Type Applicable">
-														<option value=""></option>
-														<option ${franchiseeList.rateSettingType==1 ? 'selected' : ''}  value="1">Regular Rate</option>
-														<option ${franchiseeList.rateSettingType==2 ? 'selected' : ''} value="2">Special Rate</option>
-														<option ${franchiseeList.rateSettingType==3 ? 'selected' : ''} value="3">Local Rate</option>
-													</optgroup>
-
-												</select>
-												
-											</div>
-										</div>
 										<div class="form-group"></div>
 										<div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">No of Days for Delivery Date</label>
@@ -700,18 +703,16 @@
 	$(function() {
 		/* $('.formgroup2').hide();
 		$('#type1').show(); */
-		var rateSett=${franchiseeList.rateSettingFrom};
-		 if(parseInt(rateSett)==1){
-			 $('.formgroup2').hide();
+		var catId=${franchiseeList.catId};
+		 if(parseInt(catId)==5){
 		    	$('#type1').show();
 		 }else{
-			 $('.formgroup2').hide();
 		    	$('#type0').show();
 		 }
-	    $('input:radio[name="rate_setting_from"]').change(function() {
+	    /* $('input:radio[name="rate_setting_from"]').change(function() {
 	    	$('.formgroup2').hide();
 	    	$('#type' + $(this).val()).show();
-	    });
+	    }); */
 	    var isDisc=${franchiseeList.isDiscApp};
 	    if(parseInt(isDisc)==1){
 	    	$('#disc_app_div').show();

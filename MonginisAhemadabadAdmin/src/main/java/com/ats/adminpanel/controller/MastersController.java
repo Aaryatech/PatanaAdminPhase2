@@ -971,15 +971,20 @@ public class MastersController {
 			for(int j=0;j<flavorListRes.size();j++)
 			{
 				System.err.println("spFlavourList.get(j)"+flavorListRes.get(j));
-				float rate=Float.parseFloat(request.getParameter("rate"+flavorListRes.get(j).getSpfId()));
-				float mrp=Float.parseFloat(request.getParameter("mrp"+flavorListRes.get(j).getSpfId()));
-                if(rate!=0 && mrp!=0) {
+				float rate=Float.parseFloat(request.getParameter("mrp1"+flavorListRes.get(j).getSpfId()));
+				float mrp1=Float.parseFloat(request.getParameter("mrp1"+flavorListRes.get(j).getSpfId()));
+				float mrp2=Float.parseFloat(request.getParameter("mrp2"+flavorListRes.get(j).getSpfId()));
+				float mrp3=Float.parseFloat(request.getParameter("mrp3"+flavorListRes.get(j).getSpfId()));
+
+                if(rate!=0 && mrp1!=0) {
 				 FlavourConf flConf=new FlavourConf();
-				 flConf.setFlavId(0);
+				 flConf.setSpFlavConfId(0);
 				 flConf.setSpId(spIdsList.get(i));
 				 flConf.setSpfId(flavorListRes.get(j).getSpfId());
 				 flConf.setRate(Math.round(rate));
-				 flConf.setMrp(Math.round(mrp));
+				 flConf.setMrp1(Math.round(mrp1));
+				 flConf.setMrp2(Math.round(mrp2));
+				 flConf.setMrp3(Math.round(mrp3));
 				 flConf.setSpType(flavorListRes.get(j).getSpType());
 				 flConf.setExVar1("-");
 				 flConf.setExInt1(0);
@@ -1026,14 +1031,18 @@ public class MastersController {
 	public @ResponseBody Info updateFlavourConf(HttpServletRequest request, HttpServletResponse response) {
 		Info info=new Info();
 		try {
-			int flavId=Integer.parseInt(request.getParameter("flavId"));
-		    float rate=Float.parseFloat(request.getParameter("rate"));
-		    float mrp=Float.parseFloat(request.getParameter("mrp"));
+			int spFlavConfId=Integer.parseInt(request.getParameter("spFlavConfId"));
+		    float rate=Float.parseFloat(request.getParameter("mrp1"));
+		    float mrp1=Float.parseFloat(request.getParameter("mrp1"));
+		    float mrp2=Float.parseFloat(request.getParameter("mrp2"));
+		    float mrp3=Float.parseFloat(request.getParameter("mrp3"));
 		    
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-			map.add("flavId", flavId);
+			map.add("spFlavConfId", spFlavConfId);
 			map.add("rate", rate);
-			map.add("mrp", mrp);
+			map.add("mrp1", mrp1);
+			map.add("mrp2", mrp2);
+			map.add("mrp3", mrp3);
 			RestTemplate restTemplate = new RestTemplate();
 			 info = restTemplate.postForObject(Constants.url + "/updateFlavourConf",map, Info.class);
 			} catch (Exception e) {
@@ -1041,14 +1050,14 @@ public class MastersController {
 		}
 		return info;
 	}
-	@RequestMapping(value = "/deleteFlavourConf/{flavId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/deleteFlavourConf/{spFlavConfId}", method = RequestMethod.GET)
 
-	public String deleteFlavourConf(@PathVariable("flavId") int flavId) {
+	public String deleteFlavourConf(@PathVariable("spFlavConfId") int spFlavConfId) {
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("flavId", flavId);
+			map.add("spFlavConfId", spFlavConfId);
 			Info info = restTemplate.postForObject(Constants.url + "/deleteFlavourConf", map, Info.class);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

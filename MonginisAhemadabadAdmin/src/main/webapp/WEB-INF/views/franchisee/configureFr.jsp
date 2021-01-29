@@ -11,7 +11,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<title>Configure Franchisee</title>
+<title>Configure Menu</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -208,7 +208,7 @@ select {
 											<label class="col-sm-3 col-lg-2 control-label">Menu</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												<select data-placeholder="Select Menu" name="menu"
-													class="form-control chosen" tabindex="-1" id="menu"
+													class="form-control chosen" onchange="getCatId()" tabindex="-1" id="menu"
 													data-rule-required="true">
 	                                        <!--      <optgroup label="All Menus">         -->                                             
 <option value="">Select Menu</option>
@@ -217,7 +217,7 @@ select {
 <c:forEach
 															items="${menuList}"
 															var="menu">
-															<option value="${menu.menuId}">${menu.menuTitle}</option>
+															<option id="menu-cat${menu.menuId}" value="${menu.menuId}" data-catid="${menu.mainCatId}">${menu.menuTitle}</option>
 
 														</c:forEach>
 												</select>
@@ -382,24 +382,17 @@ select {
 												</select>
 											</div>
 										</div>
-										<div class="form-group">
+										<div id="type1" class="form-group" style="display: none">
 											<label class="col-sm-3 col-lg-2 control-label">Rate Setting From</label>
 											<div class="col-sm-9 col-lg-10 controls">
-												<input type="radio" id="profi_per" name="rate_setting_from" value="0">Profit %
-												<input type="radio" checked id="rate_type" name="rate_setting_from" value="1">Rate Type
+												<input type="radio" id="profi_per" name="rate_setting_from" value="0">Master
+												<input type="radio" checked id="rate_type" name="rate_setting_from" value="1">Flavor Conf
 											</div>
 										</div>
 										
-										<div id="type0" class="formgroup2" style="display: none">
-											<label class="col-sm-3 col-lg-2 control-label">Profit %</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												
-												<input type="text" name="profit_per" id="profit_per"
-													class="form-control" value="0" required />
-										    </div>
-										</div>
 										
-										<div id="type1" class="formgroup2" style="display: none">
+										
+										<div id="type3" class="formgroup2">
 											<label class="col-sm-3 col-lg-2 control-label">Rate Type</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												<select data-placeholder="Select Rate Type" name="rateTypeValue"
@@ -407,14 +400,23 @@ select {
 													 id="rateTypeValue">
 													<optgroup label="Rate Type Applicable">
 														<option value=""></option>
-														<option selected value="1">Regular Rate</option>
-														<option value="2">Special Rate</option>
-														<option value="3">Local Rate</option>
+														<option selected value="1">Regular Rate (MRP 1)</option>
+														<option value="2">Special Rate (MRP 2)</option>
+														<option value="3">Local Rate (MRP 3)</option>
 													</optgroup>
 
 												</select>
 												
 											</div>
+										</div>
+										<div class="form-group"></div>
+										<div id="type0" class="formgroup2">
+											<label class="col-sm-3 col-lg-2 control-label">Profit %</label>
+											<div class="col-sm-9 col-lg-10 controls">
+												
+												<input type="text" name="profit_per" id="profit_per"
+													class="form-control" value="0" required />
+										    </div>
 										</div>
 										<div class="form-group"></div>
 										<div class="form-group">
@@ -509,13 +511,13 @@ jQuery('.numberOnly').keyup(function() {
 	
 	
 $(function() {
-	$('.formgroup2').hide();
-	$('#type1').show();
+	/* $('.formgroup2').hide();
+	$('#type1').show(); */
 	
-    $('input:radio[name="rate_setting_from"]').change(function() {
+    /* $('input:radio[name="rate_setting_from"]').change(function() {
     	$('.formgroup2').hide();
     	$('#type' + $(this).val()).show();
-    });
+    }); */
     
     $('input:radio[name="is_disc_app"]').change(function() {
     	$('.formgroup3').hide();
@@ -567,7 +569,7 @@ $(function() {
 </script>
 <script>
 $('#select_all').click(function() {
-	alert("alert");
+	//alert("alert");
     $('#items option').prop('selected', true);
     $('#items').chosen('destroy').val(["hola","mundo","cruel"]).chosen();
 });
@@ -579,7 +581,11 @@ $(document).ready(function() {
 	
     $('#menu').change(
             function() {
-            	
+            	$('#type1').hide();
+            	var catId = $("#menu-cat"+$(this).val()).data("catid");
+            if(parseInt(catId)==5){
+            	$('#type1').show();
+            }
                 $.getJSON('${findItemsByCatId}', {
                     menuId : $(this).val(),
                     ajax : 'true'
