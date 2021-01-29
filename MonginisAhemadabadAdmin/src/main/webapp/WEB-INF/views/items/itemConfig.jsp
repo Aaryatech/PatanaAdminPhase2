@@ -123,7 +123,7 @@
 
 														<div class="col-md-2">
 															<input type="submit" class="btn btn-primary"
-																value="Submit">
+																value="Search">
 
 														</div>
 													</div>
