@@ -593,7 +593,11 @@ function showChart(){
 					
 function genPdf()
 {
-	window.open('${pageContext.request.contextPath}/getSalesReportPdf');
+		var fromDate = $("#fromDate").val()
+		var toDate = $("#toDate").val()
+		var frStr = $("#selectFr").val()
+		
+	window.open('${pageContext.request.contextPath}/getSalesReportPdf/'+fromDate+'/'+toDate+'/'+frStr.join());
 	
 	}
 function exportToExcel()

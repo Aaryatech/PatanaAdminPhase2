@@ -45,6 +45,7 @@ import com.ats.adminpanel.commons.DateConvertor;
 import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.AllFrIdNameList;
 import com.ats.adminpanel.model.ExportToExcel;
+import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.Tax1Report;
 import com.ats.adminpanel.model.Tax2Report;
 import com.ats.adminpanel.model.reportv2.CrNoteRegItem;
@@ -264,294 +265,337 @@ public class ReportControllerV2 {
 	}
 
 	// postProductionPlanDetaillist
-	@RequestMapping(value = "/getSalesReportPdf", method = RequestMethod.GET)
-	public void showProdByOrderPdf(HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value = "/getSalesReportPdf/{fromDate}/{toDate}/{frStr}", method = RequestMethod.GET)
+	public ModelAndView showProdByOrderPdf(HttpServletRequest request, HttpServletResponse response, @PathVariable String fromDate, @PathVariable String toDate,
+			@PathVariable String frStr)
 			throws FileNotFoundException {
-
-		Document document = new Document(PageSize.A4);
-		document.setPageSize(PageSize.A4.rotate());
-		// ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-
-		System.out.println("time in Gen Bill PDF ==" + dateFormat.format(cal.getTime()));
-		String timeStamp = dateFormat.format(cal.getTime());
-		String FILE_PATH = Constants.REPORT_SAVE;
-		File file = new File(FILE_PATH);
-
-		PdfWriter writer = null;
-
-		FileOutputStream out = new FileOutputStream(FILE_PATH);
-
+		ModelAndView model = new ModelAndView("reports/sales/pdf/frSalesReportPdf");
 		try {
-			writer = PdfWriter.getInstance(document, out);
-		} catch (DocumentException e) {
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
-			e.printStackTrace();
-		}
+			RestTemplate restTemplate = new RestTemplate();
+			
+			if (frStr.contains("-1")) {
+				map.add("frIdList", -1);
 
-		PdfPTable table = new PdfPTable(9);
-		try {
-			table.setHeaderRows(1);
-			System.out.println("Inside PDF Table try");
-			table.setWidthPercentage(100);
-			table.setWidths(new float[] { 0.7f, 3.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f });
-			Font headFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL, BaseColor.BLACK);
-			Font headFont1 = new Font(FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.BLACK);
-			Font f = new Font(FontFamily.TIMES_ROMAN, 10.0f, Font.UNDERLINE, BaseColor.BLUE);
+			} else {
 
-			PdfPCell hcell;
-			hcell = new PdfPCell(new Phrase("Sr.No.", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Party Name", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Sales", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("GVN", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("NET Value", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("GRN", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("NET Value", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("IN Lakh", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Return%", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-			float totalSaleValue = 0.0f;
-			float totalGvnValue = 0.0f;
-			float totalNetVal1 = 0.0f;
-			float totalGrnValue = 0.0f;
-			float totalNetVal2 = 0.0f;
-			float totalInLac = 0.0f;
-			float totalRetPer = 0.0f;
-			int index = 0;
-			for (int j = 0; j < saleReportList.size(); j++) {
-
-				index++;
-				PdfPCell cell;
-
-				cell = new PdfPCell(new Phrase(String.valueOf(index), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-				table.addCell(cell);
-
-				float netVal1 = (saleReportList.get(j).getSaleValue()) - (saleReportList.get(j).getGvnValue());
-				float netVal2 = (netVal1) - (saleReportList.get(j).getGrnValue());
-				float inLac = (netVal2) / 100000;
-				float retPer = 0.0f;
-				if (saleReportList.get(j).getGrnValue() > 0) {
-					retPer = ((saleReportList.get(j).getGrnValue()) / (saleReportList.get(j).getSaleValue() / 100));
-				}
-
-				totalSaleValue = totalSaleValue + saleReportList.get(j).getSaleValue();
-				totalGvnValue = totalGvnValue + saleReportList.get(j).getGvnValue();
-				totalNetVal1 = totalNetVal1 + netVal1;
-				totalGrnValue = totalGrnValue + saleReportList.get(j).getGrnValue();
-				totalNetVal2 = totalNetVal2 + netVal2;
-				totalInLac = totalInLac + inLac;
-				// totalRetPer = totalRetPer + retPer;
-
-				cell = new PdfPCell(new Phrase(String.valueOf(saleReportList.get(j).getFrName()+" "+saleReportList.get(j).getFrCode()), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(roundUp(saleReportList.get(j).getSaleValue()) + "", headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(roundUp(saleReportList.get(j).getGvnValue()) + "", headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(netVal1)), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(saleReportList.get(j).getGrnValue())), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(netVal2)), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(inLac)), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(retPer)), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
+				map.add("frIdList", frStr);
 			}
+			
+			map.add("fromDate", DateConvertor.convertToYMD(fromDate));
 
-			PdfPCell cell;
+			map.add("toDate", DateConvertor.convertToYMD(toDate));
 
-			cell = new PdfPCell(new Phrase("Total", headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(cell);
+			SalesReport[] saleRepArray = restTemplate.postForObject(Constants.url + "getSalesReportV2", map,
+					SalesReport[].class);
+			saleReportList = new ArrayList<>(Arrays.asList(saleRepArray));
 
-			cell = new PdfPCell(new Phrase("", headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(cell);
-
-			double d = Double.parseDouble("" + totalSaleValue);
-			String strTotalSaleValue = String.format("%.2f", d);
-
-			cell = new PdfPCell(new Phrase("" + strTotalSaleValue, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			double d1 = Double.parseDouble("" + totalGvnValue);
-			String strTotalGvnValue = String.format("%.2f", d1);
-
-			cell = new PdfPCell(new Phrase("" + strTotalGvnValue, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			double d2 = Double.parseDouble("" + totalNetVal1);
-			String strTotalNetVal1 = String.format("%.2f", d2);
-
-			cell = new PdfPCell(new Phrase("" + strTotalNetVal1, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			double d3 = Double.parseDouble("" + totalGrnValue);
-			String strTotalGrnValue = String.format("%.2f", d3);
-
-			cell = new PdfPCell(new Phrase("" + strTotalGrnValue, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			double d4 = Double.parseDouble("" + totalNetVal2);
-			String strTotalNetVal2 = String.format("%.2f", d4);
-
-			cell = new PdfPCell(new Phrase("" + strTotalNetVal2, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			double d5 = Double.parseDouble("" + totalInLac);
-			String strTotalInLac = String.format("%.2f", d5);
-
-			cell = new PdfPCell(new Phrase("" + strTotalInLac, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			totalRetPer = (totalGrnValue * 100) / totalSaleValue;
-
-			double d6 = Double.parseDouble("" + totalRetPer);
-			String strTotalRetPer = String.format("%.2f", d6);
-
-			cell = new PdfPCell(new Phrase("" + strTotalRetPer, headFont1));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			table.addCell(cell);
-
-			document.open();
-
-			Paragraph heading = new Paragraph("Franchise Sales Report");
-			heading.setAlignment(Element.ALIGN_CENTER);
-			document.add(heading);
-
-			DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
-			String reportDate = DF.format(new Date());
-
-			document.add(new Paragraph("\n"));
-
-			document.add(table);
-
-			document.close();
-
-			if (file != null) {
-
-				String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-
-				if (mimeType == null) {
-
-					mimeType = "application/pdf";
-
-				}
-
-				response.setContentType(mimeType);
-
-				response.addHeader("content-disposition", String.format("inline; filename=\"%s\"", file.getName()));
-
-				// response.setHeader("Content-Disposition", String.format("attachment;
-				// filename=\"%s\"", file.getName()));
-
-				response.setContentLength((int) file.length());
-
-				InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-
-				try {
-					FileCopyUtils.copy(inputStream, response.getOutputStream());
-				} catch (IOException e) {
-					System.out.println("Excep in Opening a Pdf File");
-					e.printStackTrace();
-				}
-
-			}
-
-		} catch (DocumentException ex) {
-
-			System.out.println("Pdf Generation Error: Prod From Orders" + ex.getMessage());
-
-			ex.printStackTrace();
-
+			System.err.println("saleReportList " + saleReportList.toString());
+			
+		}catch (Exception e) {
+			// TODO: handle exception
 		}
+		
+		model.addObject("fromDate", fromDate);
+		model.addObject("toDate", toDate);
+		model.addObject("report", saleReportList);
+		
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		
+		map.add("stKey", "showPdfHead");
+		Setting allowHead = SalesReportController.isHeadAllow();		
+		if (allowHead.getSettingValue() == 1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
+		return model;
+
+//		Document document = new Document(PageSize.A4);
+//		document.setPageSize(PageSize.A4.rotate());
+//		// ByteArrayOutputStream out = new ByteArrayOutputStream();
+//
+//		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+//		Calendar cal = Calendar.getInstance();
+//
+//		System.out.println("time in Gen Bill PDF ==" + dateFormat.format(cal.getTime()));
+//		String timeStamp = dateFormat.format(cal.getTime());
+//		String FILE_PATH = Constants.REPORT_SAVE;
+//		File file = new File(FILE_PATH);
+//
+//		PdfWriter writer = null;
+//
+//		FileOutputStream out = new FileOutputStream(FILE_PATH);
+//
+//		try {
+//			writer = PdfWriter.getInstance(document, out);
+//		} catch (DocumentException e) {
+//
+//			e.printStackTrace();
+//		}
+//
+//		PdfPTable table = new PdfPTable(9);
+//		try {
+//			table.setHeaderRows(1);
+//			System.out.println("Inside PDF Table try");
+//			table.setWidthPercentage(100);
+//			table.setWidths(new float[] { 0.7f, 3.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f });
+//			Font headFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL, BaseColor.BLACK);
+//			Font headFont1 = new Font(FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.BLACK);
+//			Font f = new Font(FontFamily.TIMES_ROMAN, 10.0f, Font.UNDERLINE, BaseColor.BLUE);
+//
+//			PdfPCell hcell;
+//			hcell = new PdfPCell(new Phrase("Sr.No.", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Party Name", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Sales", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("GVN", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("NET Value", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("GRN", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("NET Value", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("IN Lakh", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Return%", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//			float totalSaleValue = 0.0f;
+//			float totalGvnValue = 0.0f;
+//			float totalNetVal1 = 0.0f;
+//			float totalGrnValue = 0.0f;
+//			float totalNetVal2 = 0.0f;
+//			float totalInLac = 0.0f;
+//			float totalRetPer = 0.0f;
+//			int index = 0;
+//			for (int j = 0; j < saleReportList.size(); j++) {
+//
+//				index++;
+//				PdfPCell cell;
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(index), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//				table.addCell(cell);
+//
+//				float netVal1 = (saleReportList.get(j).getSaleValue()) - (saleReportList.get(j).getGvnValue());
+//				float netVal2 = (netVal1) - (saleReportList.get(j).getGrnValue());
+//				float inLac = (netVal2) / 100000;
+//				float retPer = 0.0f;
+//				if (saleReportList.get(j).getGrnValue() > 0) {
+//					retPer = ((saleReportList.get(j).getGrnValue()) / (saleReportList.get(j).getSaleValue() / 100));
+//				}
+//
+//				totalSaleValue = totalSaleValue + saleReportList.get(j).getSaleValue();
+//				totalGvnValue = totalGvnValue + saleReportList.get(j).getGvnValue();
+//				totalNetVal1 = totalNetVal1 + netVal1;
+//				totalGrnValue = totalGrnValue + saleReportList.get(j).getGrnValue();
+//				totalNetVal2 = totalNetVal2 + netVal2;
+//				totalInLac = totalInLac + inLac;
+//				// totalRetPer = totalRetPer + retPer;
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(saleReportList.get(j).getFrName()+" "+saleReportList.get(j).getFrCode()), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(roundUp(saleReportList.get(j).getSaleValue()) + "", headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(roundUp(saleReportList.get(j).getGvnValue()) + "", headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(netVal1)), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(saleReportList.get(j).getGrnValue())), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(netVal2)), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(inLac)), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(roundUp(retPer)), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//			}
+//
+//			PdfPCell cell;
+//
+//			cell = new PdfPCell(new Phrase("Total", headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			table.addCell(cell);
+//
+//			cell = new PdfPCell(new Phrase("", headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			table.addCell(cell);
+//
+//			double d = Double.parseDouble("" + totalSaleValue);
+//			String strTotalSaleValue = String.format("%.2f", d);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalSaleValue, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			double d1 = Double.parseDouble("" + totalGvnValue);
+//			String strTotalGvnValue = String.format("%.2f", d1);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalGvnValue, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			double d2 = Double.parseDouble("" + totalNetVal1);
+//			String strTotalNetVal1 = String.format("%.2f", d2);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalNetVal1, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			double d3 = Double.parseDouble("" + totalGrnValue);
+//			String strTotalGrnValue = String.format("%.2f", d3);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalGrnValue, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			double d4 = Double.parseDouble("" + totalNetVal2);
+//			String strTotalNetVal2 = String.format("%.2f", d4);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalNetVal2, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			double d5 = Double.parseDouble("" + totalInLac);
+//			String strTotalInLac = String.format("%.2f", d5);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalInLac, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			totalRetPer = (totalGrnValue * 100) / totalSaleValue;
+//
+//			double d6 = Double.parseDouble("" + totalRetPer);
+//			String strTotalRetPer = String.format("%.2f", d6);
+//
+//			cell = new PdfPCell(new Phrase("" + strTotalRetPer, headFont1));
+//			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//			table.addCell(cell);
+//
+//			document.open();
+//
+//			Paragraph heading = new Paragraph("Franchise Sales Report");
+//			heading.setAlignment(Element.ALIGN_CENTER);
+//			document.add(heading);
+//
+//			DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
+//			String reportDate = DF.format(new Date());
+//
+//			document.add(new Paragraph("\n"));
+//
+//			document.add(table);
+//
+//			document.close();
+//
+//			if (file != null) {
+//
+//				String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+//
+//				if (mimeType == null) {
+//
+//					mimeType = "application/pdf";
+//
+//				}
+//
+//				response.setContentType(mimeType);
+//
+//				response.addHeader("content-disposition", String.format("inline; filename=\"%s\"", file.getName()));
+//
+//				// response.setHeader("Content-Disposition", String.format("attachment;
+//				// filename=\"%s\"", file.getName()));
+//
+//				response.setContentLength((int) file.length());
+//
+//				InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+//
+//				try {
+//					FileCopyUtils.copy(inputStream, response.getOutputStream());
+//				} catch (IOException e) {
+//					System.out.println("Excep in Opening a Pdf File");
+//					e.printStackTrace();
+//				}
+//
+//			}
+//
+//		} catch (DocumentException ex) {
+//
+//			System.out.println("Pdf Generation Error: Prod From Orders" + ex.getMessage());
+//
+//			ex.printStackTrace();
+//
+//		}
 	}
 
 	// getGstRegister

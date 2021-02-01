@@ -21,7 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/main.css">
 <style type="text/css">
 .bg-overlay {
-    background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url("${pageContext.request.contextPath}/resources/img/cake.jpg");
+    /* background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url("${pageContext.request.contextPath}/resources/img/cake.jpg"); */
    background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;

@@ -79,6 +79,7 @@ import com.ats.adminpanel.model.PDispatchReport;
 import com.ats.adminpanel.model.PDispatchReportList;
 import com.ats.adminpanel.model.POrder;
 import com.ats.adminpanel.model.Route;
+import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.SpFlavourSummaryDao;
 import com.ats.adminpanel.model.SpFlavourSummaryDaoResponse;
 import com.ats.adminpanel.model.SpKgSummaryDao;
@@ -934,19 +935,22 @@ public class SalesReportController {
 	public ModelAndView showSaleReportByDatePdf(@PathVariable String fDate, @PathVariable String tDate,
 			@PathVariable String selectedFr, @PathVariable String routeId, @PathVariable String selectedCat,
 			HttpServletRequest request, HttpServletResponse response) {
-
+		
 		ModelAndView model = new ModelAndView("reports/sales/pdf/billwisesalesbydatePdf");
 
 		List<SalesReportBillwise> saleList = new ArrayList<>();
 
 		boolean isAllFrSelected = false;
+
 		try {
 
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			RestTemplate restTemplate = new RestTemplate();
 			if (!routeId.equalsIgnoreCase("0")) {
 
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+				map = new LinkedMultiValueMap<String, Object>();
 
-				RestTemplate restTemplate = new RestTemplate();
+				restTemplate = new RestTemplate();
 
 				map.add("routeId", routeId);
 
@@ -974,8 +978,8 @@ public class SalesReportController {
 				isAllFrSelected = true;
 			}
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-			RestTemplate restTemplate = new RestTemplate();
+			map = new LinkedMultiValueMap<String, Object>();
+			restTemplate = new RestTemplate();
 
 			if (isAllFrSelected) {
 
@@ -1010,22 +1014,25 @@ public class SalesReportController {
 				saleListForPdf = new ArrayList<>();
 				saleListForPdf = saleList;
 				System.out.println("sales List Bill Wise " + saleList.toString());
-
 			}
 
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 
 		model.addObject("fromDate", fDate);
-
 		model.addObject("toDate", tDate);
-		model.addObject("FACTORYNAME", Constants.FACTORYNAME);
-		model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
 		model.addObject("report", saleList);
+		
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		
+		map.add("stKey", "showPdfHead");
+		Setting allowHead = isHeadAllow();		
+		if (allowHead.getSettingValue() == 1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
 
 		return model;
 	}
@@ -3173,7 +3180,7 @@ public class SalesReportController {
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 			RestTemplate restTemplate = new RestTemplate();
-			System.out.println(selectedFr+" "+fromDate+" "+toDate);
+			System.out.println(selectedFr + " " + fromDate + " " + toDate);
 			map.add("frIdList", selectedFr);
 			map.add("fromDate", fromDate);
 			map.add("toDate", toDate);
@@ -3182,8 +3189,8 @@ public class SalesReportController {
 			};
 			ResponseEntity<List<SalesReportRoyaltyFr>> responseEntity = restTemplate.exchange(
 					Constants.url + "getFrSalesReportRoyalty", HttpMethod.POST, new HttpEntity<>(map), typeRef);
-			//getSalesReportRoyaltyFr
-			
+			// getSalesReportRoyaltyFr
+
 			royaltyFrList = new ArrayList<>();
 			royaltyFrList = responseEntity.getBody();
 
@@ -3232,7 +3239,7 @@ public class SalesReportController {
 			rowData = new ArrayList<String>();
 
 			rowData.add("" + i + 1);
-			rowData.add(royaltyFrList.get(i).getFrName()+" "+royaltyFrList.get(i).getFrCode());
+			rowData.add(royaltyFrList.get(i).getFrName() + " " + royaltyFrList.get(i).getFrCode());
 			rowData.add(royaltyFrList.get(i).getFrCity());
 			rowData.add("" + royaltyFrList.get(i).gettBillTaxableAmt());
 			rowData.add("" + royaltyFrList.get(i).gettGrnTaxableAmt());
@@ -4608,6 +4615,7 @@ public class SalesReportController {
 	}
 
 	List<PDispatchReport> pDispatchReportList = null;
+
 	@RequestMapping(value = "/getPDispatchReportByRoute", method = RequestMethod.GET)
 	public @ResponseBody PDispatchReportList getPDispatchReportByRoute(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -4618,11 +4626,11 @@ public class SalesReportController {
 			System.out.println("Inside get Dispatch Report");
 			String billDate = request.getParameter("bill_date");
 			String routeIds = request.getParameter("route_id");
-			
+
 			routeIds = routeIds.substring(1, routeIds.length() - 1);
 			routeIds = routeIds.replaceAll("\"", "");
 			System.err.println(routeIds);
-			
+
 			String selectedCat = request.getParameter("cat_id_list");
 
 			boolean isAllCatSelected = false;
@@ -4777,8 +4785,8 @@ public class SalesReportController {
 			e.printStackTrace();
 
 		}
-		
-		System.out.println("Dsip -------------- "+dispatchReports);
+
+		System.out.println("Dsip -------------- " + dispatchReports);
 
 		return dispatchReports;
 
@@ -5277,11 +5285,11 @@ public class SalesReportController {
 
 		List<PDispatchReport> dispatchReportList = new ArrayList<PDispatchReport>();
 		PDispatchReportList dispatchReports = new PDispatchReportList();
-		
+
 		List<SubCategory> subCatExList = new ArrayList<SubCategory>();
-		
+
 		List<Item> itemExList = new ArrayList<Item>();
-		
+
 		List<FrNameIdByRouteId> frNameIdByRouteIdList = new ArrayList<FrNameIdByRouteId>();
 		try {
 			String convertedDate = "";
@@ -5424,10 +5432,10 @@ public class SalesReportController {
 				 * dispachReport.setItemId(responseEntity1.getBody().get(j).getId());
 				 * dispachReport.setBillQty(0); dispatchReportList.add(dispachReport); } } } }
 				 */
-				
+
 				subCatExList = subCatAList;
 				itemExList = responseEntity1.getBody();
-				
+
 				model.addObject("dispatchReportList", dispatchReportList);
 				model.addObject("frList", frNameIdByRouteIdList);
 				model.addObject("itemList", responseEntity1.getBody());
@@ -5463,31 +5471,32 @@ public class SalesReportController {
 				ParameterizedTypeReference<List<SubCategory>> typeRef2 = new ParameterizedTypeReference<List<SubCategory>>() {
 				};
 
-				ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate.exchange(
-						Constants.url + "getSubCatList", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+				ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate
+						.exchange(Constants.url + "getSubCatList", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
 
 				subCatExList = responseEntity2.getBody();
 				itemExList = responseEntity1.getBody();
-				
+
 				model.addObject("dispatchReportList", dispatchReportList);
 				model.addObject("frList", frNameIdByRouteIdList);
 				model.addObject("itemList", responseEntity1.getBody());
 				model.addObject("subCatList", responseEntity2.getBody());
 			}
-			
+
 			map = new LinkedMultiValueMap<String, Object>();
 			map.add("productionDate", billDate);
 			map.add("frId", selectedFr);
-			DispatchSpCake[] spCakeArr = restTemplate.postForObject(Constants.url + "getPDispatchSpCake", map, DispatchSpCake[].class);
-			List<DispatchSpCake> spCakeList = new ArrayList<DispatchSpCake>(Arrays.asList(spCakeArr));			
-			
+			DispatchSpCake[] spCakeArr = restTemplate.postForObject(Constants.url + "getPDispatchSpCake", map,
+					DispatchSpCake[].class);
+			List<DispatchSpCake> spCakeList = new ArrayList<DispatchSpCake>(Arrays.asList(spCakeArr));
+
 			model.addObject("spCakeList", spCakeList);
-			
+
 			model.addObject("routeName", routeName);
 			model.addObject("convertedDate", convertedDate);
 			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
 			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
-			
+
 //			// exportToExcel
 //			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 //
@@ -5535,11 +5544,11 @@ public class SalesReportController {
 
 		List<PDispatchReport> dispatchReportList = new ArrayList<PDispatchReport>();
 		PDispatchReportList dispatchReports = new PDispatchReportList();
-		
+
 		List<Item> itemExList = new ArrayList<Item>();
 		List<FranchiseForDispatch> frNameIdByRouteIdList = new ArrayList<>();
 		List<SubCategory> subCatExlList = new ArrayList<SubCategory>();
-		
+
 		try {
 			String convertedDate = "";
 			try {
@@ -5723,26 +5732,27 @@ public class SalesReportController {
 				model.addObject("frList", frNameIdByRouteIdList);
 				model.addObject("itemList", responseEntity1.getBody());
 				model.addObject("subCatList", responseEntity2.getBody());
-				
-				subCatExlList =  responseEntity2.getBody();
+
+				subCatExlList = responseEntity2.getBody();
 				itemExList = responseEntity1.getBody();
 			}
-			
+
 			map = new LinkedMultiValueMap<String, Object>();
 			map.add("productionDate", billDate);
 			map.add("frId", selectedFr);
-			DispatchSpCake[] spCakeArr = restTemplate.postForObject(Constants.url + "getPDispatchSpCake", map, DispatchSpCake[].class);
+			DispatchSpCake[] spCakeArr = restTemplate.postForObject(Constants.url + "getPDispatchSpCake", map,
+					DispatchSpCake[].class);
 			List<DispatchSpCake> spCakeList = new ArrayList<DispatchSpCake>(Arrays.asList(spCakeArr));
-			
-			System.out.println("Dispatch SpCake List = "+spCakeList);			
+
+			System.out.println("Dispatch SpCake List = " + spCakeList);
 			model.addObject("spCakeList", spCakeList);
-			
+
 			model.addObject("routeName", routeName);
 			model.addObject("frId", frId);
 			model.addObject("convertedDate", convertedDate);
 			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
 			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
-			
+
 			// exportToExcel
 //			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 //			HttpSession  session = request.getSession();
@@ -5844,7 +5854,7 @@ public class SalesReportController {
 		return model;
 
 	}
-	
+
 	@RequestMapping(value = "pdf/getDispatchPReportPdfForDispatch/{billDate}/{routeId}/{selectedCat}/{frId}", method = RequestMethod.GET)
 	public ModelAndView getDispatchPReportPdfForDispatch(@PathVariable String billDate, @PathVariable String routeId,
 			@PathVariable String selectedCat, @PathVariable int frId, HttpServletRequest request,
@@ -6276,8 +6286,6 @@ public class SalesReportController {
 //		return model;
 //
 //	}
-
-	
 
 	// -------------------------------------------------------------------------------------------
 
@@ -6911,10 +6919,10 @@ public class SalesReportController {
 	public ModelAndView showMonthlySalesQtyWiseReport(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = null;
-		
+
 		model = new ModelAndView("reports/sales/monthlysalesqtyreport");
 		RestTemplate restTemplate = new RestTemplate();
-		
+
 		String[] yrs;
 
 		try {
@@ -7051,9 +7059,9 @@ public class SalesReportController {
 				exportToExcelList.add(expoExcel);
 
 				HttpSession session = request.getSession();
-				//session.setAttribute("exportExcelList", exportToExcelList);
-				//session.setAttribute("excelName", "MonthlySalesReturnQtyReport");
-				
+				// session.setAttribute("exportExcelList", exportToExcelList);
+				// session.setAttribute("excelName", "MonthlySalesReturnQtyReport");
+
 				session.setAttribute("exportExcelListNew", exportToExcelList);
 				session.setAttribute("excelNameNew", "Monthly_Sales_Return_Qty_Report");
 				session.setAttribute("reportNameNew", "Monthly Sales Return Qty Report");
@@ -7078,7 +7086,7 @@ public class SalesReportController {
 
 		model = new ModelAndView("reports/sales/monthwisesalespercentage");
 		RestTemplate restTemplate = new RestTemplate();
-		String[] yrs ;
+		String[] yrs;
 		try {
 			String year = request.getParameter("year");
 
@@ -7197,18 +7205,15 @@ public class SalesReportController {
 
 				System.err.println("exportToExcelList" + exportToExcelList.toString());
 				HttpSession session = request.getSession();
-				//session.setAttribute("exportExcelList", exportToExcelList);
-				//session.setAttribute("excelName", "MonthlySalesPerContrReport");
-				
+				// session.setAttribute("exportExcelList", exportToExcelList);
+				// session.setAttribute("excelName", "MonthlySalesPerContrReport");
+
 				session.setAttribute("exportExcelListNew", exportToExcelList);
 				session.setAttribute("excelNameNew", "Sub_Category_wise_Contribution_Report");
 				session.setAttribute("reportNameNew", "Sub Category wise Contribution Report");
 				session.setAttribute("searchByNew", "From : " + yrs[0] + "  To  " + yrs[1] + " ");
 				session.setAttribute("mergeUpto1", "$A$1:$Z$1");
 				session.setAttribute("mergeUpto2", "$A$2:$Z$2");
-
-				
-				
 
 			}
 		} catch (Exception e) {
@@ -7223,7 +7228,7 @@ public class SalesReportController {
 	public ModelAndView showMonthlySalesValueWiseReport(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = null;
-		
+
 		model = new ModelAndView("reports/sales/monthwisesalesreturnvalue");
 		RestTemplate restTemplate = new RestTemplate();
 		String[] yrs;
@@ -7360,11 +7365,11 @@ public class SalesReportController {
 				expoExcel.setRowData(rowData);
 				exportToExcelList.add(expoExcel);
 				System.err.println("exportToExcelList" + exportToExcelList.toString());
-				
+
 				HttpSession session = request.getSession();
-				//session.setAttribute("exportExcelList", exportToExcelList);
-				//session.setAttribute("excelName", "MonthlySalesReturnValueWiseReport");
-				
+				// session.setAttribute("exportExcelList", exportToExcelList);
+				// session.setAttribute("excelName", "MonthlySalesReturnValueWiseReport");
+
 				session.setAttribute("exportExcelListNew", exportToExcelList);
 				session.setAttribute("excelNameNew", "Monthly_Sales_Return_Value_Wise_Report");
 				session.setAttribute("reportNameNew", "Monthly Sales Return Value Wise Report");
@@ -7387,7 +7392,7 @@ public class SalesReportController {
 	public ModelAndView showKgWiseReport(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = null;
-		
+
 		model = new ModelAndView("reports/kgWiseReport");
 
 		// Constants.mainAct =2;
@@ -7755,14 +7760,14 @@ public class SalesReportController {
 			try {
 
 				Dimension landscapeA4 = pd4ml.changePageOrientation(PD4Constants.A4);
-				pd4ml.setPageSize(landscapeA4);
+				// pd4ml.setPageSize(landscapeA4);
 				pd4ml.enableSmartTableBreaks(true);
 				PD4PageMark footer = new PD4PageMark();
 
 				footer.setPageNumberTemplate("Page $[page] of $[total]");
 				footer.setPageNumberAlignment(PD4PageMark.RIGHT_ALIGN);
-				footer.setFontSize(10);
-				footer.setAreaHeight(20);
+				footer.setFontSize(8);
+				footer.setAreaHeight(15);
 
 				pd4ml.setPageFooter(footer);
 
@@ -8044,4 +8049,19 @@ public class SalesReportController {
 		return spFlavourSummaryDaoResponse;
 	}
 
+	public static  Setting isHeadAllow() {
+		Setting allowHead = new Setting();
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			RestTemplate restTemplate = new RestTemplate();
+			map.add("stKey", "showPdfHead");
+			allowHead = restTemplate.postForObject(Constants.url + "getSettingValByKey", map, Setting.class);
+		}catch (Exception e) {
+			System.out.println("Exception in isHeadAllow()"+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return allowHead;
+	
+}
 }

@@ -23,21 +23,26 @@
 	border-collapse: collapse;
 	font-size: 10;
 	width:100%;
-page-break-inside: auto !important 
-
+	page-break-inside: auto !important; 
+	
 } 
 p  {
     color: black;
     font-family: arial;
-    font-size: 60%;
+    font-size: 80%;
 	margin-top: 0;
+	margin-bottom: 6px;
 	padding: 0;
-
+	font-weight: bold;
 }
+
 h6  {
     color: black;
     font-family: arial;
     font-size: 80%;
+}
+h5{
+	margin-bottom: 6px;
 }
 
 th {
@@ -49,10 +54,9 @@ th {
 
 </head>
 <body onload="myFunction()">
-<h3 align="center">${FACTORYNAME}</h3>
-<p align="center">${FACTORYADDRESS}</p>
+<p align="center">${FACTORYNAME} <br> ${FACTORYADDRESS}</p>
 
-<div align="center"> <h5> Bill-wise Report &nbsp;&nbsp;&nbsp;&nbsp; From &nbsp; ${fromDate}  &nbsp;To &nbsp; ${toDate}</h5></div>
+<div align="center"> <h5> Bill-wise Report <br> Dates : ${fromDate} ,${toDate}</h5></div>
 	<table  align="center" border="1" cellspacing="0" cellpadding="1" 
 		id="table_grid" class="table table-bordered">
 		<thead>
