@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.zefer.pd4ml.PD4Constants;
@@ -718,8 +719,12 @@ public class BillController {
 					map.add("menuId", selectedMenu);
 					map.add("delDate", selectedDate);
 
+					try {
 					generateBillList = restTemplate.postForObject("" + Constants.url + "generateBill", map,
 							GenerateBillList.class);
+					}catch (HttpClientErrorException e) {
+						System.err.println("Admin generateBill Mapping call" +e.getResponseBodyAsString());
+					}
 					System.out.println("generate bill list " + generateBillList.toString());
 
 					System.out.println("g bill first size " + generateBillList.getGenerateBills().size());

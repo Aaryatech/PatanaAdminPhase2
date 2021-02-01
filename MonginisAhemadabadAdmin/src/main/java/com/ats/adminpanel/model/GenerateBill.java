@@ -60,6 +60,16 @@ public class GenerateBill {
 	
 	private float cessPer;//new1
 
+	String spDeliveryPlace;
+	
+	
+	public String getSpDeliveryPlace() {
+		return spDeliveryPlace;
+	}
+
+	public void setSpDeliveryPlace(String spDeliveryPlace) {
+		this.spDeliveryPlace = spDeliveryPlace;
+	}
 
 	public float getCessPer() {
 		return cessPer;
@@ -289,7 +299,7 @@ public class GenerateBill {
 				+ itemTax1 + ", itemTax2=" + itemTax2 + ", itemTax3=" + itemTax3 + ", grnType=" + grnType
 				+ ", itemShelfLife=" + itemShelfLife + ", isSameState=" + isSameState + ", deliveryDate=" + deliveryDate
 				+ ", partyName=" + partyName + ", partyGstin=" + partyGstin + ", partyAddress=" + partyAddress
-				+ ", hsnCode=" + hsnCode + ", cessPer=" + cessPer + "]";
+				+ ", hsnCode=" + hsnCode + ", cessPer=" + cessPer + ", spDeliveryPlace=" + spDeliveryPlace + "]";
 	}
 
 	

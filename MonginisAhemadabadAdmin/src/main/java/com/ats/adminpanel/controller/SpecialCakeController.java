@@ -677,7 +677,13 @@ public class SpecialCakeController {
 		try {
 			map = new LinkedMultiValueMap<String, Object>();
 
-			map.add("spfId", specialCake.getErpLinkcode());
+			map.add("spfId",specialCake.getErpLinkcode());
+			/*
+			 * List<Integer> numbers =
+			 * Arrays.asList(specialCake.getErpLinkcode().split(","));
+			 * map.add("spfId",numbers);
+			 */
+			
 			List<Flavour> flavoursListSelected = restTemplate.postForObject(Constants.url + "getFlavoursBySpfIdIn", map,
 					List.class);
 			model.addObject("flavoursListSelected", flavoursListSelected);
