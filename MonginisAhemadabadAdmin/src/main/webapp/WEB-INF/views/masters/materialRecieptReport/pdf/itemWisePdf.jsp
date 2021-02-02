@@ -55,7 +55,7 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 <body onload="myFunction()">
 <p align="center">${FACTORYNAME} <br> ${FACTORYADDRESS}</p>
 
-<div align="center"> <h5>Purchase Report (Item wise )<br> Dates : ${fromDate}, ${toDate}</h5></div>
+<div align="center"> <h5>Purchase Report (Item wise)<br> Dates : ${fromDate}, ${toDate}</h5></div>
 
 <table  align="center" border="1" cellspacing="0" cellpadding="1" 
 		id="table_grid" class="table table-bordered">

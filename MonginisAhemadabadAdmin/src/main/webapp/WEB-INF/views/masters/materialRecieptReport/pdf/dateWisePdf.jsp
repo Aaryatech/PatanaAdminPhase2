@@ -53,7 +53,7 @@ th {
 <body onload="myFunction()">
 <p align="center">${FACTORYNAME} <br> ${FACTORYADDRESS}</p>
 
-<div align="center"> <h5>Purchase Report (Date wise )<br> Dates : ${from_date}, ${to_date}</h5></div>
+<div align="center"> <h5>Purchase Report (Date wise)<br> Dates : ${from_date}, ${to_date}</h5></div>
 
 <table  align="center" border="1" cellspacing="0" cellpadding="1" 
 		id="table_grid" class="table table-bordered">
