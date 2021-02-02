@@ -422,12 +422,12 @@
 
 							},
 							function(data) {
-
-								alert(data);
+								
 								if (data == "") {
 									alert("No records found !!");
 
 								}
+								$('#loader').hide();
 								var i = 0;
 
 								google.charts.load('current', {
