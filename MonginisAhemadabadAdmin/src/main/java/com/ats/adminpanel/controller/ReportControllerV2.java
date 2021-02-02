@@ -265,7 +265,7 @@ public class ReportControllerV2 {
 	}
 
 	// postProductionPlanDetaillist
-	@RequestMapping(value = "/getSalesReportPdf/{fromDate}/{toDate}/{frStr}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getSalesReportPdf/{fromDate}/{toDate}/{frStr}", method = RequestMethod.GET)
 	public ModelAndView showProdByOrderPdf(HttpServletRequest request, HttpServletResponse response, @PathVariable String fromDate, @PathVariable String toDate,
 			@PathVariable String frStr)
 			throws FileNotFoundException {

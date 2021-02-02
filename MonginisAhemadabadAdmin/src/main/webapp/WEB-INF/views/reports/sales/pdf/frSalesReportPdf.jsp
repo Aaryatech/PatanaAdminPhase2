@@ -83,15 +83,23 @@ th {
 				<c:set var="ttlNetValue1" value="${0}"/>
 				<c:set var="ttlNetValue2" value="${0}"/>
 				<c:set var="ttlInLac" value="${0}"/>
-				<c:set var="ttlRetPer" value="${0}"/>
-				<c:set var="calretPer" value="${0}"/>
+				
+				<c:set var="calFinlRate" value="${0}"/>
+				<c:set var="ttlFinlRate" value="${0}"/>
+				
 			<c:forEach items="${report}" var="report" varStatus="count">
 			
+			<c:set var="ttlRetPer" value="${0}"/>
+				<c:set var="calretPer" value="${0}"/>
+				
 				<c:set var="netValue1" value="${report.saleValue - report.gvnValue}"/>
 				<c:set var="netValue2" value="${netValue1 - report.grnValue}"/>
 				<c:set var="inLac" value="${netValue2/100000}"/>
-				<c:set var="calretPer" value="${report.grnValue/report.saleValue}"/>
-				<c:set var="retPer" value="${calretPer/100}"/>
+				
+				<c:if test="${report.grnValue>0}">
+					<c:set var="calretPer" value="${report.saleValue/100}"/>
+					<c:set var="retPer" value="${report.grnValue/calretPer}"/>
+				</c:if>
 				<tr>
 					<td width="0" ><c:out value="${count.index+1}" /></td>
 					<td><c:out value="${report.frName} ${report.frCode}" /></td>
@@ -118,8 +126,8 @@ th {
 					<c:set var="ttlNetValue1" value="${ttlNetValue1+netValue1}"/>
 					<c:set var="ttlNetValue2" value="${ttlNetValue2+netValue2}"/>
 					<c:set var="ttlInLac" value="${ttlInLac+inLac}"/>
-					<c:set var="ttlRetPer" value="${ttlRetPer+retPer}"/>
-					
+					<c:set var="ttlRetPer" value="${ttlSales/100}"/>
+					<c:set var="ttlFinlRate" value="${ttlGrn/ttlRetPer}"/>
 					
 					<%-- <c:set var="taxAmount" value="${taxAmount + report.taxableAmt}" />
 					
@@ -147,12 +155,16 @@ th {
 					<td width="100" align="right"><b><fmt:formatNumber type="number"
 								maxFractionDigits="2"  minFractionDigits="2"  value="${ttlInLac}" /></b></td>
 					<td width="100" align="right"><b><fmt:formatNumber type="number"
-								maxFractionDigits="2"  minFractionDigits="2"  value="${ttlRetPer}" /></b></td>
+								maxFractionDigits="2"  minFractionDigits="2"  value="${ttlFinlRate}" /></b></td>
 				</tr>
 		</tbody>
 	</table>
-	
-
+	<br><br>
+<div class="footer_btm" style="display: inline-block; width: 100%; text-align: center; position: absolute; bottom:0; margin: 20px 0 0 0;">
+	<img alt="" src="${pageContext.request.contextPath}/resources/img/mongi.png" height="20px;" style="float: left; vertical-align: middle;">
+	<span style="display: inline-block; float:left; text-align: center; width: 70%; vertical-align: middle; font-size: 12px;  ">******</span>
+	<img alt="" src="${pageContext.request.contextPath}/resources/img/powerd_logo.png" height="10px;" style="float: right; vertical-align: top;">
+	</div>
 	<!-- END Main Content -->
 
 </body>

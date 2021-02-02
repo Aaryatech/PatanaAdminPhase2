@@ -30,10 +30,16 @@ page-break-inside: auto !important
 p  {
     color: black;
     font-family: arial;
-    font-size: 60%;
+    font-size: 80%;
 	margin-top: 0;
+	margin-bottom: 6px;
 	padding: 0;
+	font-weight: bold;
+}
 
+
+h5{
+	margin-bottom: 6px;
 }
 h6  {
     color: black;
@@ -49,20 +55,40 @@ th {
 </style>
 </head>
 <body onload="myFunction()">
-	<h4 align="center">${FACTORYNAME}</h4>
-	<p align="center">${FACTORYADDRESS}</p>
+	<p align="center">${FACTORYNAME} <br> ${FACTORYADDRESS}</p>
 	<div align="center">
-		<h5>Royalty Consolidated Report (Category/Item wise)
-			&nbsp;&nbsp;&nbsp;&nbsp; From &nbsp; ${fromDate} &nbsp;To &nbsp;
-			${toDate}</h5>
+		<h5>Sales Royalty Report Consolidated by Category
+			<br>
+		 Dates : ${fromDate}, ${toDate}
+		 
+		 <br>
+		 
+			By : 
+			<c:choose>
+				<c:when test="${getBy==1}">
+		Taxable Amount
+		</c:when>
+				<c:when test="${getBy==2}">
+		Grand Total
+		</c:when>
+			</c:choose>
+
+			&nbsp;&nbsp;and&nbsp;&nbsp;
+
+			<c:choose>
+				<c:when test="${type==1}">
+			GRN
+			</c:when>
+				<c:when test="${type==2}">
+			CRN
+			</c:when>
+			</c:choose>
+		</h5>
 	</div>
 
-	<div align="center">
-		<h5>Franchisee :- &nbsp;&nbsp;&nbsp;&nbsp; ${fr}</h5>
-	</div>
+	
 
-
-	<div align="center">
+	<%-- <div align="center">
 		<h5>
 			By :- &nbsp;&nbsp;&nbsp;&nbsp;
 			<c:choose>
@@ -85,7 +111,7 @@ th {
 			</c:when>
 			</c:choose>
 		</h5>
-	</div>
+	</div> --%>
 
 	<table align="center" border="1" cellspacing="0" cellpadding="1"
 		id="table_grid" class="table table-bordered">
@@ -544,7 +570,12 @@ th {
 		</tbody>
 	</table>
 
-
+<br>
+<div class="footer_btm" style="display: inline-block; width: 100%; text-align: center; position: absolute; bottom:0; margin: 20px 0 0 0;">
+	<img alt="" src="${pageContext.request.contextPath}/resources/img/mongi.png" height="20px;" style="float: left; vertical-align: middle;">
+	<span style="display: inline-block; float:left; text-align: center; width: 70%; vertical-align: middle; font-size: 12px;  ">******</span>
+	<img alt="" src="${pageContext.request.contextPath}/resources/img/powerd_logo.png" height="10px;" style="float: right; vertical-align: top;">
+	</div>
 	<!-- END Main Content -->
 
 </body>

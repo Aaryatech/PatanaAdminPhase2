@@ -597,7 +597,7 @@ function genPdf()
 		var toDate = $("#toDate").val()
 		var frStr = $("#selectFr").val()
 		
-	window.open('${pageContext.request.contextPath}/getSalesReportPdf/'+fromDate+'/'+toDate+'/'+frStr.join());
+	window.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/getSalesReportPdf/'+fromDate+'/'+toDate+'/'+frStr.join());
 	
 	}
 function exportToExcel()

@@ -2028,8 +2028,11 @@ public class SalesReportController {
 		model.addObject("fromDate", fromDate);
 
 		model.addObject("toDate", toDate);
-		model.addObject("FACTORYNAME", Constants.FACTORYNAME);
-		model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		Setting showHead = isHeadAllow();
+		if(showHead.getSettingValue()==1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
 		model.addObject("report", saleList);
 		return model;
 	}
@@ -2569,10 +2572,14 @@ public class SalesReportController {
 		}
 
 		model.addObject("fromDate", fromDate);
-
 		model.addObject("toDate", toDate);
-		model.addObject("FACTORYNAME", Constants.FACTORYNAME);
-		model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		
+		Setting showHead = isHeadAllow();
+		if(showHead.getSettingValue()==1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
+		
 		model.addObject("report", saleList);
 		return model;
 	}
@@ -3396,11 +3403,14 @@ public class SalesReportController {
 				getRoyPer());
 
 		model.addObject("fromDate", fromDate);
-		model.addObject("FACTORYNAME", Constants.FACTORYNAME);
-		model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
 		model.addObject("toDate", toDate);
-
 		model.addObject("report", staticRoyaltyFrList);
+		
+		Setting showHead = isHeadAllow();
+		if(showHead.getSettingValue()==1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}	
 
 		return model;
 	}
@@ -3761,8 +3771,11 @@ public class SalesReportController {
 		model.addObject("fromDate", fromDate);
 
 		model.addObject("toDate", toDate);
-		model.addObject("FACTORYNAME", Constants.FACTORYNAME);
-		model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		Setting showHead = isHeadAllow();
+		if(showHead.getSettingValue()==1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
 		model.addObject("report", staticSaleListItemWise);
 
 		return model;
@@ -6894,12 +6907,17 @@ public class SalesReportController {
 				model.addObject("royaltyList", royaltyBean);
 				model.addObject("fromDate", fromDate);
 				model.addObject("toDate", toDate);
-				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
-				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
 				model.addObject("royPer", getRoyPer());
-
 				model.addObject("getBy", getBy);
 				model.addObject("type", type);
+				
+				
+				Setting showHead = isHeadAllow();
+				if(showHead.getSettingValue()==1) {
+					model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+					model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+				}
+
 
 			}
 		} catch (
@@ -7758,13 +7776,17 @@ public class SalesReportController {
 			PD4ML pd4ml = new PD4ML();
 
 			try {
-
+				SimpleDateFormat pdfSdf = new SimpleDateFormat("dd-MM-yyyy");
+				Date pdfDate = new Date();
+				
 				Dimension landscapeA4 = pd4ml.changePageOrientation(PD4Constants.A4);
 				// pd4ml.setPageSize(landscapeA4);
 				pd4ml.enableSmartTableBreaks(true);
 				PD4PageMark footer = new PD4PageMark();
 
 				footer.setPageNumberTemplate("Page $[page] of $[total]");
+				footer.setTitleTemplate(pdfSdf.format(pdfDate));
+				footer.setTitleAlignment(PD4PageMark.CENTER_ALIGN);
 				footer.setPageNumberAlignment(PD4PageMark.RIGHT_ALIGN);
 				footer.setFontSize(8);
 				footer.setAreaHeight(15);
