@@ -59,7 +59,7 @@ th {
 
 	<div align="center">
 		<h5>GRN GVN Report (Month Wise) <br>
-		Dates : ${fromDate}, ${toDate} <br>
+		Dates : ${fromDate}, ${toDate}, &nbsp;
 		By : ${isGrn == 1 ? 'GRN' : isGrn == 0 ? 'GVN' : 'All'}</h5>
 	</div>
 	<table align="center" border="1" cellspacing="0" cellpadding="1"

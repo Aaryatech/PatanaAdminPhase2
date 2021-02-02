@@ -59,7 +59,7 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 
 	<div align="center">
 		<h5>GRN GVN Report (Franchise Wise) <br> 
-		Dates : ${fromDate}, ${toDate}  <br>  By : ${isGrn==1 ? 'GRN' : isGrn==0 ? 'GVN' : 'All'}</h5>
+		Dates : ${fromDate}, ${toDate}, &nbsp; By : ${isGrn==1 ? 'GRN' : isGrn==0 ? 'GVN' : 'All'}</h5>
 	</div>
 	<table align="center" border="1" cellspacing="0" cellpadding="1"
 		id="table_grid" class="table table-bordered">
