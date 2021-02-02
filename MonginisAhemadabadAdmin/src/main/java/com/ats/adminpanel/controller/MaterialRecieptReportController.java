@@ -36,6 +36,7 @@ import org.zefer.pd4ml.PD4PageMark;
 import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.commons.DateConvertor;
 import com.ats.adminpanel.model.ExportToExcel;
+import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.RawMaterial.GetRawMaterialDetailList; 
 import com.ats.adminpanel.model.materialreceipt.Supplist;
 import com.ats.adminpanel.model.materialrecreport.GetMaterialRecieptReportBillWise;
@@ -260,6 +261,13 @@ List<ExportToExcel> exportToExcelList=new ArrayList<ExportToExcel>();
 			model.addObject("staticlist", materialRecieptBillWiseReport);
 			model.addObject("fromDate", from_date);
 			model.addObject("toDate", to_date);
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
+			
 			System.out.println("billWisePdf" + materialRecieptBillWiseReport);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -480,6 +488,12 @@ List<ExportToExcel> exportToExcelList=new ArrayList<ExportToExcel>();
 			model.addObject("from_date", from_date);
 			model.addObject("to_date", to_date);
 			System.out.println("supplierWisePdf" + materialRecieptsSupplierWiseReport);
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -699,6 +713,12 @@ List<ExportToExcel> exportToExcelList=new ArrayList<ExportToExcel>();
 			model.addObject("fromDate", from_date);
 			model.addObject("toDate", to_date);
 			model.addObject("staticlist", materialRecieptsDateWiseReport);
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
 			System.out.println("dateWisePdf" + materialRecieptsDateWiseReport);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -910,6 +930,12 @@ List<ExportToExcel> exportToExcelList=new ArrayList<ExportToExcel>();
 			model.addObject("fromDate", from_date);
 			model.addObject("toDate", to_date);
 			System.out.println("ItemWisepdf" + materialRecieptsItemWiseReport);
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1112,6 +1138,12 @@ List<ExportToExcel> exportToExcelList=new ArrayList<ExportToExcel>();
 			model.addObject("toDate", to_date);
 			model.addObject("staticlist", materialRecieptHsndCodeReport);
 			System.out.println("HsndCodeReportpdf" + materialRecieptHsndCodeReport);
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1319,6 +1351,12 @@ List<ExportToExcel> exportToExcelList=new ArrayList<ExportToExcel>();
 			model.addObject("toDate", to_date);
 			model.addObject("staticlist", materialRecieptMonthReport);
 			System.out.println("monthwisepdf" + materialRecieptMonthReport);
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

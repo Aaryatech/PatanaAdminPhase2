@@ -21,11 +21,26 @@
 p  {
     color: black;
     font-family: arial;
-    font-size: 60%;
+    font-size: 80%;
 	margin-top: 0;
+	margin-bottom: 6px;
 	padding: 0;
-
+	font-weight: bold;
 }
+
+
+h5{
+	margin-bottom: 6px;
+}
+
+.footer_btm{position: fixed; text-align: center; padding: 10px; bottom: 0; left:0; font-size: 12px; 
+color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
+h6  {
+    color: black;
+    font-family: arial;
+    font-size: 80%;
+}
+
 h6  {
     color: black;
     font-family: arial;
@@ -41,10 +56,8 @@ th {
 
 </head>
 <body onload="myFunction()">
-<h3 align="center"> ${Constants.FACTORYNAME}</h3>
-<p align="center">${Constants.FACTORYADDRESS}</p>
-
-<div align="center"> <h5>Purchase Report (HSN Code wise )&nbsp;&nbsp;&nbsp;&nbsp; From &nbsp; ${fromDate}  &nbsp;To &nbsp; ${toDate}</h5></div>
+<p align="center">${FACTORYNAME} <br> ${FACTORYADDRESS}</p>
+<div align="center"> <h5>Purchase Report (HSN Code wise )<br> Dates : ${fromDate}, ${toDate}</h5></div>
 
 <table  align="center" border="1" cellspacing="0" cellpadding="1" 
 		id="table_grid" class="table table-bordered">
@@ -105,7 +118,11 @@ th {
 								  </tr>
 							 </tbody>
 								</table>
-
+<div class="footer_btm" style="display: inline-block; width: 100%; text-align: center; position: absolute; bottom:0; margin: 20px 0 0 0;">
+	<img alt="" src="${pageContext.request.contextPath}/resources/img/mongi.png" height="20px;" style="float: left; vertical-align: middle;">
+	<span style="display: inline-block; float:left; text-align: center; width: 70%; vertical-align: middle; font-size: 12px;  ">******</span>
+	<img alt="" src="${pageContext.request.contextPath}/resources/img/powerd_logo.png" height="10px;" style="float: right; vertical-align: top;">
+	</div>
 	
 </body>
 </html>

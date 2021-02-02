@@ -383,15 +383,14 @@
 		function genPdf() {
 			var from_date = $("#fromDate").val();
 			var to_date = $("#toDate").val();
-
 			var selectedFr = $("#selectFr").val();
-			var routeId = $("#selectRoute").val();
-
+			var isCrn = $("#isCrn").val();
 			var isGrn = $("#isGrn").val();
+			var grnStatus = $("#grnStatus").val();
 
 			window
-					.open('${pageContext.request.contextPath}/showGrnGvnPendingItemReportPdf/'
-							+ from_date + '/' + to_date + '/');
+					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showGrnGvnPendingItemReportPdf/'
+							+ from_date + '/' + to_date + '/'+ selectedFr + '/' + isCrn + '/' + isGrn + '/' + grnStatus);
 
 		}
 		function exportToExcel() {

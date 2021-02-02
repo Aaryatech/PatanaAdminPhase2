@@ -544,11 +544,8 @@ public class ReportController {
 		}
 		
 		
-		if(CreditNoteType=="" || CreditNoteType==null) {
-			model.addObject("creditNoteType", -1);
-		}else {
-			model.addObject("creditNoteType", CreditNoteType);
-		}
+		
+		model.addObject("creditNoteType", CreditNoteType);
 		model.addObject("fromDate", fromdate);
 		model.addObject("toDate", todate);
 		model.addObject("report", crNoteRegItemList);

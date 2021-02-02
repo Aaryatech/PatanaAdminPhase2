@@ -11,7 +11,7 @@
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>Grn Gvn Report PDF</title>
+<title>Grn Gvn Pending Item Report PDF</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -56,22 +56,25 @@ th {
 	<p align="center">${FACTORYNAME} <br> ${FACTORYADDRESS}</p>
 
 	<div align="center">
-		<h5>GRN GVN Report (Date Wise) <br>
-		Dates : ${fromDate} ,${toDate}</h5>
+		<h5>GRN GVN Pending Item Report <br>
+		Dates : ${fromDate}, ${toDate},&nbsp;&nbsp;  By : ${isGrn==1 ? 'GRN' : isGrn==0 ? 'GVN' : 'All'},&nbsp;
+		&nbsp; CRN Generate : ${isCrn==1 ? 'Yes' : isGrn==0 ? 'No' : 'All'}</h5>
 	</div>
 	<table align="center" border="1" cellspacing="0" cellpadding="1"
 		id="table_grid" class="table table-bordered">
 		<thead>
 			<tr class="bgpink">
 				<th>Sr.No.</th>
-				<th>Date</th>
-				<th>Type</th>
-				<th>GrnGvn Sr.No.</th>
-				<th>Party Name</th>
-				<th>Req Qty</th>
+				<th>GRN No.</th>
+				<th>Invoice No.</th>
+				<th>Item Name</th>
+				<th>GRN %/th>
+				<th>Req Qty.</th>
 				<th>Req Value</th>
-				<th>Apr Qty</th>
+				<th>Apr Qty.</th>
 				<th>Apr Amt</th>
+				<th>GRN Generated</th>
+				<th>Status</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -81,48 +84,53 @@ th {
 			<c:set var="aprValSum" value="${0}" />
 			<c:forEach items="${report}" var="report" varStatus="count">
 				<tr>
-					<td width="60" align="center"><c:out value="${count.index+1}" /></td>
-					<c:choose>
-						<c:when test="${report.isGrn==0 || report.isGrn==2}">
-							<c:set var="type" value="GVN" />
-						</c:when>
-						<c:when test="${report.isGrn==1}">
-							<c:set var="type" value="GRN" />
-						</c:when>
-					</c:choose>
+					<td width="60" align="center"><c:out value="${count.index+1}" /></td>					
 					<td width="120" align="center"><c:out
-							value="${report.grngvnDate}" /></td>
-
-					<td width="100" align="center"><c:out value="${type}" /></td>
+							value="${report.grngvnSrno}~${report.grngvnDate}" /></td>
 
 					<td width="120" style="padding: 3px;"><c:out
-							value="${report.grngvnSrno}" /></td>
+							value="${report.invoiceNo}~${report.billDate}" /></td>
 
 					<td width="120" style="padding: 3px;"><c:out
-							value="${report.frName}" /></td>
+							value="${report.itemName}" /></td>
+					<td width="120" style="padding: 3px;"><c:out
+							value="${report.grnPer}" /></td>
 					<td width="100" align="right" style="padding: 3px;"><fmt:formatNumber
 							type="number" maxFractionDigits="2" minFractionDigits="2"
 							value="${report.reqQty}" /></td>
 					<td width="100" align="right" style="padding: 3px;"><fmt:formatNumber
 							type="number" maxFractionDigits="2" minFractionDigits="2"
-							value="${report.totalAmt}" /></td>
+							value="${report.reqAmt}" /></td>
 					<td align="right" width="100" style="padding: 3px;"><fmt:formatNumber
 							type="number" maxFractionDigits="2" minFractionDigits="2"
 							value="${report.aprQty}" /></td>
 					<td align="right" width="100" style="padding: 3px;"><fmt:formatNumber
 							type="number" maxFractionDigits="2" minFractionDigits="2"
-							value="${report.aprGrandTotal}" /></td>
+							value="${report.aprAmt}" /></td>
+				
+					<td width="120" align="center"><c:out
+							value="${report.isCreditNote == 1 ? 'Yes' : 'No'}" /></td>
+					 
+							
+							
+					<td width="120" align="center"><c:out
+							value="${report.grngvnStatus == 1 ? 'Pending' : report.grngvnStatus == 2 ? 'Approved By Gate' :
+								report.grngvnStatus == 3 ? 'Reject By Gate' : report.grngvnStatus == 4 ? 'Approved By Store' :
+								report.grngvnStatus == 5 ? 'Reject By Store' : report.grngvnStatus == 6 ? 'Approved By Acc' :
+								report.grngvnStatus == 7 ? 'Reject By Acc' : ''}" /></td>		
+							
+								
 					<c:set var="reqQtySum" value="${reqQtySum + report.reqQty}" />
-					<c:set var="reqValSum" value="${reqValSum+report.totalAmt}" />
+					<c:set var="reqValSum" value="${reqValSum+report.reqAmt}" />
 
 					<c:set var="aprQtySum" value="${aprQtySum + report.aprQty}" />
-					<c:set var="aprValSum" value="${aprValSum+report.aprGrandTotal}" />
+					<c:set var="aprValSum" value="${aprValSum+report.aprAmt}" />
 
 				</tr>
 			</c:forEach>
 			<tr>
-
-				<td width="100" colspan='5' align="left"><b>Total</b></td>
+				<td></td>
+				<td width="100" colspan='4' align="left"><b>Total</b></td>
 				<td width="100" align="right" style="padding: 3px;"><b><fmt:formatNumber
 							type="number" maxFractionDigits="2" minFractionDigits="2"
 							value="${reqQtySum}" /></b></td>
@@ -136,6 +144,9 @@ th {
 				<td width="100" align="right" style="padding: 3px;"><b><fmt:formatNumber
 							type="number" maxFractionDigits="2" minFractionDigits="2"
 							value="${aprValSum}" /></b></td>
+				<td></td>
+				<td></td>
+				
 			</tr>
 		</tbody>
 	</table>
