@@ -55,6 +55,7 @@ import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.ItemReport;
 import com.ats.adminpanel.model.ItemReportDetail;
 import com.ats.adminpanel.model.Route;
+import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteId;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteIdResponse;
@@ -462,255 +463,350 @@ public class ReportController {
 	}
 
 	// getCRN Reg Pdf
-	@RequestMapping(value = "/getCRNoteRegisterDonePdf/{fromdate}/{todate}", method = RequestMethod.GET)
-	public void getCRNoteRegisterDonePdf(@PathVariable String fromdate, @PathVariable String todate,
+	@RequestMapping(value = "pdf/getCRNoteRegisterDonePdf/{fromdate}/{todate}/{CreditNoteType}", method = RequestMethod.GET)
+	public  ModelAndView getCRNoteRegisterDonePdf(@PathVariable String fromdate, @PathVariable String todate, @PathVariable String CreditNoteType,
 			HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+		
+		ModelAndView model = new ModelAndView("reports/sales/pdf/crnRegisterDonePdf");
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("fromDate", DateConvertor.convertToYMD(fromdate));
 
-		Document document = new Document(PageSize.A4);
-		document.setPageSize(PageSize.A4.rotate());
+			map.add("toDate", DateConvertor.convertToYMD(todate));
+			map.add("CreditNoteType", CreditNoteType);
+			System.out.println("CreditNoteType" + CreditNoteType);
+
+			CrNoteRegisterList crnArray = restTemplate.postForObject(Constants.url + "getCrNoteRegisterDone", map,
+					CrNoteRegisterList.class);
+
+			List<CrNoteRegSp> crnRegSpList = new ArrayList<>();
+
+			crNoteRegItemList = crnArray.getCrNoteRegItemList();
+			crnRegSpList = crnArray.getCrNoteRegSpList();
+
+			for (int j = 0; j < crnRegSpList.size(); j++) {
+				int flag = 0;
+
+				for (int i = 0; i < crNoteRegItemList.size(); i++) {
+
+					if (crNoteRegItemList.get(i).getCrnId() == crnRegSpList.get(j).getCrnId()
+							&& crNoteRegItemList.get(i).getHsnCode().equals(crnRegSpList.get(j).getHsnCode())) {
+						flag = 1;
+						crNoteRegItemList.get(i)
+								.setCrnQty(crNoteRegItemList.get(i).getCrnQty() + crnRegSpList.get(j).getCrnQty());
+
+						crNoteRegItemList.get(i).setCrnTaxable(
+								(crNoteRegItemList.get(i).getCrnTaxable() + crnRegSpList.get(j).getCrnTaxable()));
+
+						crNoteRegItemList.get(i)
+								.setCgstAmt((crNoteRegItemList.get(i).getCgstAmt() + crnRegSpList.get(j).getCgstAmt()));
+						crNoteRegItemList.get(i)
+								.setSgstAmt((crNoteRegItemList.get(i).getSgstAmt() + crnRegSpList.get(j).getSgstAmt()));
+						crNoteRegItemList.get(i)
+								.setCrnAmt((crNoteRegItemList.get(i).getCrnAmt() + crnRegSpList.get(j).getCrnAmt()));
+
+					}
+
+				}
+
+				if (flag == 0) {
+
+					System.err.println("New hsn code item found ");
+
+					CrNoteRegItem regItem = new CrNoteRegItem();
+
+					regItem.setCrnDate(crnRegSpList.get(j).getCrnDate());
+
+					regItem.setBillDate(crnRegSpList.get(j).getBillDate());
+					regItem.setCrndId(crnRegSpList.get(j).getCrndId());
+					regItem.setCrnId(crnRegSpList.get(j).getCrnId());
+					regItem.setCrnQty(crnRegSpList.get(j).getCrnQty());
+					regItem.setCgstAmt(crnRegSpList.get(j).getCgstAmt());
+					regItem.setCgstPer(crnRegSpList.get(j).getCgstPer());
+					regItem.setFrGstNo(crnRegSpList.get(j).getFrGstNo());
+					regItem.setFrName(crnRegSpList.get(j).getFrName());
+					regItem.setCrnAmt(crnRegSpList.get(j).getCrnAmt());
+					regItem.setHsnCode(crnRegSpList.get(j).getHsnCode());
+					regItem.setInvoiceNo(crnRegSpList.get(j).getInvoiceNo());
+					regItem.setSgstAmt(crnRegSpList.get(j).getSgstAmt());
+					regItem.setSgstPer(crnRegSpList.get(j).getSgstPer());
+					regItem.setCrnTaxable(crnRegSpList.get(j).getCrnTaxable());
+
+					regItem.setFrCode(crnRegSpList.get(j).getFrCode());
+
+					crNoteRegItemList.add(regItem);
+				}
+			}
+
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		if(CreditNoteType=="" || CreditNoteType==null) {
+			model.addObject("creditNoteType", -1);
+		}else {
+			model.addObject("creditNoteType", CreditNoteType);
+		}
+		model.addObject("fromDate", fromdate);
+		model.addObject("toDate", todate);
+		model.addObject("report", crNoteRegItemList);
+		
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		
+		map.add("stKey", "showPdfHead");
+		Setting allowHead = SalesReportController.isHeadAllow();		
+		if (allowHead.getSettingValue() == 1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
+		return model;
+//		Document document = new Document(PageSize.A4);
+//		document.setPageSize(PageSize.A4.rotate());
 		// ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
+//		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+//		Calendar cal = Calendar.getInstance();
 
-		System.out.println("timegetCRNoteRegisterPdf PDF ==" + dateFormat.format(cal.getTime()));
-		String timeStamp = dateFormat.format(cal.getTime());
-		String FILE_PATH = Constants.REPORT_SAVE;
-		File file = new File(FILE_PATH);
-
-		PdfWriter writer = null;
-
-		FileOutputStream out = new FileOutputStream(FILE_PATH);
-
-		try {
-			writer = PdfWriter.getInstance(document, out);
-		} catch (DocumentException e) {
-
-			e.printStackTrace();
-		}
-
-		PdfPTable table = new PdfPTable(13);
-		table.setHeaderRows(1);
-		try {
-			System.out.println("Inside PDF Table try");
-			table.setWidthPercentage(100);
-			table.setWidths(
-					new float[] { 0.7f, 1.1f, 2.0f, 2.1f, 2.3f, 2.0f, 2.2f, 1.2f, 1.2f, 1.2f, 0.9f, 0.9f, 1.2f });
-			Font headFont = new Font(FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.BLACK);
-			Font headFont1 = new Font(FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.BLACK);
-			Font f = new Font(FontFamily.TIMES_ROMAN, 10.0f, Font.UNDERLINE, BaseColor.BLUE);
-
-			PdfPCell hcell;
-			hcell = new PdfPCell(new Phrase("Sr.", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("CRN No", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("CRN Date", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Invoice No", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Invoice Date", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Party Name", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("GST No", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Tax Rate", headFont1));
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Bill Qty", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Taxable Amt", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("CGST Amt", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("SGST Amt", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			hcell = new PdfPCell(new Phrase("Bill Amt", headFont1)); // Varience title replaced with P2 Production
-			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			hcell.setBackgroundColor(BaseColor.PINK);
-			table.addCell(hcell);
-
-			int index = 0;
-			for (int j = 0; j < crNoteRegItemList.size(); j++) {
-
-				index++;
-				PdfPCell cell;
-
-				cell = new PdfPCell(new Phrase(String.valueOf(index), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase("" + crNoteRegItemList.get(j).getFrCode(), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getCrnDate()), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(crNoteRegItemList.get(j).getInvoiceNo(), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getBillDate()), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getFrName()), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getFrGstNo()), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(new Phrase(
-						String.valueOf(
-								roundUp(crNoteRegItemList.get(j).getCgstPer() + crNoteRegItemList.get(j).getSgstPer())),
-						headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(1);
-				table.addCell(cell);
-
-				cell = new PdfPCell(
-						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCrnQty())), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(
-						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCrnTaxable())), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(
-						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCgstAmt())), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(
-						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getSgstAmt())), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-				cell = new PdfPCell(
-						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCrnAmt())), headFont));
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setPaddingRight(8);
-				table.addCell(cell);
-
-			}
-			document.open();
-
-			Paragraph heading = new Paragraph(
-					"Credit Note-wise Tax Slab-wise Report \n From Date:" + fromdate + " To Date:" + todate);
-			heading.setAlignment(Element.ALIGN_CENTER);
-			document.add(heading);
-
-			DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
-			String reportDate = DF.format(new Date());
-
-			document.add(new Paragraph("\n"));
-
-			document.add(table);
-
-			document.close();
-
-			if (file != null) {
-
-				String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-
-				if (mimeType == null) {
-
-					mimeType = "application/pdf";
-
-				}
-
-				response.setContentType(mimeType);
-
-				response.addHeader("content-disposition", String.format("inline; filename=\"%s\"", file.getName()));
-
-				// response.setHeader("Content-Disposition", String.format("attachment;
-				// filename=\"%s\"", file.getName()));
-
-				response.setContentLength((int) file.length());
-
-				InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-
-				try {
-					FileCopyUtils.copy(inputStream, response.getOutputStream());
-				} catch (IOException e) {
-					System.out.println("Excep in Opening a Pdf File");
-					e.printStackTrace();
-				}
-
-			}
-
-		} catch (DocumentException ex) {
-
-			System.out.println("Pdf Generation Error: Prod From Orders" + ex.getMessage());
-
-			ex.printStackTrace();
-
-		}
+//		System.out.println("timegetCRNoteRegisterPdf PDF ==" + dateFormat.format(cal.getTime()));
+//		String timeStamp = dateFormat.format(cal.getTime());
+//		String FILE_PATH = Constants.REPORT_SAVE;
+//		File file = new File(FILE_PATH);
+//
+//		PdfWriter writer = null;
+//
+//		FileOutputStream out = new FileOutputStream(FILE_PATH);
+//
+//		try {
+//			writer = PdfWriter.getInstance(document, out);
+//		} catch (DocumentException e) {
+//
+//			e.printStackTrace();
+//		}
+//
+//		PdfPTable table = new PdfPTable(13);
+//		table.setHeaderRows(1);
+//		try {
+//			System.out.println("Inside PDF Table try");
+//			table.setWidthPercentage(100);
+//			table.setWidths(
+//					new float[] { 0.7f, 1.1f, 2.0f, 2.1f, 2.3f, 2.0f, 2.2f, 1.2f, 1.2f, 1.2f, 0.9f, 0.9f, 1.2f });
+//			Font headFont = new Font(FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.BLACK);
+//			Font headFont1 = new Font(FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.BLACK);
+//			Font f = new Font(FontFamily.TIMES_ROMAN, 10.0f, Font.UNDERLINE, BaseColor.BLUE);
+//
+//			PdfPCell hcell;
+//			hcell = new PdfPCell(new Phrase("Sr.", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("CRN No", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("CRN Date", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Invoice No", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Invoice Date", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Party Name", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("GST No", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Tax Rate", headFont1));
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Bill Qty", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Taxable Amt", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("CGST Amt", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("SGST Amt", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			hcell = new PdfPCell(new Phrase("Bill Amt", headFont1)); // Varience title replaced with P2 Production
+//			hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//			hcell.setBackgroundColor(BaseColor.PINK);
+//			table.addCell(hcell);
+//
+//			int index = 0;
+//			for (int j = 0; j < crNoteRegItemList.size(); j++) {
+//
+//				index++;
+//				PdfPCell cell;
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(index), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase("" + crNoteRegItemList.get(j).getFrCode(), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getCrnDate()), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(crNoteRegItemList.get(j).getInvoiceNo(), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getBillDate()), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getFrName()), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(String.valueOf(crNoteRegItemList.get(j).getFrGstNo()), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(new Phrase(
+//						String.valueOf(
+//								roundUp(crNoteRegItemList.get(j).getCgstPer() + crNoteRegItemList.get(j).getSgstPer())),
+//						headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(1);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(
+//						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCrnQty())), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(
+//						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCrnTaxable())), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(
+//						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCgstAmt())), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(
+//						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getSgstAmt())), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//				cell = new PdfPCell(
+//						new Phrase(String.valueOf(roundUp(crNoteRegItemList.get(j).getCrnAmt())), headFont));
+//				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//				cell.setPaddingRight(8);
+//				table.addCell(cell);
+//
+//			}
+//			document.open();
+//
+//			Paragraph heading = new Paragraph(
+//					"Credit Note-wise Tax Slab-wise Report \n From Date:" + fromdate + " To Date:" + todate);
+//			heading.setAlignment(Element.ALIGN_CENTER);
+//			document.add(heading);
+//
+//			DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
+//			String reportDate = DF.format(new Date());
+//
+//			document.add(new Paragraph("\n"));
+//
+//			document.add(table);
+//
+//			document.close();
+//
+//			if (file != null) {
+//
+//				String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+//
+//				if (mimeType == null) {
+//
+//					mimeType = "application/pdf";
+//
+//				}
+//
+//				response.setContentType(mimeType);
+//
+//				response.addHeader("content-disposition", String.format("inline; filename=\"%s\"", file.getName()));
+//
+//				// response.setHeader("Content-Disposition", String.format("attachment;
+//				// filename=\"%s\"", file.getName()));
+//
+//				response.setContentLength((int) file.length());
+//
+//				InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+//
+//				try {
+//					FileCopyUtils.copy(inputStream, response.getOutputStream());
+//				} catch (IOException e) {
+//					System.out.println("Excep in Opening a Pdf File");
+//					e.printStackTrace();
+//				}
+//
+//			}
+//
+//		} catch (DocumentException ex) {
+//
+//			System.out.println("Pdf Generation Error: Prod From Orders" + ex.getMessage());
+//
+//			ex.printStackTrace();
+//
+//		}
 	}
 
 	@RequestMapping(value = "/showHSNwiseReportBetDate", method = RequestMethod.GET)

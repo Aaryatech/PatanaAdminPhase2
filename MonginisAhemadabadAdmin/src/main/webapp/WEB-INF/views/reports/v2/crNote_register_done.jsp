@@ -77,8 +77,6 @@
 							<select data-placeholder="Select Type"
 								class="form-control chosen" id="Credittype" name="Credittype"
 								required>
-								<option value="">Select Credit Note Type</option>
-
 								<option value="1">GRN</option>
 								<option value="0">GVN</option>
 							</select>
@@ -556,9 +554,10 @@
 		function genPdf() {
 			var fromdate = $("#fromDate").val();
 			var todate = $("#toDate").val();
+			var Credittype = $("#Credittype").val();
 			window
-					.open('${pageContext.request.contextPath}/getCRNoteRegisterDonePdf/'
-							+ fromdate + '/' + todate + '/');
+					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/getCRNoteRegisterDonePdf/'
+							+ fromdate + '/' + todate + '/' + Credittype);
 
 		}
 		function exportToExcel() {
