@@ -8,7 +8,7 @@
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 
 	<c:url var="getBillList" value="/getSaleReportItemwise"></c:url>
-
+	<c:url var="getSubCatByCatId" value="/getSubCatByCatIdAjax" />
 	<!-- BEGIN Sidebar -->
 	<div id="sidebar" class="navbar-collapse collapse">
 
@@ -63,7 +63,7 @@
 
 					<div class="form-group">
 						<label class="col-sm-3 col-lg-2	 control-label">From Date</label>
-						<div class="col-sm-6 col-lg-2 controls date_select">
+						<div class="col-sm-6 col-lg-4 controls date_select">
 							<input class="form-control date-picker" id="fromDate"
 								name="fromDate" size="30" type="text" value="${todaysDate}" />
 						</div>
@@ -73,12 +73,21 @@
 					<div class="form-group  "> -->
 
 						<label class="col-sm-3 col-lg-1	 control-label">To Date</label>
-						<div class="col-sm-6 col-lg-2 controls date_select">
+						<div class="col-sm-6 col-lg-4 controls date_select">
 							<input class="form-control date-picker" id="toDate" name="toDate"
 								size="30" type="text" value="${todaysDate}" />
 						</div>
-						<label class="col-sm-3 col-lg-1 control-label">Category</label>
-						<div class="col-sm-6 col-lg-3 controls">
+					</div>
+
+				</div>
+				
+				
+				
+				<br>
+				<div class="row">
+				<div class="form-group">
+						<label class="col-sm-3 col-lg-2 control-label">Category</label>
+						<div class="col-sm-6 col-lg-4 controls">
 							<select data-placeholder="Select Route"
 								class="form-control chosen" name="selectCat" id="selectCat">
 								<option value="0">Select Category</option>
@@ -89,6 +98,18 @@
 								</c:forEach>
 							</select>
 						</div>
+						
+						<label class="col-sm-3 col-lg-1 control-label">
+							Sub Category</label>
+						<div class="col-sm-6 col-lg-4 controls">
+
+							<select data-placeholder="Select Sub Category"
+											class="form-control chosen-select" name="item_grp2"
+											tabindex="-1" id="item_grp2" data-rule-required="true">
+
+										</select>
+						</div>
+						
 					</div>
 
 				</div>
@@ -241,6 +262,7 @@
 			var catId = $("#selectCat").val();
 			var from_date = $("#fromDate").val();
 			var to_date = $("#toDate").val();
+			var sub_cat = $("#item_grp2").val();
 			$('#loader').show();
 
 			$.getJSON('${getBillList}',
@@ -251,6 +273,7 @@
 				toDate : to_date,
 				route_id : routeId,
 				catId : catId,
+				sub_cat : sub_cat,
 				ajax : 'true'
 
 			}, function(data) {
@@ -440,7 +463,7 @@
 			var selectedFr = $("#selectFr").val();
 			var routeId = $("#selectRoute").val();
 			var catId = $("#selectCat").val();
-
+			var sub_cat = $("#item_grp2").val();
 			window
 					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showSaleReportItemwisePdf/'
 							+ from_date
@@ -448,7 +471,7 @@
 							+ to_date
 							+ '/'
 							+ selectedFr
-							+ '/' + routeId + '/' + catId + '/');
+							+ '/' + routeId + '/' + catId + '/' + sub_cat);
 
 			//window.open('${pageContext.request.contextPath}/pdfForReport?url=showSaleReportItemwisePdf/'+from_date+'/'+to_date);
 
@@ -475,6 +498,43 @@
 		      lastThree = ',' + lastThree;
 		  return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
 		 } 
+	</script>
+	
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							$('#selectCat')
+									.change(
+											function() {
+												var selectItem = $("#selectCat").val();		
+												//$('#item_grp2').remove();
+												$
+														.getJSON(
+																'${getSubCatByCatId}',
+																{
+																	catId : JSON.stringify(selectItem),
+																	ajax : 'true'
+																},
+																function(data) {
+																	var html = '<option value="" selected >Select Sub-Category</option>';
+
+																	var len = data.length;
+																	for (var i = 0; i < len; i++) {
+																		html += '<option value="' + data[i].subCatId + '">'
+																				+ data[i].subCatName
+																				+ '</option>';
+																	}
+																	html += '</option>';
+																	$(
+																			'#item_grp2')
+																			.html(
+																					html);
+																	
+
+																});
+											});
+						});
 	</script>
 	
 

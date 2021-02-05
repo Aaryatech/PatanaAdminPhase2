@@ -234,6 +234,46 @@ public class ItemController {
 
 		return subCatList;
 	}
+	
+	@RequestMapping(value = "/getSubCatByCatIdAjax", method = RequestMethod.GET)
+	public @ResponseBody List<SubCategory> getSubCatByCatId(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+
+		List<SubCategory> subCatList = new ArrayList<SubCategory>();
+		String selectedCat = request.getParameter("catId");
+		
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		RestTemplate restTemplate = new RestTemplate();		
+		
+		
+		boolean isAllCatSelected = false;
+		if (selectedCat.contains("-1")) {
+			isAllCatSelected = true;
+			
+			map.add("catId", "-1");
+		} else {
+			selectedCat = selectedCat.substring(1, selectedCat.length() - 1);
+			selectedCat = selectedCat.replaceAll("\"", "");
+			System.out.println("selectedCat" + selectedCat.toString());
+			
+			map.add("catId", selectedCat);
+		}
+		
+		System.out.println("CatIds ------------- "+selectedCat);
+		
+		
+		ParameterizedTypeReference<List<SubCategory>> typeRef2 = new ParameterizedTypeReference<List<SubCategory>>() {
+		};
+
+		ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate
+				.exchange(Constants.url + "getSubCatListAjax", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+
+		 subCatList = responseEntity2.getBody();
+		System.out.println("List Found-------------------"+subCatList);
+
+		return subCatList;
+	}
 
 	@RequestMapping(value = "/showFrItemConfiguration")
 	public ModelAndView showFrItemConfiguration(HttpServletRequest request, HttpServletResponse response) {

@@ -1432,6 +1432,7 @@ public class GrnGvnReportController {
 
 			String frIdString = "";
 			String itemIdString = "";
+			String subCatId = "";
 
 			System.out.println("inside getGrnGvnByDatewise ajax call");
 
@@ -1439,7 +1440,7 @@ public class GrnGvnReportController {
 			itemIdString = request.getParameter("item_id_list");
 			String fromDate = request.getParameter("from_date");
 			String toDate = request.getParameter("to_date");
-
+			subCatId = request.getParameter("subCatId");
 			String isGrn = request.getParameter("is_grn");
 
 			String grnType;
@@ -1468,6 +1469,9 @@ public class GrnGvnReportController {
 
 			itemIdString = itemIdString.substring(1, itemIdString.length() - 1);
 			itemIdString = itemIdString.replaceAll("\"", "");
+			
+			subCatId = subCatId.substring(1, subCatId.length() - 1);
+			subCatId = subCatId.replaceAll("\"", "");
 
 			/*
 			 * List<String> itemIds = new ArrayList(); itemIds =
@@ -1510,6 +1514,7 @@ public class GrnGvnReportController {
 
 				map.add("frIdList", -1);
 				map.add("catIdList", -1);
+				map.add("subCatId", subCatId);
 				// model.addObject("billHeadersList",billHeadersListForPrint);
 
 			} else { // few franchisee selected
@@ -1517,7 +1522,7 @@ public class GrnGvnReportController {
 				System.out.println("Inside Else: Few Fr Selected ");
 				map.add("frIdList", frIdString);
 				map.add("catIdList", itemIdString);
-
+				map.add("subCatId", subCatId);
 			}
 
 			map.add("fromDate", DateConvertor.convertToYMD(fromDate));

@@ -104,7 +104,7 @@ root
 
 
 						<div class="box-content">
-							<form class="form-horizontal" method="get" id="validation-form">
+							<form class="form-horizontal" method="get" id="validation-form" target="_blank">
 	                        <input type="hidden" class="form-control" name="billnumber" id="billnumber"	value="0"  />
 							<input type="hidden" class="form-control" name="issinglepdf" id="issinglepdf" 	value="0" />
 						
@@ -264,7 +264,7 @@ root
 														<th class="col-md-2">Taxable Amt</th>
 														<th class="col-sm-1">Tax Amt</th>
 														<th class="col-md-1">Total</th>
-														<th class="col-md-1">Status</th>
+														<!-- <th class="col-md-1">Status</th> -->
 														<th class="col-md-1" align="left">Action</th>
 														
 
@@ -421,23 +421,29 @@ root
 		src="${pageContext.request.contextPath}/resources/assets/jquery-validation/dist/additional-methods.min.js"></script>
 
 	<script type="text/javascript">
-		function submitBill() {
+	
+		function submitBill() {			
+			if($('input:checkbox').is(':checked')){
+			document.getElementById("btn_billDtl").disabled = true;
 			//submitBillForm.submit();
 			// window.open("${pageContext.request.contextPath}/pdf?url=showBillPdf");
 
 			// window.open("${pageContext.request.contextPath}/showBillListForPrint");
-var form = document.getElementById("validation-form")
-form.action = "${pageContext.request.contextPath}/getBillDetailForPrint";
-form.submit();
+			var form = document.getElementById("validation-form")
+			form.action = "${pageContext.request.contextPath}/getBillDetailForPrint";
+			form.submit();
+			}else{
+				alert("Check atleast 1 check box!")
+			}
 		}
 		$('#btn_submit')
 				.click(
 						function() {
-							var form = document.getElementById("validation-form")
+							var form = document
+									.getElementById("validation-form")
 							form.action = "${pageContext.request.contextPath}/getBillDetailForPrint";
 							form.submit();
-						});	
-		
+						});
 	</script>
 
 
@@ -537,7 +543,7 @@ form.submit();
 			var isValid=validate();
 			if(isValid==true){
 			$('#loader').show();
-
+			document.getElementById("expExcel2").disabled=false;
 			$
 					.getJSON(
 							'${callGetBillListProcess}',
@@ -566,7 +572,7 @@ form.submit();
 													tr.append($('<td class="col-md-2" style="text-align:right;"></td>').html(bill.taxableAmt.toFixed(2)));
 													tr.append($('<td class="col-sm-1" style="text-align:right;"></td>').html(bill.totalTax.toFixed(2)));
 													tr.append($('<td class="col-md-1" style="text-align:right;"></td>').html(bill.grandTotal.toFixed(2)));
-													tr.append($('<td class="col-md-2"></td>').html("<input type='button' id='btn_submit' name='btn_submit' onClick='submitBill()' value='BillDetail'  class='btn btn-primary'/> &nbsp;&nbsp; <input type='button' id='btn_submit_pdf' value='PDF'  class='btn btn-primary' onClick='submitBillPdf()'/>"));
+													tr.append($('<td class="col-md-2"></td>').html("<input type='button' id='btn_billDtl' name='btn_submit' onClick='submitBill()' value='BillDetail'  class='btn btn-primary'/> &nbsp;&nbsp; <input type='button' id='btn_submit_pdf' value='PDF'  class='btn btn-primary' onClick='submitBillPdf()'/>"));
 													$('#table1 tbody').append(tr);
 												}
 													
@@ -586,7 +592,7 @@ form.submit();
 														tr.append($('<td class="col-md-2" style="text-align:right;"></td>').html(bill.taxableAmt.toFixed(2)));
 														tr.append($('<td class="col-sm-1" style="text-align:right;"></td>').html(bill.totalTax.toFixed(2)));
 														tr.append($('<td class="col-md-1" style="text-align:right;"></td>').html(bill.grandTotal.toFixed(2)));
-														tr.append($('<td class="col-md-2"></td>').html("<input type='button' id='btn_submit' name='btn_submit' onClick='submitBill()' value='BillDetail'  class='btn btn-primary'/> &nbsp;&nbsp; <input type='button' id='btn_submit_pdf' value='PDF'  class='btn btn-primary' onClick='submitBillPdf()'/>"));
+														tr.append($('<td class="col-md-2"></td>').html("<input type='button' id='btn_billDtl' name='btn_submit' onClick='submitBill()' value='BillDetail'  class='btn btn-primary'/> &nbsp;&nbsp; <input type='button' id='btn_submit_pdf' value='PDF'  class='btn btn-primary' onClick='submitBillPdf()'/>"));
 														$('#table1 tbody').append(tr);
 													
 											document.getElementById("expExcel2").disabled=false;
@@ -801,6 +807,49 @@ form.submit();
                 });
             });
         });
+	</script>
+	<script type="text/javascript">
+		function setAccLvlItemToDetailList() {
+
+			var itemList = [];
+
+			$(".item-taxable-value")
+					.each(
+							function(counter) {
+
+								if (document
+										.getElementsByClassName("item-rate-value")[counter].value > 0) {
+
+									var itemId = document
+											.getElementsByClassName("item-id")[counter].value;
+									var itemRate = document
+											.getElementsByClassName("item-rate-value")[counter].value;
+
+									var item = {
+										id : itemId,
+										rate : itemRate
+									}
+
+									itemList.push(item);
+								}
+
+							});
+
+			//alert(JSON.stringify(itemList));
+
+			$.getJSON('${geMRNDetailWithAccLevelItems}', {
+				jsonStr : JSON.stringify(itemList),
+				ajax : 'true'
+			}, function(data) {
+
+				setTableData(data);
+
+				var modal = document.getElementById('myModal');
+				modal.style.display = "none";
+
+			});
+
+		}
 	</script>
 	<!-- <script type="text/javascript">
 	$(document).ready(function () {

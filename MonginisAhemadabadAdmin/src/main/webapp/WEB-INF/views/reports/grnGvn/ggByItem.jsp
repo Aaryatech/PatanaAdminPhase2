@@ -11,7 +11,7 @@
 <body>
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 	<c:url var="getGrnGvnByGrpByItem" value="/getGrnGvnByGrpByItem"></c:url>
-
+<c:url var="getSubCatByCatId" value="/getSubCatByCatIdAjax" />
 	<!-- BEGIN Sidebar -->
 	<div id="sidebar" class="navbar-collapse collapse">
 
@@ -128,10 +128,25 @@
 						</div>
 
 
+					<label class="col-sm-3 col-lg-2 control-label">Select
+							SubCategory</label>
+						<div class="col-sm-3 col-lg-4">
+
+							<select data-placeholder="Select Sub Category"
+											class="form-control chosen-select" name="item_grp2"
+											tabindex="-1" id="item_grp2" onchange="onSubCatChange(this.value)" data-rule-required="true">
+
+										</select>
+						</div>
 
 
+						
+					</div>
+				</div>
 
-						<label class="col-sm-3 col-lg-2 control-label">Select
+				<br>
+				<div class="row">
+				<label class="col-sm-3 col-lg-2 control-label">Select
 							Franchisee</label>
 						<div class="col-sm-6 col-lg-4">
 
@@ -148,11 +163,6 @@
 							</select>
 
 						</div>
-					</div>
-				</div>
-
-				<br>
-				<div class="row">
 					<label class="col-sm-3 col-lg-2 control-label"> View Option</label>
 					<div class="col-md-2">
 
@@ -284,6 +294,7 @@
 
 			var from_date = $("#fromDate").val();
 			var to_date = $("#toDate").val();
+			var subCatId = $("#item_grp2").val();
 
 			$('#loader').show();
 
@@ -295,7 +306,7 @@
 				item_id_list : JSON.stringify(selectItem),
 				from_date : from_date,
 				to_date : to_date,
-
+				subCatId : JSON.stringify(subCatId),
 				is_grn : isGrn,
 				ajax : 'true'
 
@@ -449,5 +460,47 @@
 	<script src="${pageContext.request.contextPath}/resources/js/flaty.js"></script>
 	<script
 		src="${pageContext.request.contextPath}/resources/js/flaty-demo-codes.js"></script>
+		
+		
+		<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							$('#selectCat')
+									.change(
+											function() {
+												var selectItem = $("#selectCat").val();		
+												//$( '#item_grp2').remove();
+												$
+														.getJSON(
+																'${getSubCatByCatId}',
+																{
+																	catId : JSON.stringify(selectItem),
+																	ajax : 'true'
+																},
+																function(data) {
+																	
+																	var html = '<option value="-1" selected >Select Sub-Category</option>';
+																	html+= '<option value="-1">All</option>';
+																	var len = data.length;
+																	for (var i = 0; i < len; i++) {
+																		html += '<option value="' + data[i].subCatId + '">'
+																				+ data[i].subCatName
+																				+ '</option>';
+																	}
+																	html += '</option>';
+																	$(
+																			'#item_grp2')
+																			.html(
+																					html);
+																	/* $(
+																			'#item_grp2')
+																			.formcontrol(
+																					'refresh'); */
+
+																});
+											});
+						});
+	</script>
 </body>
 </html>
