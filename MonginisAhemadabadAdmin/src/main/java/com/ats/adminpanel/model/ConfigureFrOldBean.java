@@ -18,6 +18,15 @@ public class ConfigureFrOldBean {
 	    private String frName;
 	    private String menuTitle;
 	    private String catName;
+	    private int catId;
+	    
+	    
+		public int getCatId() {
+			return catId;
+		}
+		public void setCatId(int catId) {
+			this.catId = catId;
+		}
 		public int getSettingId() {
 			return settingId;
 		}

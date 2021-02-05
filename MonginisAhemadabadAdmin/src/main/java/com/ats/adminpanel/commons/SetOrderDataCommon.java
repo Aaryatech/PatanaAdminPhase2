@@ -26,19 +26,27 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.ats.adminpanel.model.ConfigureFrBean;
+import com.ats.adminpanel.model.FlavourConf;
 import com.ats.adminpanel.model.FrMenu;
 import com.ats.adminpanel.model.FrMenuConfigure;
 import com.ats.adminpanel.model.Orders;
+import com.ats.adminpanel.model.flavours.Flavour;
+import com.ats.adminpanel.model.franchisee.Menu;
 import com.ats.adminpanel.model.item.Item;
+/*import com.monginis.ops.constant.Constant;
+import com.monginis.ops.model.Flavour;
+import com.monginis.ops.model.FlavourConf;
+import com.monginis.ops.model.SpecialCake;*/
+import com.ats.adminpanel.model.manspbill.SpecialCake;
 
 public class SetOrderDataCommon {
+	RestTemplate restTemplate = new RestTemplate();
 
 	public MultiValueMap<String, Object> map;
 
 	public Orders setOrderData(Orders order,int menuId,int frId,int orderQty,HttpServletRequest request,
 			String methodOrderDate) {
 		System.err.println("in setOrderData methodOrderDate" +methodOrderDate); 
-		RestTemplate restTemplate = new RestTemplate();
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 		map.add("id", order.getItemId());
@@ -158,4 +166,72 @@ public class SetOrderDataCommon {
 		return sqlDate;
 
 	}
+	
+//	Sac04Feb2021
+	
+	public SpecialCake setSpCakeOrderData(SpecialCake spCake, Flavour flavor, int menuId,int billBy) {
+		System.err.println("Menu id " +menuId);
+		ConfigureFrBean menu=null;
+		
+		map = new LinkedMultiValueMap<String, Object>();
+		map.add("menuId", menuId);
+	
+		try {
+			menu = restTemplate.postForObject(
+				Constants.url + "getFrMenuConfigureByMenuFrId", map, ConfigureFrBean.class);
+		}catch (HttpClientErrorException e) {
+			System.err.println("getFrConfUpdate" +e.getResponseBodyAsString());
+		}
+		
+		float spBackEndRate=0.0f;
+				float mrp_sprRate=0.0f;
+				double addOnRate=0.0;
+				float profitPer = menu.getProfitPer();
+				
+				if (menu.getRateSettingFrom() == 0) {
+					// By Master
+					if (menu.getRateSettingType() == 1) {
+						mrp_sprRate=spCake.getMrpRate1();
+					} else if (menu.getRateSettingType() == 2) {
+						mrp_sprRate=spCake.getMrpRate2();
+					} else {
+						mrp_sprRate=spCake.getMrpRate3();
+					}
+				} else {
+					// By Flavor Confi
+					//Get Flavor Configuration By SpId
+					FlavourConf spFlavConf=new FlavourConf();
+					if(flavor!=null) {
+						map.add("spfId", flavor.getSpfId());
+						map.add("spId",spCake.getSpId());
+						spFlavConf=restTemplate.postForObject(Constants.url + "/getFlConfByIds",map, FlavourConf.class);
+					}
+					if (menu.getRateSettingType() == 1) {
+						mrp_sprRate=spFlavConf.getMrp1();
+					} else if (menu.getRateSettingType() == 2) {
+						mrp_sprRate=spFlavConf.getMrp2();
+					} else {
+						mrp_sprRate=spFlavConf.getMrp3();
+					}
+				}
+				if(menu.getRateSettingFrom()==0 && spCake.getIsAddonRateAppli()==1) {
+					addOnRate=flavor.getSpfAdonRate();
+				}
+				System.err.println("addOnRate " +addOnRate);
+				mrp_sprRate=(float) (mrp_sprRate+addOnRate);
+				spBackEndRate=(mrp_sprRate - (mrp_sprRate * profitPer) / 100);
+				
+			
+				if (billBy == 0) { // means calc by mrp
+					spBackEndRate = mrp_sprRate;
+				} else {// means calc by rate
+					
+				}
+				spCake.setSprRateMrp(mrp_sprRate);
+				spCake.setSpBackendRate(spBackEndRate);
+				
+				spCake.setSprAddOnRate((float)addOnRate);
+				System.err.println("mrp_sprRate  " +mrp_sprRate +"spBackEndRate " + spBackEndRate +"addOnRate "+addOnRate);
+				return spCake;
+			}
 }

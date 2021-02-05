@@ -351,7 +351,7 @@ var optVal= $("#selectMenu option:selected").val();
 								function(data) {
 
 									//$('#table_grid td').remove();
-									//alert(data);
+									alert(data);
 									document.getElementById("searchFr").disabled=false;
 									$('#loader').hide();
 									if (data == "") {

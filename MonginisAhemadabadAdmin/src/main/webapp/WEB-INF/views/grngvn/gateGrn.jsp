@@ -172,8 +172,8 @@
 
 
 															<td align="left"><c:out value="${grnList.itemName}" /></td>
-
-															<c:choose>
+	<td align="left"><c:out value="${grnList.grnType}"></c:out></td>
+															<%-- Sac02Feb2021<c:choose>
 																<c:when test="${grnList.grnType==0}">
 																	<td align="left"><c:out value="GRN 1"></c:out></td>
 																</c:when>
@@ -186,7 +186,7 @@
 																<c:when test="${grnList.grnType==4}">
 																	<td align="left"><c:out value="GRN 3"></c:out></td>
 																</c:when>
-															</c:choose>
+															</c:choose> --%>
 
 															<td align="center"><c:out
 																	value="${grnList.grnGvnQtyAuto}" /></td>

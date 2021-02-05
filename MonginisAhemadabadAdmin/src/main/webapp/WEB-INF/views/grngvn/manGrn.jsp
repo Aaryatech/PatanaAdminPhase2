@@ -272,16 +272,16 @@
 						  	tr.append($('<td></td>').html(bill.invoiceNo));
 
 						  	tr.append($('<td></td>').html(bill.itemName));
-						  	var grnType;
+						  	var grnType=bill.grnType;
 						  //	alert("GRN TYPE " +bill.grnType);
 						  	
-						  	if(bill.grnType==0){
+						  	/*Sac02Feb2021 if(bill.grnType==0){
 						  		 grnType="Grn 1";
 						  	}
 						  	else 	if(bill.grnType==1){
 						  		 grnType="Grn 2";}
 						  	else 	if(bill.grnType==2 || bill.grnType==4){
-						  		 grnType="Grn 3";}
+						  		 grnType="Grn 3";} */
 						  	
 						  	tr.append($('<td></td>').html(grnType));
 						  	tr.append($('<td></td>').html(bill.billQty));
@@ -362,8 +362,10 @@
 					
 					var grnBaseRate;
 					var grnRate;
-					
-				    if(grnType==0){
+					var grnRate=rate;
+					grnBaseRate = baseRate * grnType / 100;
+					 grnRate=(rate * grnType) / 100;
+				   /*Sac02Feb2021  if(grnType==0){
 						var grnRate=rate;
 						grnBaseRate = baseRate * 85 / 100;
 						 grnRate=(rate * 85) / 100;
@@ -389,7 +391,7 @@
 							grnBaseRate=baseRate;
 							grnRate=rate;
 							
-							}
+							} */
 						var totTaxPer=parseFloat(sgstPer)+parseFloat(cgstPer)+parseFloat(cessPer);
 						var taxableAmt=grnBaseRate*grnQty;
 						//alert("prev taxableAmt " +taxableAmt)

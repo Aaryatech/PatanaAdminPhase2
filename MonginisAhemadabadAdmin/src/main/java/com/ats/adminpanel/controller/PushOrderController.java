@@ -35,6 +35,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -77,6 +78,7 @@ public class PushOrderController {
 	public ModelAndView showPushOrder(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = null;
+		try {
 		HttpSession session = request.getSession();
 
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
@@ -145,6 +147,11 @@ public class PushOrderController {
 			model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
 			model.addObject("date", new SimpleDateFormat("dd-MM-yyyy").format(utilDate));
 		}
+		}catch (HttpClientErrorException e) {
+			System.err.println("Http Error At push order " +e.getResponseBodyAsString());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return model;
 	}
 
@@ -194,9 +201,9 @@ public class PushOrderController {
 		selectedFrIdList = new ArrayList();
 		List<AllFrIdName> allFrList = allFrIdNameList.getFrIdNamesList();
 
-		for (int i = 0; i < menuList.size(); i++) {
-			if (menuList.get(i).getMenuId() == menuId) {
-				selectedMainCatId = menuList.get(i).getMainCatId();
+		for (int i = 0; i < selectedMenuList.size(); i++) {
+			if (selectedMenuList.get(i).getMenuId() == menuId) {
+				selectedMainCatId = selectedMenuList.get(i).getMainCatId();
 			}
 		}
 
@@ -242,7 +249,7 @@ public class PushOrderController {
 		PushOrderList pushOrder = null;
 		for (int j = 0; j < items.size(); j++) {
 
-			System.out.println("Inside First For ");
+			//System.out.println("Inside First For ");
 
 			pushOrder = new PushOrderList();
 
@@ -291,7 +298,7 @@ public class PushOrderController {
 				// System.out.println("Current Fr"+selectedFrList.get(j));
 
 				if ((allFrList.get(i).getFrId()) == Integer.parseInt(selectedFrList.get(j))) {
-					System.out.println(allFrList.get(i).getFrName());
+					//System.out.println(allFrList.get(i).getFrName());
 
 					selectedFrIdList.add(allFrList.get(i).getFrId());
 				}

@@ -237,5 +237,10 @@ public class Company implements Serializable{
 				+ delStatus + ", panNo=" + panNo + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exVar5=" + exVar5 + ", exVar6=" + exVar6 + "]";
 	}
+
+	public int getFromPinCode() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
     
 }

@@ -37,6 +37,7 @@ import com.ats.adminpanel.model.grngvn.GetGrnItemConfig;
 import com.ats.adminpanel.model.grngvn.GrnGvn;
 import com.ats.adminpanel.model.grngvn.GrnGvnHeader;
 import com.ats.adminpanel.model.grngvn.PostGrnGvnList;
+import com.ats.adminpanel.model.setting.NewSetting;
 import com.ats.adminpanel.model.stock.PostFrItemStockDetail;
 
 @Controller
@@ -272,7 +273,15 @@ public class ManualGrnController {
 			float sumTotalAmt = 0;
 
 			String curDateTime = null;
+//Sac03Feb2021
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
+			map = new LinkedMultiValueMap<String, Object>();
+			map.add("settingKey", "GRNGVN_INSERT_STATUS_ADMIN");
+			map.add("delStatus", 0);
+			NewSetting grnStatusValues=restTemplate.postForObject(Constants.url + "getNewSettingByKey", map,
+					NewSetting.class);
+map = new LinkedMultiValueMap<String, Object>();
 			for (int i = 0; i < selectedGrn.size(); i++) {
 
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -311,27 +320,16 @@ public class ManualGrnController {
 					float grnBaseRate = 0.0f;
 
 					float grnRate = 0.0f;
-
-					if (selectedGrn.get(i).getGrnType() == 0) {
-						grnBaseRate = baseRate * 85 / 100;
-
-						grnRate = (selectedGrn.get(i).getRate() * 85) / 100;
-						// postGrnGvn.setGrnGvnAmt(roundUp(grnAmt));
-					}
-
-					if (selectedGrn.get(i).getGrnType() == 1) {
-						grnBaseRate = baseRate * 75 / 100;
-						grnRate = (selectedGrn.get(i).getRate() * 75) / 100;
-						// postGrnGvn.setGrnGvnAmt(roundUp(grnAmt));
-					}
-
-					if (selectedGrn.get(i).getGrnType() == 2 || selectedGrn.get(i).getGrnType() == 4) {
-						// postGrnGvn.setGrnGvnAmt(roundUp(grnAmt));
-
-						grnBaseRate = baseRate;
-						grnRate = selectedGrn.get(i).getRate();
-					}
-
+					grnBaseRate = baseRate * selectedGrn.get(i).getGrnType() / 100;
+					grnRate = (selectedGrn.get(i).getRate() * selectedGrn.get(i).getGrnType()) / 100;
+					/*
+					 * if (selectedGrn.get(i).getGrnType() == 0) { grnBaseRate = baseRate * 85 /
+					 * 100; grnRate = (selectedGrn.get(i).getRate() * 85) / 100; } if
+					 * (selectedGrn.get(i).getGrnType() == 1) { grnBaseRate = baseRate * 75 / 100;
+					 * grnRate = (selectedGrn.get(i).getRate() * 75) / 100; } if
+					 * (selectedGrn.get(i).getGrnType() == 2 || selectedGrn.get(i).getGrnType() ==
+					 * 4) { grnBaseRate = baseRate; grnRate = selectedGrn.get(i).getRate(); }
+					 */
 					float taxableAmt = grnBaseRate * grnQty;
 
 					// 5 FEB 2019
@@ -371,7 +369,12 @@ public class ManualGrnController {
 					postGrnGvn.setFrGrnGvnRemark("Man GRN BY Monginis");
 					postGrnGvn.setGvnPhotoUpload1("grn:no photo");
 					postGrnGvn.setGvnPhotoUpload2("grn:no photo");
-					postGrnGvn.setGrnGvnStatus(6);
+					//Sac03Feb2021
+					try {
+						postGrnGvn.setGrnGvnStatus(Integer.parseInt(grnStatusValues.getSettingValue2()));
+					}catch (Exception e) {
+						postGrnGvn.setGrnGvnStatus(6);
+					}
 					postGrnGvn.setApprovedLoginGate(0);
 					postGrnGvn.setApproveimedDateTimeGate(dateFormat.format(cal.getTime()));
 					postGrnGvn.setApprovedRemarkGate(" ");
@@ -453,7 +456,12 @@ public class ManualGrnController {
 			grnHeader.setCreditNoteId("");
 			grnHeader.setGrngvnDate(new SimpleDateFormat("dd-MM-yyyy").format(grnGvnDate));
 			grnHeader.setGrngvnSrno(getGrnGvnSrNo(request, response, frList.getFrCode()));
-			grnHeader.setGrngvnStatus(6);
+			//Sac03Feb2021
+			try {
+			grnHeader.setGrngvnStatus(Integer.parseInt(grnStatusValues.getSettingValue1()));
+			}catch (Exception e) {
+				grnHeader.setGrngvnStatus(6);
+			}
 			grnHeader.setIsCreditNote(0);
 			grnHeader.setIsGrn(1);
 			grnHeader.setAprGrandTotal(roundUp(sumTotalAmt));
@@ -484,7 +492,7 @@ public class ManualGrnController {
 			// Info insertGrn=null;
 			if (insertGrn.getError() == false) {
 
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+				map = new LinkedMultiValueMap<String, Object>();
 
 				map.add("frId", frList.getFrId());
 				FrSetting frSetting = restTemplate.postForObject(Constants.url + "getFrSettingValue", map,

@@ -138,7 +138,7 @@
 													<c:if test="${frConfig.menuId==menu}">
 													<c:set var="selct" value="1" ></c:set>
 													</c:if>
-													
+													</c:forEach>
 													<c:choose>
 													<c:when test="${selct==1}">
 													<option selected="selected" value="${frConfig.menuId}">${frConfig.menuTitle}</option>
@@ -148,7 +148,7 @@
 													</c:otherwise>
 													</c:choose>
 													
-													</c:forEach>
+													
 													
 													
 													

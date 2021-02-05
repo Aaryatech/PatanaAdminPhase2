@@ -1098,21 +1098,22 @@ public class GrnGvnController {
 			float sgstRs, cgstRs,cessRs, igstRs;
 
 			float grandTotal;
-			if (detail.getGrnType() == 0) {
-
-				grnRate = detail.getBaseRate() * 85 / 100;
-			}
-
-			if (detail.getGrnType() == 1) {
-
-				grnRate = detail.getBaseRate() * 75 / 100;
-			}
-
-			if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
-
-				grnRate = detail.getBaseRate();
-
-			}
+			grnRate = detail.getBaseRate() * detail.getGrnType() / 100;
+			/*
+			 * if (detail.getGrnType() == 0) {
+			 * 
+			 * grnRate = detail.getBaseRate() * 85 / 100; }
+			 * 
+			 * if (detail.getGrnType() == 1) {
+			 * 
+			 * grnRate = detail.getBaseRate() * 75 / 100; }
+			 * 
+			 * if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
+			 * 
+			 * grnRate = detail.getBaseRate();
+			 * 
+			 * }
+			 */
 
 			aprTaxableAmt = grnRate * qty;
 
@@ -1221,21 +1222,22 @@ public class GrnGvnController {
 					float sgstRs, cgstRs,cessRs, igstRs;
 
 					float grandTotal;
-					if (detail.getGrnType() == 0) {
-
-						grnRate = detail.getBaseRate() * 85 / 100;
-					}
-
-					if (detail.getGrnType() == 1) {
-
-						grnRate = detail.getBaseRate() * 75 / 100;
-					}
-
-					if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
-
-						grnRate = detail.getBaseRate();
-
-					}
+					grnRate = detail.getBaseRate() * detail.getGrnType() / 100;
+					/*Sac02Feb2021
+					 * if (detail.getGrnType() == 0) {
+					 * 
+					 * grnRate = detail.getBaseRate() * 85 / 100; }
+					 * 
+					 * if (detail.getGrnType() == 1) {
+					 * 
+					 * grnRate = detail.getBaseRate() * 75 / 100; }
+					 * 
+					 * if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
+					 * 
+					 * grnRate = detail.getBaseRate();
+					 * 
+					 * }
+					 */
 
 					aprTaxableAmt = grnRate * accGrnQty;
 
@@ -1583,21 +1585,22 @@ public class GrnGvnController {
 					float sgstRs, cgstRs,cessRs, igstRs;
 
 					float grandTotal;
-					if (detail.getGrnType() == 0) {
-
-						grnRate = detail.getBaseRate() * 85 / 100;
-					}
-
-					if (detail.getGrnType() == 1) {
-
-						grnRate = detail.getBaseRate() * 75 / 100;
-					}
-
-					if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
-
-						grnRate = detail.getBaseRate();
-
-					}
+					grnRate = detail.getBaseRate() * detail.getGrnType() / 100;
+					/*Sac02Feb2021
+					 * if (detail.getGrnType() == 0) {
+					 * 
+					 * grnRate = detail.getBaseRate() * 85 / 100; }
+					 * 
+					 * if (detail.getGrnType() == 1) {
+					 * 
+					 * grnRate = detail.getBaseRate() * 75 / 100; }
+					 * 
+					 * if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
+					 * 
+					 * grnRate = detail.getBaseRate();
+					 * 
+					 * }
+					 */
 
 					aprTaxableAmt = grnRate * accGrnQty;
 
@@ -1960,21 +1963,22 @@ public class GrnGvnController {
 						float aprTaxableAmt, aprTotalTax, aprGrandTotal;
 						float sgstRs, cgstRs, igstRs,cessRs;
 						float grandTotal;
-						if (detail.getGrnType() == 0) {
-
-							grnRate = detail.getBaseRate() * 85 / 100;
-						}
-
-						if (detail.getGrnType() == 1) {
-
-							grnRate = detail.getBaseRate() * 75 / 100;
-						}
-
-						if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
-
-							grnRate = detail.getBaseRate();
-
-						}
+						grnRate = detail.getBaseRate() * detail.getGrnType() / 100;
+						/*
+						 * if (detail.getGrnType() == 0) {
+						 * 
+						 * grnRate = detail.getBaseRate() * 85 / 100; }
+						 * 
+						 * if (detail.getGrnType() == 1) {
+						 * 
+						 * grnRate = detail.getBaseRate() * 75 / 100; }
+						 * 
+						 * if (detail.getGrnType() == 2 || detail.getGrnType() == 4) {
+						 * 
+						 * grnRate = detail.getBaseRate();
+						 * 
+						 * }
+						 */
 
 						aprTaxableAmt = grnRate * accGrnQty;
 						float discAmt = (aprTaxableAmt * detail.getItemMrp()) / 100;// 4 FEB 2019

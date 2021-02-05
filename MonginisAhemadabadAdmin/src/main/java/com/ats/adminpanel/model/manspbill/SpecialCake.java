@@ -75,8 +75,33 @@ public class SpecialCake {
 	
 	private int noOfChars;
 	
+	//Sachin Temp Field Added 04-02-2021
 	
+		float sprRateMrp;
+		float spBackendRate;
+		int menuSettingDelDays;
 	
+		
+		
+		
+	public float getSprRateMrp() {
+			return sprRateMrp;
+		}
+		public void setSprRateMrp(float sprRateMrp) {
+			this.sprRateMrp = sprRateMrp;
+		}
+		public float getSpBackendRate() {
+			return spBackendRate;
+		}
+		public void setSpBackendRate(float spBackendRate) {
+			this.spBackendRate = spBackendRate;
+		}
+		public int getMenuSettingDelDays() {
+			return menuSettingDelDays;
+		}
+		public void setMenuSettingDelDays(int menuSettingDelDays) {
+			this.menuSettingDelDays = menuSettingDelDays;
+		}
 	public int getNoOfChars() {
 		return noOfChars;
 	}
@@ -297,7 +322,8 @@ public class SpecialCake {
 				+ orderQty + ", orderDiscount=" + orderDiscount + ", isCustChoiceCk=" + isCustChoiceCk
 				+ ", isAddonRateAppli=" + isAddonRateAppli + ", mrpRate1=" + mrpRate1 + ", mrpRate2=" + mrpRate2
 				+ ", mrpRate3=" + mrpRate3 + ", spRate1=" + spRate1 + ", spRate2=" + spRate2 + ", spRate3=" + spRate3
-				+ ", isSlotUsed=" + isSlotUsed + ", noOfChars=" + noOfChars + "]";
+				+ ", isSlotUsed=" + isSlotUsed + ", noOfChars=" + noOfChars + ", sprRateMrp=" + sprRateMrp
+				+ ", spBackendRate=" + spBackendRate + ", menuSettingDelDays=" + menuSettingDelDays + "]";
 	}
 	
 

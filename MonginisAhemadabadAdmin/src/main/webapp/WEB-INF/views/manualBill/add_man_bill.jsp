@@ -133,7 +133,7 @@
         control.makeTransliteratable(['transliterateTextarea']);   showCtype();
       }
    
-      google.setOnLoadCallback(onLoad);
+     // google.setOnLoadCallback(onLoad);
     </script>
 <jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 <style type="text/css">
@@ -177,6 +177,16 @@ select {
 									</h3>
 								</div>
 
+<div align="center" id="loader" style="display: none;background-color: white;">
+
+					<span>
+						<h4>
+							<font color="#343690">Loading</font>
+						</h4>
+					</span> <span class="l-1"></span> <span class="l-2"></span> <span
+						class="l-3"></span> <span class="l-4"></span> <span class="l-5"></span>
+					<span class="l-6"></span>
+				</div>
 
 								<c:set var="allFranchiseeAndMenuList"
 									value="${allFranchiseeAndMenuList}" />
@@ -187,7 +197,35 @@ select {
 
 
 										<div class="form-group">
-											<div class="col-md-2">
+										
+										<div class="col-md-1">
+												Menu<font size="5" color="red">*</font>
+											</div>
+											<div class="col-md-3">
+												<select name="spMenuId" class="form-control chosen"
+													data-placeholder="Menu" id="spMenuId" required>
+													<option value="">Select Menu</option>
+													<c:forEach items="${frMenuList}" var="frMenuList" varStatus="count">
+														<c:choose>
+															<c:when test="${frMenuList.mainCatId==5}">
+															<c:choose>
+																<c:when test="${frMenuList.menuId==menuId}">
+															<option id="menuIndex${frMenuList.menuId}" data-menuindex="${count.index}" selected value="${frMenuList.menuId}">
+																	<c:out value="${frMenuList.menuTitle}" /></option>
+															</c:when>
+															<c:otherwise>
+															<option id="menuIndex${frMenuList.menuId}" data-menuindex="${count.index}" value="${frMenuList.menuId}">
+																	<c:out value="${frMenuList.menuTitle}" /></option>
+															</c:otherwise>
+															</c:choose>
+																
+															</c:when>
+														</c:choose>
+													</c:forEach>
+												</select>
+											</div>
+											
+											<div class="col-md-1">
 												Franchisee <font size="5" color="red">*</font>
 											</div>
 											<div class="col-md-3">
@@ -225,23 +263,23 @@ select {
 													</c:otherwise>
 												</c:choose>
 											</div>
-											<div class="col-md-1">
+											<!-- <div class="col-md-1">
 												Sp List <font size="5" color="red">*</font>
-											</div>
-											<div class="col-md-3">
+											</div> -->
+											<div class="col-md-2">
 												<select data-placeholder="Select Menu" name="sp_cake_id"
 													class="form-control chosen" tabindex="-1" id="sp_cake_id"
 													data-rule-required="true">
 													<option value="">Select Special Cake</option>
 													<c:forEach items="${specialCakeList}" var="spCake">
 														<c:choose>
-															<c:when test="${specialCake.spCode==spCake.spCode}">
-																<option selected value="${spCake.spCode}">${spCake.spCode}
-																	- ${spCake.spName}</option>
+															<c:when test="${spCode==spCake}">
+																<option selected value="${spCake}">${spCake}
+																	</option>
 															</c:when>
 															<c:otherwise>
-																<option value="${spCake.spCode}">${spCake.spCode}
-																	- ${spCake.spName}</option>
+																<option value="${spCake}">${spCake}
+																	</option>
 															</c:otherwise>
 														</c:choose>
 													</c:forEach>
@@ -292,7 +330,7 @@ select {
 										<div class="form-group">
 											<div class="col-md-2">Cake Name</div>
 											<div class="col-md-3" id="spDesc" style="color: #eb62ad;">
-												-${specialCake.spName}</div>
+												-${specialCake.spName} ${specialCake.spCode}</div>
 											<div class="col-md-2">
 												Min Weight <b>${specialCake.spMinwt} Kg </b>
 											</div>
@@ -317,13 +355,13 @@ select {
 										<div class="form-group">
 											<input type="hidden" name="sptype" id="sptype" value="1" />
 
-											<div class="col-md-2">
+											<div class="col-md-1">
 												Flavour<font size="5" color="red">*</font>
 											</div>
-											<div class="col-md-7">
+											<div class="col-md-8">
 												<select data-placeholder="Select Flavour" name="spFlavour"
 													required class="form-control chosen" tabindex="-1"
-													id="spFlavour" onchange="onChangeFlavour()">
+													id="spFlavour">
 													<option value="">Select Flavour</option>
 													<c:forEach items="${filterFlavoursList}" var="flavoursList">
 														<option value="${flavoursList.spfId}">${flavoursList.spfName}</option>
@@ -486,7 +524,7 @@ select {
 													name="sp_place" id="sp_place" type="text" value="${spNo}"
 													readonly>
 											</div>
-											<div class="col-md-1">
+											<%-- <div class="col-md-1">
 												Menu<font size="5" color="red">*</font>
 											</div>
 											<div class="col-md-3">
@@ -502,7 +540,7 @@ select {
 														</c:choose>
 													</c:forEach>
 												</select>
-											</div>
+											</div> --%>
 											<!--  <div class="col-md-1" ></div> -->
 											<!-----------------------5-------------------------------->
 											<div class="col-md-1" style="font-weight: bold;">Discount(%)</div>
@@ -515,7 +553,7 @@ select {
 										</div>
 
 										<div class="form-group">
-										<div class="col-md-2">Select
+										<%-- <div class="col-md-2">Select
 							Section</div>
 						<div class="col-sm-6 col-lg-3 controls date_select">
 							<select data-placeholder="Choose Menu"
@@ -531,7 +569,7 @@ select {
 
 
 							</select>
-						</div>
+						</div> --%>
 
 											<div class="col-md-1">
 												<!-- GST  No -->
@@ -873,20 +911,27 @@ $(document).ready(function() {
 					spfId : $(this).val(),
 					ajax : 'true'
 				}, function(data) {
+					console.log("data",JSON.stringify(data));
 					 $('#rate').empty();	
 					 $("#dbAdonRate").val(0);//data.spfAdonRate
 					$("#rate").html(data.mrp);//data.spfAdonRate
 					document.getElementById("dbPrice").value=data.mrp;//new
 					document.getElementById("dbRate").value=data.mrp;//new
 					document.getElementById("spBackendRate").value=data.rate;//new
-					
 					document.getElementById("sp_add_rate").setAttribute('value',0);//data.spfAdonRate
-				
-					
-					var wt = $('#spwt').find(":selected").text();
-					
 					var flavourAdonRate=0;//data.spfAdonRate;
 					
+					//Sac code
+					 $('#rate').empty();	
+					 $("#dbAdonRate").val(0);//data.spfAdonRate
+					$("#rate").html(data.mrp);//data.spfAdonRate
+					document.getElementById("dbPrice").value=data.sprRateMrp;//new
+					document.getElementById("dbRate").value=data.spBackendRate;//new
+					document.getElementById("spBackendRate").value=data.spBackendRate;//new
+					document.getElementById("sp_add_rate").setAttribute('value',0);//data.spfAdonRate
+					var flavourAdonRate=data.sprAddOnRate;
+					//Sac code 
+					var wt = $('#spwt').find(":selected").text();
 					var tax3 = parseFloat($("#tax3").val());
 					var tax1 = parseFloat($("#tax1").val());
 					var tax2 = parseFloat($("#tax2").val());
@@ -894,7 +939,7 @@ $(document).ready(function() {
 					//alert("sp_ex_charges"+sp_ex_charges);
 					var sp_disc=parseFloat($("#sp_disc").val());
 					//alert("sp_disc"+sp_disc);
-					var price =data.mrp;// $("#dbPrice").val();
+					var price =data.sprRateMrp;// $("#dbPrice").val();
 				
 					var totalFlavourAddonRate= wt*flavourAdonRate;
 					var billBy=${billBy};
@@ -1378,7 +1423,7 @@ function validateForm() {
 	<!-------------------------------------------ALL VALIDATIONS----------------------------------------->
 	<script type="text/javascript">
 function validate() {
-	
+	//alert("ok")
 	 var phoneNo = /^\d{10}$/;  
 	
      var eventName,spId,spCustName,spPlace,spCustMob,spType,spFlavour,spCode,spWt,deliveryDate,spProdDate,custDob,frName,gstNo,custEmail,spMenuId,custGstNo,sectionId;
@@ -1396,7 +1441,7 @@ function validate() {
    //  custEmail=document.getElementById("cust_email").value;
      spMenuId=document.getElementById("spMenuId").value;
    //  custGstNo=document.getElementById("cust_gst_no").value;
-     sectionId=document.getElementById("sectionId").value;
+   //  sectionId=document.getElementById("sectionId").value;
      spWt=document.getElementById("spwt").value;
     var isValid=true; 
     
@@ -1477,10 +1522,10 @@ function validate() {
 	        isValid= false;
 	  }   else   if (custGstNo== "") {
 		  alert("Please Select Section.");
-	        document.getElementById('sectionId').focus();
+	       // document.getElementById('sectionId').focus();
 	        isValid= false;
 	  }  
-   
+   //alert(isValid)
     return isValid;
  
 }
@@ -1539,6 +1584,119 @@ function showPdf(billNo)
 	
    });
 });
+ 
+ $(function() {
+	    $("#spMenuId").change(function() {
+	    	  $('#loader').show();
+	    	var fd = new FormData();
+	    	fd.append('menuId', $('option:selected', this).val());
+	    	var menuIndex = $("#menuIndex"+$('option:selected', this).val()).data("menuindex");
+	    	fd.append('menuIndex', menuIndex);
+			//$('#txtPlaces').val(cityname + " ");
+			// var menuIndex = $("#menuIndex" + $('option:selected', this).val()).data("menuIndex");
+	    	$
+	    	.ajax({
+	    	url : '${pageContext.request.contextPath}/getAllFrIdNameByMenuId',
+	    	type : 'post',
+	    	dataType : 'json',
+	    	data : fd,
+	    	contentType : false,
+	    	processData : false,
+	    	success : function(resData) {
+	    		var html = '<option value="-1"></option>';
+	    		var len = resData.length;
+	    		if(len==0){
+	    			 $('#loader').hide();
+	    			 alert("No Assigned Franchise found with selected menu");
+	    		}
+	    		 $('#fr_id')
+	    		.find('option')
+	    	    .remove()
+	    	    .end();
+	    		for ( var i = 0; i < len; i++) {
+	    			$("#fr_id").append(
+	                           $("<option ></option>").attr(
+	                               "value", resData[i].frId).text(resData[i].frName)
+	                       );
+	    		} 
+	    		$("#fr_id").trigger("chosen:updated");
+	    		  $('#loader').hide();
+	    	},
+	    	});
+	    	  $('#loader').show();
+	    	$
+	    	.ajax({
+	    	url : '${pageContext.request.contextPath}/getSPCodesByMenuId',
+	    	type : 'post',
+	    	dataType : 'json',
+	    	data : fd,
+	    	contentType : false,
+	    	processData : false,
+	    	success : function(resData) {
+	    		var html = '<option value="-1"></option>';
+	    		var len = resData.length;
+	    		//alert(len)
+	    		if(len==0){
+	    			 $('#loader').hide();
+	    			 alert("No Assigned Franchise found with selected menu");
+	    		}
+	    		 $('#sp_cake_id')
+	    		.find('option')
+	    	    .remove()
+	    	    .end();
+	    		for ( var i = 0; i < len; i++) {
+	    			$("#sp_cake_id").append(
+	                           $("<option ></option>").attr(
+	                               "value", resData[i]).text(resData[i])
+	                       );
+	    		} 
+	    		$("#sp_cake_id").trigger("chosen:updated");
+	    		  $('#loader').hide();
+	    	},
+	    	});
+	    });
+	    $('#loader').hide();
+	});
+ 
+ /* $(function() {
+	    $("#fr_id").change(function() {
+	    	  $('#loader').show();
+	    	  var menuId=document.getElementById("spMenuId").value;
+	    	var fd = new FormData();
+	    	fd.append('menuId', menuId);
+	    	$
+	    	.ajax({
+	    	url : '${pageContext.request.contextPath}/getSPCodesByMenuId',
+	    	type : 'post',
+	    	dataType : 'json',
+	    	data : fd,
+	    	contentType : false,
+	    	processData : false,
+	    	success : function(resData) {
+	    		var html = '<option value="-1"></option>';
+	    		var len = resData.length;
+	    		if(len==0){
+	    			 $('#loader').hide();
+	    			 alert("No Assigned Franchise found with selected menu");
+	    		}
+	    		 $('#sp_cake_id')
+	    		.find('option')
+	    	    .remove()
+	    	    .end();
+	    		for ( var i = 0; i < len; i++) {
+	    			$("#sp_cake_id").append(
+	                           $("<option ></option>").attr(
+	                               "value", resData[i]).text(resData[i])
+	                       );
+	    		} 
+	    		$("#sp_cake_id").trigger("chosen:updated");
+	    		  $('#loader').hide();
+	    	},
+	    	});
+	    });
+	    $('#loader').hide();
+	}); */
+ 
 </script>
 </body>
 </html>

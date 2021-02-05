@@ -166,8 +166,8 @@
 
 															<c:choose>
 																<c:when test="${crnDetail.isGrn==1}">
-
-																	<c:choose>
+<c:set var="type" value="GRN ${crnDetail.grnType}"></c:set>
+																	<%-- <c:choose>
 																		<c:when test="${crnDetail.grnType==0}">
 																			<c:set var="type" value="GRN -(1)"></c:set>
 																		</c:when>
@@ -184,7 +184,7 @@
 																			<c:set var="type" value="GRN -(3)"></c:set>
 																		</c:when>
 
-																	</c:choose>
+																	</c:choose> --%>
 
 																</c:when>
 																<c:when test="${crnDetail.isGrn==0}">

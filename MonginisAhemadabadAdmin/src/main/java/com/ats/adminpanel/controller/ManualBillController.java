@@ -37,13 +37,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
+import com.ats.adminpanel.commons.SetOrderDataCommon;
 import com.ats.adminpanel.commons.VpsImageUpload;
+import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.AllFrIdNameList;
 import com.ats.adminpanel.model.AllspMessageResponse;
 import com.ats.adminpanel.model.ConfigureFrBean;
@@ -56,6 +59,7 @@ import com.ats.adminpanel.model.GenerateBillList;
 import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.Main;
 import com.ats.adminpanel.model.SearchSpCakeResponse;
+import com.ats.adminpanel.model.Section;
 import com.ats.adminpanel.model.SectionMaster;
 import com.ats.adminpanel.model.SpCakeOrder;
 import com.ats.adminpanel.model.SpCakeOrderRes;
@@ -65,6 +69,7 @@ import com.ats.adminpanel.model.billing.PostBillDataCommon;
 import com.ats.adminpanel.model.billing.PostBillDetail;
 import com.ats.adminpanel.model.billing.PostBillHeader;
 import com.ats.adminpanel.model.flavours.Flavour;
+import com.ats.adminpanel.model.franchisee.AllMenuResponse;
 import com.ats.adminpanel.model.franchisee.FranchiseeList;
 import com.ats.adminpanel.model.franchisee.Menu;
 import com.ats.adminpanel.model.grngvn.FrSetting;
@@ -84,13 +89,33 @@ public class ManualBillController {
 	public AllFrIdNameList allFrIdNameList = new AllFrIdNameList();
 	SpecialCake specialCake = new SpecialCake();
 	List<SpMessage> spMessageList;
+	List<Menu> selectedMenuList = new ArrayList<Menu>();
+int menuId=0;
+int globalIndex=0;
+int billBy=0;
+	// Sachin 04-02-2021
+		@RequestMapping(value = "/getAllFrIdNameByMenuId", method = RequestMethod.POST)
+		public @ResponseBody List<AllFrIdName> getAllFrIdNameByMenuIdConfigured(HttpServletRequest request,
+				HttpServletResponse response) {
 
+			RestTemplate restTemplate = new RestTemplate();
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("menuId", request.getParameter("menuId"));
+
+			allFrIdNameList = restTemplate.postForObject(Constants.url + "getAllFrIdNameByMenuIdConfigured",
+					map,AllFrIdNameList.class);
+			return allFrIdNameList.getFrIdNamesList();
+
+		}
+		
 	@RequestMapping(value = "/showManualBill", method = RequestMethod.GET)
 	public ModelAndView showManualBill(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = null;
 		specialCake = new SpecialCake();
 		HttpSession session = request.getSession();
+		RestTemplate restTemplate = new RestTemplate();
 
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 		Info view = AccessControll.checkAccess("showManualBill", "showManualBill", "1", "0", "0", "0", newModuleList);
@@ -102,7 +127,6 @@ public class ManualBillController {
 		} else {
 			try {
 				model = new ModelAndView("manualBill/add_man_bill");
-				RestTemplate restTemplate = new RestTemplate();
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
 				allFrIdNameList = new AllFrIdNameList();
@@ -119,7 +143,7 @@ public class ManualBillController {
 
 				SpCakeResponse spCakeResponse = restTemplate
 						.getForObject(Constants.url + "showSpecialCakeListOrderBySpCode", SpCakeResponse.class);
-				System.out.println("SpCake Controller SpCakeList Response " + spCakeResponse.toString());
+				//System.out.println("SpCake Controller SpCakeList Response " + spCakeResponse.toString());
 				List<com.ats.adminpanel.model.SpecialCake> specialCakeList = new ArrayList<com.ats.adminpanel.model.SpecialCake>();
 
 				specialCakeList = spCakeResponse.getSpecialCake();
@@ -127,7 +151,7 @@ public class ManualBillController {
 				model.addObject("specialCakeList", specialCakeList);// 1 object to be used in jsp 2 actual object
 				model.addObject("specialCake", specialCake);// 1 object to be used in jsp 2 actual object
 				model.addObject("frId", 0);// 1 object to be used in jsp 2 actual object
-
+				model.addObject("menuId", menuId);
 				flavourList = restTemplate.getForObject(Constants.url + "/showFlavourList", FlavourList.class);
 
 				AllspMessageResponse allspMessageList = restTemplate.getForObject(Constants.url + "getAllSpMessage",
@@ -155,10 +179,61 @@ public class ManualBillController {
 			model.addObject("billNo", billNo);
 			billNo = 0;
 		}
+//Sac03Feb2021
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("sectionId", Constants.MAN_SP_ORD_BILL_SECTION_ID);
+			Section section = restTemplate.postForObject(Constants.url + "getSingleSection", map, Section.class);
+			String menuIdString = section.getMenuIds();
+			
+			map = new LinkedMultiValueMap<String, Object>();
+			map.add("menuIds", menuIdString);
+			AllMenuResponse menuResponse = restTemplate.postForObject(Constants.url + "getMenuListByMenuIds", map,
+					AllMenuResponse.class);
 
+			selectedMenuList = new ArrayList<Menu>();
+			selectedMenuList = menuResponse.getMenuConfigurationPage();
+
+			java.util.Date utilDate = new java.util.Date();
+			model.addObject("frMenuList", selectedMenuList);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return model;
 	}
+	//Sac03Feb2021
+	List<String>configuredSpCodeList=null;
+	@RequestMapping(value = "/getSPCodesByMenuId", method = RequestMethod.POST)
+	public @ResponseBody List<String> getSPCodesByMenuId(HttpServletRequest request, HttpServletResponse response) {
+	configuredSpCodeList=new ArrayList<String>();
+		
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		RestTemplate restTemplate = new RestTemplate();
+		try {
+			try {
+			menuId=Integer.parseInt(request.getParameter("menuId"));
+			globalIndex=Integer.parseInt(request.getParameter("menuIndex"));
+			
+			}catch (NullPointerException e) {
+				menuId=0;
+			}
+			map.add("menuId", request.getParameter("menuId"));
+		
+		String[] configuredSpCodeArr = restTemplate.postForObject(Constants.url + "/getSPCodesByMenuId", map,
+			String[].class);
 
+		 configuredSpCodeList = Arrays.asList(configuredSpCodeArr);
+		// System.err.println("configuredSpCodeList " +configuredSpCodeList);
+		}catch (HttpClientErrorException e) {
+			System.err.println("getSPCodesByMenuId ex " +e.getResponseBodyAsString());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return configuredSpCodeList;
+	
+	}
+	
 	public String getSpNo(int frId) {
 		String spNoNewStr = "";
 		try {
@@ -203,12 +278,16 @@ public class ManualBillController {
 			List<Float> weightList = new ArrayList<>();
 
 			int frId = Integer.parseInt(request.getParameter("fr_id"));
-			int billBy = Integer.parseInt(request.getParameter("sel_rate"));
+			 billBy = Integer.parseInt(request.getParameter("sel_rate"));
 			System.err.println("Bill By " + billBy);
-
+			model.addObject("menuId", menuId);
 			model.addObject("frId", frId);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-			map.add("spCode", spCode);
+			
+			String arraySp[] = spCode.split("~~~");
+			map.add("spCode", arraySp[0]);
+			model.addObject("spCode", spCode);
+			//map.add("spCode", spCode);
 			try {
 				SearchSpCakeResponse searchSpCakeResponse = restTemplate
 						.postForObject(Constants.url + "/searchSpecialCake", map, SearchSpCakeResponse.class);
@@ -218,8 +297,8 @@ public class ManualBillController {
 				specialCake = searchSpCakeResponse.getSpecialCake();
 
 				model.addObject("specialCake", specialCake);
-				int cutSec = searchSpCakeResponse.getSpCakeSup().getCutSection();
-				model.addObject("cutSec", cutSec);
+				//int cutSec = searchSpCakeResponse.getSpCakeSup().getCutSection();
+				model.addObject("cutSec", 0);
 				Calendar c = Calendar.getInstance();
 				c.add(Calendar.DATE, Integer.parseInt(specialCake.getSpBookb4()));
 				model.addObject("convDate", new SimpleDateFormat("dd-MM-yyyy").format(c.getTime()));
@@ -228,54 +307,29 @@ public class ManualBillController {
 			}
 			model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
 
-			SpCakeResponse spCakeResponse = restTemplate
-					.getForObject(Constants.url + "showSpecialCakeListOrderBySpCode", SpCakeResponse.class);
-			// System.out.println("SpCake Controller SpCakeList Response 0000000" +
-			// spCakeResponse.toString());
-
-			List<com.ats.adminpanel.model.SpecialCake> specialCakeList = new ArrayList<com.ats.adminpanel.model.SpecialCake>();
-
-			specialCakeList = spCakeResponse.getSpecialCake();
-
-			model.addObject("specialCakeList", specialCakeList);
+			/*
+			 * SpCakeResponse spCakeResponse = restTemplate .getForObject(Constants.url +
+			 * "showSpecialCakeListOrderBySpCode", SpCakeResponse.class);
+			 * 
+			 * List<com.ats.adminpanel.model.SpecialCake> specialCakeList = new
+			 * ArrayList<com.ats.adminpanel.model.SpecialCake>();
+			 * 
+			 * specialCakeList = spCakeResponse.getSpecialCake();
+			 */
+			model.addObject("specialCakeList", configuredSpCodeList);
 
 			FranchiseeList frDetails = restTemplate.getForObject(Constants.url + "getFranchisee?frId={frId}",
 					FranchiseeList.class, frId);
 
 			float sprRate;
 			float spBackendRate;
-
-			/*float minWt = Float.valueOf(specialCake.getSpMinwt());
-
-			float maxWt = Float.valueOf(specialCake.getSpMaxwt());
-
-			weightList.add(minWt);
-			float currentWt = minWt;
-			while (currentWt < maxWt) {
-				currentWt = currentWt + specialCake.getSpRate2();// spr rate 2 means weight increment by
-				weightList.add(currentWt);
-			}
-			while (currentWt < 2) {
-				currentWt = currentWt + 0.5f;//spr rate 2 means weight increment by 
-				if(currentWt<=2) {
-				weightList.add(currentWt);
-				}
-				
-			}
-			float max=2;*/
 			
-			
-			//float minWt = Float.valueOf(specialCake.getSpMinwt());
 			float minWt = 1;
 			float maxWt = 15;
-			//float maxWt = Float.valueOf(specialCake.getSpMaxwt());
 
 			weightList.add(minWt);
 			float currentWt = minWt;
-		/*	while (currentWt < maxWt) {
-				currentWt = currentWt + specialCake.getSpRate2();// spr rate 2 means weight increment by
-				weightList.add(currentWt);
-			}*/
+		
 			while (currentWt < 15) {
 				currentWt = currentWt + 0.5f;//spr rate 2 means weight increment by 
 				if(currentWt<=15) {
@@ -321,30 +375,47 @@ public class ManualBillController {
 			List<Flavour> filterFlavoursList=new ArrayList<>();
 			 map = new LinkedMultiValueMap<String, Object>();
 			 map.add("spId", specialCake.getSpId());
-			flavourList = restTemplate.postForObject(Constants.url + "/showFlavourListBySpId",map, FlavourList.class);
+			flavourList = restTemplate.postForObject(Constants.url + "/getFlavorsAndSpConfBySpId",map, FlavourList.class);
 				List<Flavour> flavoursArrayList = flavourList.getFlavour();
 
-			//for (int i = 0; i < flavoursArrayList.size(); i++) {
-             //	filterFlavoursList.add(flavoursArrayList.get(i));
-			//}
-			List<String> list = Arrays.asList(specialCake.getErpLinkcode().split(","));
-			System.err.println("list"+specialCake.getErpLinkcode());
-			for (Flavour flavour : flavoursArrayList) {
-				
-					if (list.contains(""+flavour.getSpfId())) {
-						flavour.setSpfAdonRate(0.0);
-					
-					}
-				
-					filterFlavoursList.add(flavour);
-
-			}
+			System.err.println("sp Id " +specialCake.getSpId() +"flavor  " +flavoursArrayList);
+			/*Sac comment
+			 * List<String> list = Arrays.asList(specialCake.getErpLinkcode().split(","));
+			 * System.err.println("list"+specialCake.getErpLinkcode()); for (Flavour flavour
+			 * : flavoursArrayList) {
+			 * 
+			 * if (list.contains(""+flavour.getSpfId())) { flavour.setSpfAdonRate(0.0);
+			 * 
+			 * }
+			 * 
+			 * filterFlavoursList.add(flavour);
+			 * 
+			 * }
+			 */
 			
 			//------------------------------------------------------------------
+			
+			//Sac04 Feb 2021
+			SetOrderDataCommon orderData=new SetOrderDataCommon();
+			
+			specialCake=orderData.setSpCakeOrderData(specialCake, flavoursArrayList.get(0), menuId,billBy);
+		
+			if (billBy == 0) { // means calc by mrp
+				sprRate = specialCake.getMrpRate1();
+				spBackendRate = specialCake.getMrpRate1();
+			} else {// means calc by rate
+
+				sprRate = specialCake.getSpRate1();
+				spBackendRate = specialCake.getSpRate1();
+			}
+			model.addObject("sprRate", specialCake.getSprRateMrp());
+			model.addObject("spBackendRate", specialCake.getSpBackendRate());
+
+			//Sac04 Feb 2021
 			System.err.println("sprRate " + sprRate);
 			model.addObject("sprRate", sprRate);
 			model.addObject("spBackendRate", spBackendRate);
-            model.addObject("filterFlavoursList", filterFlavoursList);
+            model.addObject("filterFlavoursList", flavoursArrayList);
 			model.addObject("weightList", weightList);
 			model.addObject("billBy", billBy);
 			String spNo = "";
@@ -355,10 +426,7 @@ public class ManualBillController {
 				e.printStackTrace();
 			}
 
-			List<Menu> allMenuList = restTemplate.getForObject(Constants.url + "getAllMenuList", List.class);
-			model.addObject("frMenuList", allMenuList);
-			System.err.println("frMenuList" + allMenuList.toString());
-			// System.out.println("Special Cake List:" + specialCakeList.toString());
+			model.addObject("frMenuList", selectedMenuList);
 			model.addObject("spNo", spNo);
 			AllspMessageResponse allspMessageList = restTemplate.getForObject(Constants.url + "getAllSpMessage",
 					AllspMessageResponse.class);
@@ -370,12 +438,15 @@ public class ManualBillController {
 			String currentDate =new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 			model.addObject("currentDate", currentDate);
 			model.addObject("date", currentDate);
-			model.addObject("date", currentDate);
+			
 
-			SectionMaster[] sectionMasterArray = restTemplate.getForObject(Constants.url + "/getSectionListOnly",
-					SectionMaster[].class);
-			List<SectionMaster> sectionList = new ArrayList<SectionMaster>(Arrays.asList(sectionMasterArray));
-			model.addObject("sectionList", sectionList);
+			/*Sac
+			 * SectionMaster[] sectionMasterArray = restTemplate.getForObject(Constants.url
+			 * + "/getSectionListOnly", SectionMaster[].class); List<SectionMaster>
+			 * sectionList = new
+			 * ArrayList<SectionMaster>(Arrays.asList(sectionMasterArray));
+			 * model.addObject("sectionList", sectionList);
+			 */
 			
 		} catch (Exception e) {
 			System.err.println("Exce in getSpCakeForManBill" + e.getMessage());
@@ -449,11 +520,10 @@ public class ManualBillController {
 	// ------------------------Get Addon Rate AJAX
 	// method(spcakeorder)-----------------------------------
 	@RequestMapping(value = "/getAddOnRate", method = RequestMethod.GET)
-	public @ResponseBody FlavourConf getAddOnRate(@RequestParam(value = "spfId", required = true) int spfId,@RequestParam(value = "spId", required = true) int spId) {
-		FlavourConf flavourConf=new FlavourConf();
+	public @ResponseBody SpecialCake getAddOnRate(@RequestParam(value = "spfId", required = true) int spfId,@RequestParam(value = "spId", required = true) int spId) {
 		
 		System.err.println("Hi" +spfId + "spId  " +spId);
-		/*List<Flavour> flavoursList = new ArrayList<Flavour>();
+		List<Flavour> flavoursList = new ArrayList<Flavour>();
 		Flavour filteredFlavour = new Flavour();
 		flavoursList = flavourList.getFlavour();
 
@@ -464,15 +534,22 @@ public class ManualBillController {
 				filteredFlavour = flavour;
 			}
 		}
-		return filteredFlavour;*/
-		RestTemplate restTemplate = new RestTemplate();
-
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("spId", spId);
-		map.add("spfId", spfId);
-		flavourConf = restTemplate.postForObject(Constants.url + "getFlConfByIds", map, FlavourConf.class);
-System.err.println("flavour is " +flavourConf.toString());
-		return flavourConf;
+		
+SetOrderDataCommon orderData=new SetOrderDataCommon();
+		
+		specialCake=orderData.setSpCakeOrderData(specialCake, filteredFlavour, menuId,billBy);
+	
+		return specialCake;
+		/*
+		 * RestTemplate restTemplate = new RestTemplate();
+		 * 
+		 * MultiValueMap<String, Object> map = new LinkedMultiValueMap<String,
+		 * Object>(); map.add("spId", spId); map.add("spfId", spfId); flavourConf =
+		 * restTemplate.postForObject(Constants.url + "getFlConfByIds", map,
+		 * FlavourConf.class); System.err.println("flavour is "
+		 * +flavourConf.toString());
+		 */
+		//return flavourConf;
 	}
 
 
@@ -510,9 +587,9 @@ System.err.println("flavour is " +flavourConf.toString());
 			FranchiseeList frDetails = restTemplate.getForObject(Constants.url + "getFranchisee?frId={frId}",
 					FranchiseeList.class, frId);
 
-			int spId = Integer.parseInt(request.getParameter("sp_id"));
+			int spId = specialCake.getSpId();//SacInteger.parseInt(request.getParameter("sp_id"));
 
-			int spMenuId = Integer.parseInt(request.getParameter("spMenuId"));
+			int spMenuId =menuId;//Sac Integer.parseInt(request.getParameter("spMenuId"));
 			logger.info("1spId" + spId);
 			
 			String spCode = request.getParameter("sp_code");

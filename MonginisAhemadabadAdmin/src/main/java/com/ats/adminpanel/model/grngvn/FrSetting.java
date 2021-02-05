@@ -1,5 +1,7 @@
 package com.ats.adminpanel.model.grngvn;
 
+import java.util.Date;
+
 public class FrSetting {
 
 	private int frSettingId;
@@ -18,6 +20,12 @@ public class FrSetting {
 	private int posCr;
 	private String exVarchar;
 
+	//Sac05Feb2021
+	
+	private String orderDate;
+	private String prodDate;
+	
+	//Sac05feb
 	public int getSpNo() {
 		return spNo;
 	}
@@ -90,11 +98,27 @@ public class FrSetting {
 		this.posCr = posCr;
 	}
 
+	public String getOrderDate() {
+		return orderDate;
+	}
+
+	public void setOrderDate(String orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public String getProdDate() {
+		return prodDate;
+	}
+
+	public void setProdDate(String prodDate) {
+		this.prodDate = prodDate;
+	}
+
 	@Override
 	public String toString() {
 		return "FrSetting [frSettingId=" + frSettingId + ", frId=" + frId + ", frCode=" + frCode + ", sellBillNo="
 				+ sellBillNo + ", grnGvnNo=" + grnGvnNo + ", spNo=" + spNo + ", count=" + count + ", posCr=" + posCr
-				+ ", exVarchar=" + exVarchar + "]";
+				+ ", exVarchar=" + exVarchar + ", orderDate=" + orderDate + ", prodDate=" + prodDate + "]";
 	}
 
 }

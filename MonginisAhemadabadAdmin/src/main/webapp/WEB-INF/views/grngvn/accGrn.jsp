@@ -930,8 +930,8 @@ function calcGrn(grnType,baseRate,grnId,sgstPer,cgstPer,cessPer,grnQty,curQty,di
 	
 	checkQty(grnId,grnQty,curQty);//Calling another function 
 	var acc_grn_qty=$("#acc_grn_qty"+grnId).val();
-
-	if(grnType==0){
+	grnRate=baseRate*grnType/100;
+	/*Sac02Feb2021 if(grnType==0){
 		grnRate=baseRate*85/100;
 	}
 	
@@ -941,7 +941,7 @@ function calcGrn(grnType,baseRate,grnId,sgstPer,cgstPer,cessPer,grnQty,curQty,di
 	
 	if(grnType==2 || grnType==4){
 		grnRate=baseRate;
-	}
+	} */
 	
 	aprTaxableAmt = grnRate * acc_grn_qty;
 	var discAmt=(aprTaxableAmt*discPer)/100;

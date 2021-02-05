@@ -1,5 +1,7 @@
 package com.ats.adminpanel.model;
 
+import java.util.List;
+
 
 //Akhilesh	2021-01-21
 public class Section {
@@ -112,13 +114,21 @@ public class Section {
 	public void setSecType(int secType) {
 		this.secType = secType;
 	}
-
+	List<AllMenus> menuList;
 	@Override
 	public String toString() {
 		return "Section [sectionId=" + sectionId + ", menuIds=" + menuIds + ", sectionName=" + sectionName
 				+ ", secType=" + secType + ", makerUserId=" + makerUserId + ", makerDatetime=" + makerDatetime
 				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2
-				+ ", delStatus=" + delStatus + "]";
+				+ ", delStatus=" + delStatus + ", menuList=" + menuList + "]";
+	}
+
+	public List<AllMenus> getMenuList() {
+		return menuList;
+	}
+
+	public void setMenuList(List<AllMenus> menuList) {
+		this.menuList = menuList;
 	}
 
 
