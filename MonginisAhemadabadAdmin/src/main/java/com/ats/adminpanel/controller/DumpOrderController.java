@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
+import com.ats.adminpanel.commons.DateConvertor;
 import com.ats.adminpanel.commons.SetOrderDataCommon;
 import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.AllFrIdNameList;
@@ -127,13 +128,14 @@ public class DumpOrderController {
 	public @ResponseBody List<AllFrIdName> getNonOrderFrList(HttpServletRequest request, HttpServletResponse response) {
 
 		int menu_id = Integer.parseInt(request.getParameter("menu_id"));
-
+		String formOrderDate=request.getParameter("orderDate");
+		System.err.println("order date selected In getNonOrderFrList "+formOrderDate);
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Date date = new java.sql.Date(utilDate.getTime());
 		String orderDate = date.toString();
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("orderDate", orderDate);
+		map.add("orderDate", DateConvertor.convertToYMD(formOrderDate));
 		map.add("menuId", menu_id);
 		RestTemplate restTemplate = new RestTemplate();
 		try {
@@ -171,7 +173,7 @@ public class DumpOrderController {
 		for (int i = 0; i < allFrList.size(); i++) {
 			for (int j = 0; j < selectedFrList.size(); j++) {
 				if ((allFrList.get(i).getFrId()) == Integer.parseInt(selectedFrList.get(j))) {
-					System.out.println(allFrList.get(i).getFrName());
+					//System.out.println(allFrList.get(i).getFrName());
 
 					selectedFrIdList.add(allFrList.get(i).getFrId());
 				}
@@ -224,7 +226,16 @@ public class DumpOrderController {
 
 		// dumpOrderList=new ArrayList<DumpOrderList>();
 		dumpOrderList = new ArrayList<>();
-
+/*
+ select 0 as order_id,
+m_franchisee.fr_id,
+0 as menu_id,
+m_fr_item_stock.reorder_qty as order_qty,
+m_fr_item_stock.item_id
+FROM m_fr_item_stock,m_franchisee,m_fr_configure
+WHERE m_franchisee.fr_id in (156,111) and m_franchisee.stock_type=m_fr_item_stock.type
+and find_in_set(m_fr_configure.item_show,m_fr_item_stock.item_id) and m_fr_configure.menu_id=107
+ */
 		for (int i = 0; i < items.size(); i++) {
 			System.out.println("Item ID  " + items.get(i).getId());
 			DumpOrderList dumpOrder = new DumpOrderList();
@@ -258,11 +269,7 @@ public class DumpOrderController {
 		System.out.println("After Rest of Items   and mennu id is  :");
 
 		System.out.println("Item List: " + items.toString());
-		for (int i = 0; i < items.size(); i++) {
-
-			// menuId=items.get(i).getMe
-			System.out.println(items.get(i).getId());
-		}
+		
 
 		return dumpOrderList;
 	}

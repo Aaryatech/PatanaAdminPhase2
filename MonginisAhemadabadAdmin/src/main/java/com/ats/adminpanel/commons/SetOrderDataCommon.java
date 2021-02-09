@@ -61,8 +61,8 @@ public class SetOrderDataCommon {
 		ConfigureFrBean menu=null;
 	
 		map = new LinkedMultiValueMap<String, Object>();
-		map.add("menuId", order.getMenuId());
-	
+		map.add("menuId", menuId);
+		map.add("frId", order.getFrId());
 		try {
 			menu = restTemplate.postForObject(
 				Constants.url + "getFrMenuConfigureByMenuFrId", map, ConfigureFrBean.class);
@@ -169,23 +169,24 @@ public class SetOrderDataCommon {
 	
 //	Sac04Feb2021
 	
-	public SpecialCake setSpCakeOrderData(SpecialCake spCake, Flavour flavor, int menuId,int billBy) {
+	public SpecialCake setSpCakeOrderData(SpecialCake spCake, Flavour flavor, int menuId,int frId,int billBy) {
 		System.err.println("Menu id " +menuId);
 		ConfigureFrBean menu=null;
 		
 		map = new LinkedMultiValueMap<String, Object>();
 		map.add("menuId", menuId);
-	
+		map.add("frId", frId);
+		System.err.println("map for getFrMenuConfigureByMenuFrId  " +map);
 		try {
 			menu = restTemplate.postForObject(
 				Constants.url + "getFrMenuConfigureByMenuFrId", map, ConfigureFrBean.class);
 		}catch (HttpClientErrorException e) {
 			System.err.println("getFrConfUpdate" +e.getResponseBodyAsString());
 		}
-		
+		System.err.println("menu " +menu);
 		float spBackEndRate=0.0f;
 				float mrp_sprRate=0.0f;
-				double addOnRate=0.0;
+				float addOnRate=0.0f;
 				float profitPer = menu.getProfitPer();
 				
 				if (menu.getRateSettingFrom() == 0) {
@@ -202,6 +203,7 @@ public class SetOrderDataCommon {
 					//Get Flavor Configuration By SpId
 					FlavourConf spFlavConf=new FlavourConf();
 					if(flavor!=null) {
+						map = new LinkedMultiValueMap<String, Object>();
 						map.add("spfId", flavor.getSpfId());
 						map.add("spId",spCake.getSpId());
 						spFlavConf=restTemplate.postForObject(Constants.url + "/getFlConfByIds",map, FlavourConf.class);
@@ -215,10 +217,10 @@ public class SetOrderDataCommon {
 					}
 				}
 				if(menu.getRateSettingFrom()==0 && spCake.getIsAddonRateAppli()==1) {
-					addOnRate=flavor.getSpfAdonRate();
+					addOnRate=(float) flavor.getSpfAdonRate();
 				}
 				System.err.println("addOnRate " +addOnRate);
-				mrp_sprRate=(float) (mrp_sprRate+addOnRate);
+				//mrp_sprRate=(float) (mrp_sprRate+addOnRate);
 				spBackEndRate=(mrp_sprRate - (mrp_sprRate * profitPer) / 100);
 				
 			
@@ -231,6 +233,12 @@ public class SetOrderDataCommon {
 				spCake.setSpBackendRate(spBackEndRate);
 				
 				spCake.setSprAddOnRate((float)addOnRate);
+				
+				spCake.setSprRateMrp(mrp_sprRate);
+				spCake.setSpBackendRate(spBackEndRate);
+				spCake.setSprAddOnRate(addOnRate);
+				spCake.setProfitPer(profitPer);
+				
 				System.err.println("mrp_sprRate  " +mrp_sprRate +"spBackEndRate " + spBackEndRate +"addOnRate "+addOnRate);
 				return spCake;
 			}

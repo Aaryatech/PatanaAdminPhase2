@@ -808,6 +808,15 @@ select {
 											<%--  ${sprRate} --%>
 											<input type="hidden" id="sp_id" name="sp_id"
 												value="${specialCake.spId}">
+												
+												<input type="hidden" id="spBackEndRateNew" name="spBackEndRateNew"
+								value="0">
+								<input type="hidden" id="flvAdRate" name="flvAdRate"
+								value="0">
+								<input type="hidden" id="mrp" name="mrp"
+								value="0">
+								<input type="hidden" id="profPer" name="profPer"
+								value="0">
 										</div>
 										<div class="form-group">
 											<div id="ctype1">
@@ -902,6 +911,97 @@ select {
 			}
 </script>
 	<script type="text/javascript">
+			function setData(flavourAdonRate,mrp,profitPer) {
+				/*Sachin 08-02-2021*/
+				var wt = $('#spwt').find(":selected").text();
+				//1
+				var spTotAddonRate=flavourAdonRate*wt;
+				console.log("spTotAddonRate",spTotAddonRate)
+				var tax3 = parseFloat($("#tax3").val());
+				var tax1 = parseFloat($("#tax1").val());
+				var tax2 = parseFloat($("#tax2").val());
+				
+				var sp_ex_charges = parseFloat($("#sp_ex_charges").val());
+				var sp_disc = parseFloat($("#sp_disc").val());
+
+				var advAmt=0;//document.getElementById("adv").value;
+				var spPrice=mrp*wt;
+				console.log("spPrice",spPrice)
+				var spSubTotal=(spTotAddonRate+spPrice+sp_ex_charges);
+				console.log("spSubTotal",spSubTotal)
+				var spBackEndRate=(spSubTotal-(spSubTotal*profitPer)/100);
+				console.log("spBackEndRate",spBackEndRate);
+				var discAmt=spSubTotal*(sp_disc/100);
+				var spGrandTot=(spTotAddonRate+spPrice+sp_ex_charges)-discAmt;
+				var taxableAmt=(spGrandTot*100)/100+tax3;
+
+				var mrpBaseRate = parseFloat((spSubTotal * 100) / (tax3 + 100));
+
+				var gstInRs = 0;
+				var taxPerPerc1 = 0;
+				var taxPerPerc2 = 0;
+				var tax1Amt = 0;
+				var tax2Amt = 0;
+				if (tax3 == 0) {
+					gstInRs = 0;
+
+				} else {
+					gstInRs = (mrpBaseRate * tax3) / 100;
+
+					if (tax1 == 0) {
+						taxPerPerc1 = 0;
+					} else {
+						taxPerPerc1 = parseFloat((tax1 * 100) / tax3);
+						tax1Amt = parseFloat((gstInRs * taxPerPerc1) / 100);
+					}
+					if (tax2 == 0) {
+						taxPerPerc2 = 0;
+					} else {
+						taxPerPerc2 = parseFloat((tax2 * 100) / tax3);
+						tax2Amt = parseFloat((gstInRs * taxPerPerc2) / 100);
+					}
+				}
+
+				$('#gstrs').html(gstInRs.toFixed(2));
+				document.getElementById("gst_rs").setAttribute('value',
+						taxableAmt.toFixed(2));
+
+				var mGstAmt = mrpBaseRate;
+				$('#mgstamt').html('AMT-' + mGstAmt.toFixed(2));
+				document.getElementById("m_gst_amt").setAttribute('value',
+						mGstAmt.toFixed(2));
+
+				$('#price').html(spPrice.toFixed(2));
+				document.getElementById("sp_calc_price").value = spPrice;
+				$('#rate').html(spTotAddonRate.toFixed(2));
+				document.getElementById("sp_add_rate").setAttribute('value',
+						spTotAddonRate);
+
+				$('#subtotal').html(spSubTotal.toFixed(2));
+				document.getElementById("sp_sub_total").setAttribute('value',
+						spSubTotal);
+
+				$('#INR').html('INR-' + (spGrandTot).toFixed(2));
+				document.getElementById("sp_grand").setAttribute('value',
+						spGrandTot);
+				$('#tot').html('TOTAL-' + (spSubTotal).toFixed(2));
+				document.getElementById("total_amt").setAttribute('value',
+						spSubTotal);
+				/* $('#rmAmt').html((spGrandTot-advAmt).toFixed(2));
+				document.getElementById("rm_amount").setAttribute('value',
+						(spGrandTot-advAmt).toFixed(2));
+ */
+				document.getElementById("t1amt").setAttribute('value',
+						tax1Amt.toFixed(2));
+
+				document.getElementById("t2amt").setAttribute('value',
+						tax2Amt.toFixed(2));
+				document.getElementById("spBackEndRateNew").setAttribute('value',
+						spBackEndRate.toFixed(2));
+			}
+		</script>
+		
+	<script type="text/javascript">
 $(document).ready(function() { 
 	$('#spFlavour').change(
 			function() {
@@ -912,6 +1012,16 @@ $(document).ready(function() {
 					ajax : 'true'
 				}, function(data) {
 					console.log("data",JSON.stringify(data));
+					document .getElementById("flvAdRate").value=data.sprAddOnRate
+					document .getElementById("mrp").value=data.sprRateMrp;
+					document .getElementById("profPer").value=data.profitPer;
+					
+					var flavourAdonRate=$("#flvAdRate").val();
+					var mrp=$("#mrp").val();
+					var profitPer=$("#profPer").val();
+					setData(flavourAdonRate,mrp,profitPer);
+					if(1==2){
+						
 					 $('#rate').empty();	
 					 $("#dbAdonRate").val(0);//data.spfAdonRate
 					$("#rate").html(data.mrp);//data.spfAdonRate
@@ -1024,7 +1134,7 @@ $(document).ready(function() {
 						document.getElementById("gst_rs").setAttribute('value',gstInRs.toFixed(2));
 						$('#mgstamt').html('AMT-'+mrpBaseRate.toFixed(2)); 
 						document.getElementById("m_gst_amt").setAttribute('value',mrpBaseRate.toFixed(2));
-						
+				}	
 				});
 			});
 });
@@ -1032,6 +1142,13 @@ $(document).ready(function() {
 
 	<script type="text/javascript">
 		function onChange() {
+			
+			var flavourAdonRate=$("#flvAdRate").val();
+			var mrp=$("#mrp").val();
+			var profitPer=$("#profPer").val();
+			setData(flavourAdonRate,mrp,profitPer);
+			
+			if(1==2){
 			var dbRate=$("#dbRate").val();
 
 			var wt = $('#spwt').find(":selected").text();
@@ -1130,7 +1247,7 @@ $(document).ready(function() {
 			document.getElementById("t1amt").setAttribute('value',tax1Amt.toFixed(2));
 			
 			document.getElementById("t2amt").setAttribute('value',tax2Amt.toFixed(2));
-			
+			}
 	}</script>
 
 	<script type="text/javascript">
@@ -1266,6 +1383,13 @@ $(document).ready(function() {
 	<script>
 
 function chChange() {
+	
+	var flavourAdonRate=$("#flvAdRate").val();
+	var mrp=$("#mrp").val();
+	var profitPer=$("#profPer").val();
+	setData(flavourAdonRate,mrp,profitPer);
+	
+	if(1==2){
 	var wt = $('#spwt').find(":selected").text();
 	var flavourAdonRate =$("#dbAdonRate").val();
 	var tax3 = parseFloat($("#tax3").val());
@@ -1366,7 +1490,7 @@ function chChange() {
 	document.getElementById("t1amt").setAttribute('value',tax1Amt.toFixed(2));
 	
 	document.getElementById("t2amt").setAttribute('value',tax2Amt.toFixed(2));
-	
+	}
 }
 
 

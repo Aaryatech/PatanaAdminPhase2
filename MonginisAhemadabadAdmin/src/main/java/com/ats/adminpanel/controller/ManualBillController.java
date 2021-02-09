@@ -263,7 +263,7 @@ int billBy=0;
 		return spNoNewStr;
 
 	}
-
+int staticFrId=0;
 	// getSpCakeForManBill
 	@RequestMapping(value = "/getSpCakeForManBill", method = RequestMethod.POST)
 	public ModelAndView getSpCakeForManBill(HttpServletRequest request, HttpServletResponse response) {
@@ -278,6 +278,7 @@ int billBy=0;
 			List<Float> weightList = new ArrayList<>();
 
 			int frId = Integer.parseInt(request.getParameter("fr_id"));
+			staticFrId=frId;
 			 billBy = Integer.parseInt(request.getParameter("sel_rate"));
 			System.err.println("Bill By " + billBy);
 			model.addObject("menuId", menuId);
@@ -398,7 +399,7 @@ int billBy=0;
 			//Sac04 Feb 2021
 			SetOrderDataCommon orderData=new SetOrderDataCommon();
 			
-			specialCake=orderData.setSpCakeOrderData(specialCake, flavoursArrayList.get(0), menuId,billBy);
+			//specialCake=orderData.setSpCakeOrderData(specialCake, flavoursArrayList.get(0), menuId,frId,billBy);
 		
 			if (billBy == 0) { // means calc by mrp
 				sprRate = specialCake.getMrpRate1();
@@ -537,7 +538,7 @@ int billBy=0;
 		
 SetOrderDataCommon orderData=new SetOrderDataCommon();
 		
-		specialCake=orderData.setSpCakeOrderData(specialCake, filteredFlavour, menuId,billBy);
+		specialCake=orderData.setSpCakeOrderData(specialCake, filteredFlavour, menuId,staticFrId,billBy);
 	
 		return specialCake;
 		/*
@@ -646,8 +647,10 @@ SetOrderDataCommon orderData=new SetOrderDataCommon();
 			String spAddRate = request.getParameter("sp_add_rate");
 			logger.info("25spAddRate" + spAddRate);
 			
-			float dbAdonRate = Float.parseFloat(request.getParameter("dbAdonRate"));
-			logger.info("dbAdonRate" + dbAdonRate);
+			/*
+			 * float dbAdonRate = Float.parseFloat(request.getParameter("dbAdonRate"));
+			 * logger.info("dbAdonRate" + dbAdonRate);
+			 */
 			
 			float spSubTotal = Float.parseFloat(request.getParameter("sp_sub_total"));
 			logger.info("26spSubTotal" + spSubTotal);
@@ -713,7 +716,7 @@ SetOrderDataCommon orderData=new SetOrderDataCommon();
 			String spCustMobNo = request.getParameter("cust_mobile");
 			logger.info("addonRatePerKG" + addonRatePerKG);
 
-			float backendSpRate = Float.parseFloat(request.getParameter("spBackendRate"));
+			float backendSpRate = Float.parseFloat(request.getParameter("spBackEndRateNew"));
 			logger.info("backendSpRate" + backendSpRate);
 
 			String curTimeStamp = new SimpleDateFormat("yyyy_MM_dd.HH_mm_ss").format(new Date());
@@ -927,11 +930,13 @@ SetOrderDataCommon orderData=new SetOrderDataCommon();
 			spCakeOrder.setSpCustMobNo(spCustMobNo);
 			spCakeOrder.setSlipNo("0");// slipNo
 
-			float intAddonRatePerKG = (dbAdonRate * 0.8f);
-			float extraCharges = (exCharges * 0.8f);
-			float floatBackEndRate = ((backendSpRate + intAddonRatePerKG) * spWeight) + extraCharges;
+			/*
+			 * float intAddonRatePerKG = (dbAdonRate * 0.8f); float extraCharges =
+			 * (exCharges * 0.8f);
+			 */
+			//float floatBackEndRate = ((backendSpRate + intAddonRatePerKG) * spWeight) + extraCharges;
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-			spCakeOrder.setSpBackendRate(floatBackEndRate);
+			spCakeOrder.setSpBackendRate(backendSpRate);
 			try {
 				HttpHeaders httpHeaders = new HttpHeaders();
 				httpHeaders.set("Content-Type", "application/json");
@@ -992,7 +997,7 @@ SetOrderDataCommon orderData=new SetOrderDataCommon();
 
 						PostBillDetail billDetail = new PostBillDetail();
 
-						Float orderRate = floatBackEndRate;//backend rate
+						Float orderRate = backendSpRate;//backend rate
 						Float baseRate = (orderRate * 100) / (100 + (tax1 + tax2));
 						baseRate = roundUp(baseRate);
 						Float taxableAmt = baseRate;
@@ -1058,13 +1063,14 @@ SetOrderDataCommon orderData=new SetOrderDataCommon();
 						billDetail.setOrderQty(1);
 						billDetail.setBillQty(1);
 
-						if (frDetails.getFrRateCat() == 1) {
-							billDetail.setMrp(specialCake.getMrpRate1());
-						} else {
-							billDetail.setMrp(specialCake.getMrpRate3());
-						}
+							/*
+							 * if (frDetails.getFrRateCat() == 1) {
+							 * billDetail.setMrp(specialCake.getMrpRate1()); } else {
+							 * billDetail.setMrp(specialCake.getMrpRate3()); }
+							 */
+						billDetail.setMrp(Float.parseFloat(spGrand));
 						billDetail.setRateType(frDetails.getFrRateCat());
-						billDetail.setRate(floatBackEndRate);
+						billDetail.setRate(backendSpRate);
 						billDetail.setBaseRate(roundUp(baseRate));
 						billDetail.setTaxableAmt(roundUp(taxableAmt));
 						billDetail.setDiscPer(discPer);// new

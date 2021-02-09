@@ -100,9 +100,30 @@
 
 							</select>
 						</div>
+						
+						<label class=" col-md-2 control-label franchisee_label">Order Date</label>
+						<div class="col-md-4 controls">
+										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="date" size="19"
+											type="text" name="date" value="" required />
+									</div>
+									</div>
+									
+									
 					<!-- </div>
 					<div class="form-group col-md-8">
 					<label class=" col-md-3 control-label franchisee_label"></label> -->
+					<br><br>
+					<div class="form-group"> 
+					
+					<label class=" col-md-2 control-label menu_label">Search By
+							</label>
+						<div class=" col-md-4 controls">
+							<input value="1" class="" id="prev_date" checked
+											type="radio" name="search_by"/>Stock Type
+							<input value="2" class="" id="stock_type"
+											type="radio" name="search_by"/>Prev Date
+						</div>
+						
 						<label class=" col-md-2 control-label menu_label">Previous Order
 										Date
 							</label>
@@ -116,7 +137,7 @@
 					<div class="form-group"> 
 <!-- 					<label class=" col-md-3 control-label franchisee_label"></label>
  -->								<label class=" col-md-2 control-label franchisee_label">Franchise </label>
-						<div class=" col-md-4 controls franchisee_select">
+						<div class=" col-md-6 controls franchisee_select">
 							<select data-placeholder="Choose Franchisee"
 								class="form-control chosen " multiple="multiple" tabindex="6"
 								id="selectFr" name="selectFr">
@@ -134,7 +155,7 @@
 
 							</select>
 						</div>
-						<label class=" col-md-2 control-label franchisee_label">Discount % </label>
+						<label class=" col-md-1 control-label franchisee_label">Discount%</label>
 						<div class="col-md-1">
 							<input type="text" name="discPer" id="discPer" value="1" class="form-control" width="30px"/>
 						</div>
@@ -240,11 +261,7 @@
 					</div> -->
 					
 					<div class="row" align="center">
-					<label class=" col-md-1 control-label franchisee_label">Order Date</label>
-						<div class="col-sm-3 col-lg-2 controls">
-										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="date" size="19"
-											type="text" name="date" value="" required />
-									</div>
+					
 				<label class=" col-md-1 control-label franchisee_label" style="display:none;">Delivery Date</label>
 						<div class="col-sm-3 col-lg-2 controls"  style="display:none;">
 										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="deldate" size="19"
@@ -274,9 +291,10 @@
 	 
  
 				function getFr() {
-					 
+					var orderDate = document.getElementById("date").value;
 					$.getJSON('${getNonOrderFrList}', {
 						menu_id : $("#selectMenu").val(),
+						orderDate: orderDate,
 						//menu_id : 99,
 						ajax : 'true'
 					}, function(data) {

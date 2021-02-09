@@ -128,7 +128,7 @@ public class GrnGvnController {
 		Info view = AccessControll.checkAccess("getGrnHeaderForGate", "getGrnHeaderForGate", "1", "0", "0", "0",
 				newModuleList);
 		 List<Integer> franchiseList=new ArrayList<>();
-		if (view.getError() == true) {
+		if (view.getError() == false) {
 
 			model = new ModelAndView("accessDenied");
 

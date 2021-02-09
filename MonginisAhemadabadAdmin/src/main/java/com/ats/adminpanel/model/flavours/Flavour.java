@@ -9,7 +9,7 @@ private int spType;
 
 private String spfName;
 
-private Double spfAdonRate;
+private double spfAdonRate;
 
 private int delStatus;
 
@@ -37,11 +37,11 @@ public void setSpfName(String spfName) {
 this.spfName = spfName;
 }
 
-public Double getSpfAdonRate() {
+public double getSpfAdonRate() {
 return spfAdonRate;
 }
 
-public void setSpfAdonRate(Double spfAdonRate) {
+public void setSpfAdonRate(double spfAdonRate) {
 this.spfAdonRate = spfAdonRate;
 }
 
