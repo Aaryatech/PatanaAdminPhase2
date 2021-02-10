@@ -154,6 +154,7 @@ public class DumpOrderController {
 
 		// int selectedMainCatId=0;
 		String selectOrderDate = request.getParameter("preOrder_Date");
+		String searchBy = request.getParameter("searchBy");
 		String selectedFr = request.getParameter("fr_id_list");
 		selectedFr = selectedFr.substring(1, selectedFr.length() - 1);
 		selectedFr = selectedFr.replaceAll("\"", "");
@@ -190,14 +191,14 @@ public class DumpOrderController {
 		System.out.println("Before Rest of Items   and mennu id is  :  " + selectedMenu);
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("itemGrp1", selectedMainCatId);
+		map.add("menuId", menuId);
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 
 			ParameterizedTypeReference<List<Item>> typeRef = new ParameterizedTypeReference<List<Item>>() {
 			};
 			ResponseEntity<List<Item>> responseEntity = restTemplate.exchange(
-					Constants.url + "getItemsByCatIdAndSortId", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+					Constants.url + "getItemAvailByMenuId", HttpMethod.POST, new HttpEntity<>(map), typeRef);
 
 			items = responseEntity.getBody();
 		} catch (Exception e) {
@@ -207,7 +208,7 @@ public class DumpOrderController {
 
 		map2.add("date", selectOrderDate);
 		map2.add("menuId", selectedMenu);
-
+		map2.add("searchBy", searchBy);
 		map2.add("frId", selectedFr);
 		// GetDumpOrderList getdumpOrderList;
 		List<GetDumpOrder> OrderList = new ArrayList<GetDumpOrder>();
@@ -219,11 +220,8 @@ public class DumpOrderController {
 			System.out.println(e.getMessage());
 		}
 		OrderList = getdumpOrderList.getGetDumpOrder();
-		System.out.println("List  " + OrderList.toString());
-		for (int i = 0; i < OrderList.size(); i++) {
-			System.out.println("Count    " + OrderList.get(i).getItemId() + "  And   " + OrderList.get(i).getFrId());
-		}
-
+		//System.out.println("List  " + OrderList.toString());
+		
 		// dumpOrderList=new ArrayList<DumpOrderList>();
 		dumpOrderList = new ArrayList<>();
 /*
@@ -234,8 +232,11 @@ m_fr_item_stock.reorder_qty as order_qty,
 m_fr_item_stock.item_id
 FROM m_fr_item_stock,m_franchisee,m_fr_configure
 WHERE m_franchisee.fr_id in (156,111) and m_franchisee.stock_type=m_fr_item_stock.type
-and find_in_set(m_fr_configure.item_show,m_fr_item_stock.item_id) and m_fr_configure.menu_id=107
+and find_in_set(m_fr_item_stock.item_id,m_fr_configure.item_show) and m_fr_configure.menu_id=103
  */
+		System.err.println("A items " +items);
+		System.err.println("B OrderList " +OrderList);
+		
 		for (int i = 0; i < items.size(); i++) {
 			System.out.println("Item ID  " + items.get(i).getId());
 			DumpOrderList dumpOrder = new DumpOrderList();
@@ -246,7 +247,9 @@ and find_in_set(m_fr_configure.item_show,m_fr_item_stock.item_id) and m_fr_confi
 			dumpOrder.setItemName(items.get(i).getItemName());
 
 			for (int j = 0; j < OrderList.size(); j++) {
+				//System.err.println("OrderList item Id " +OrderList.get(j).getItemId());
 				if (items.get(i).getId() == Integer.parseInt((OrderList.get(j).getItemId()))) {
+					System.err.println("Match " +OrderList.get(j).getItemId());
 					OrderData orderData = new OrderData();
 					orderData.setFrId(OrderList.get(j).getFrId());
 
@@ -256,11 +259,11 @@ and find_in_set(m_fr_configure.item_show,m_fr_item_stock.item_id) and m_fr_confi
 					System.out.println(
 							"FR  " + OrderList.get(j).getFrId() + " Item QTY  " + OrderList.get(j).getOrderQty());
 					dumpOrder.setOrderData(orderDataList);
-
+					//break;
 				}
 
 			}
-			System.out.println("List of orders   " + dumpOrder.toString());
+			//System.out.println("List of orders   " + dumpOrder.toString());
 			dumpOrderList.add(dumpOrder);
 		}
 		System.out.println("Final List  :  " + dumpOrderList.toString());
@@ -295,6 +298,7 @@ and find_in_set(m_fr_configure.item_show,m_fr_item_stock.item_id) and m_fr_confi
 		System.err.println("deliveryDate" + deliveryDate + "sqlCurrDate" + sqlCurrDate);
 		
 		SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
+		dateStr=DateConvertor.convertToYMD(dateStr);
 		java.util.Date orderDateSel=yydate.parse(dateStr);
 		
 		RestTemplate restTemplate = new RestTemplate();

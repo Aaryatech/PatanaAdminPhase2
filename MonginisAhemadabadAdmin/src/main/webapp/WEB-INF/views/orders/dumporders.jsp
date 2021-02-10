@@ -103,8 +103,8 @@
 						
 						<label class=" col-md-2 control-label franchisee_label">Order Date</label>
 						<div class="col-md-4 controls">
-										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="date" size="19"
-											type="text" name="date" value="" required />
+										<input class="form-control date-picker" placeholder="dd-MM-yyyy" id="date" size="19"
+											type="text" name="date" onblur="getFr()" value="" required />
 									</div>
 									</div>
 									
@@ -265,12 +265,12 @@
 				<label class=" col-md-1 control-label franchisee_label" style="display:none;">Delivery Date</label>
 						<div class="col-sm-3 col-lg-2 controls"  style="display:none;">
 										<input class="form-control date-picker" placeholder="dd-mm-yyyy" id="deldate" size="19"
-											type="text" name="deldate" value="" required />
+											type="text" name="deldate" value="${todayDate}"  />
 									</div>
 						<div class="col-md-offset-0 col-md-1" align="center">
 
 							<button class="btn btn-primary"
-								style="margin-right: 5px;" onclick="submitOrder()" id="submitOrder" disabled>Submit</button>
+								style="margin-right: 5px;" id="submitOrder" disabled>Submit</button>
 						</div>
 					</div>
 				</div>
@@ -291,6 +291,7 @@
 	 
  
 				function getFr() {
+					//alert("Ok")
 					var orderDate = document.getElementById("date").value;
 					$.getJSON('${getNonOrderFrList}', {
 						menu_id : $("#selectMenu").val(),
@@ -352,6 +353,7 @@
 				var selectedMenu = $("#selectMenu").val();
 				var discPer = $("#discPer").val();
 				var selectedFr = $("#selectFr").val();
+				var searchBy=$('input[name="search_by"]:checked').val();
 				var preOrderDate = document.getElementById("dp2").value;
 				franchasee();
 				var frId = [];
@@ -366,12 +368,11 @@
 		       
 		        $('#loader').show();
 				$.getJSON('${getOrderItemList}',{
-					
 									menu_id : selectedMenu,
 									fr_id_list : JSON.stringify(frId),
 									preOrder_Date : preOrderDate,
+									searchBy : searchBy,
 									ajax : 'true'
-
 								},
 								function(data) {
 
