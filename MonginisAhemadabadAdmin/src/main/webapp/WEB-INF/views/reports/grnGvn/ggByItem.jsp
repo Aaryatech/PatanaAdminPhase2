@@ -385,17 +385,16 @@
 	</script>
 	<script type="text/javascript">
 		function genPdf() {
-			var from_date = $("#fromDate").val();
-			var to_date = $("#toDate").val();
-
-			var selectedFr = $("#selectFr").val();
-			var routeId = $("#selectRoute").val();
-
-			var isGrn = $("#isGrn").val();
+			var isGrn = $("#isGrn").val();			
+			var selectedCat = $("#selectCat").val();
+			var selectFr = $("#selectFr").val();
+			var fromDate = $("#fromDate").val();
+			var toDate = $("#toDate").val();
+			var subCatId = $("#item_grp2").val();
 
 			window
-					.open('${pageContext.request.contextPath}/showGrnGvnItemwiseReportPdf/'
-							+ from_date + '/' + to_date + '/');
+					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showGrnGvnItemwiseReportPdf/'
+							+ fromDate + '/' + toDate + '/'+ selectFr + '/'+ isGrn + '/' + selectedCat + '/'+subCatId);
 
 		}
 		function exportToExcel() {

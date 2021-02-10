@@ -2099,6 +2099,13 @@ public class SalesReportController {
 				model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
 
 				model.addObject("routeList", routeList);
+				
+				CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+						CategoryListResponse.class);
+				List<MCategoryList> categoryList;
+				categoryList = categoryListResponse.getmCategoryList();
+
+				model.addObject("catList", categoryList);
 
 			} catch (Exception e) {
 

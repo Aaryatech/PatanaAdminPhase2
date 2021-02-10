@@ -134,6 +134,23 @@
 				
 				<div class="row">
 					<div class="form-group">
+					
+					<%-- <label class="col-sm-3 col-lg-2 control-label">Select
+							Category</label>
+						<div class="col-sm-3 col-lg-4">
+
+							<select data-placeholder="Choose Category"
+								class="form-control chosen" multiple="multiple" tabindex="6"
+								id="selectCat" name="selectCat">
+
+								<option value="-1"><c:out value="All" /></option>
+
+								<c:forEach items="${catList}" var="cat" varStatus="count">
+									<option value="${cat.catId}"><c:out
+											value="${cat.catName}" /></option>
+								</c:forEach>
+							</select>
+						</div> --%>
 
 						<label class="col-sm-3 col-lg-2 control-label">Select Type</label>
 						<div class="col-sm-6 col-lg-4 controls">
@@ -144,9 +161,14 @@
 								<option value="1">Taxable</option>
 								<option value="2">Grnad Total</option>
 							</select>
-
-						</div>
-						
+						</div>					
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="form-group">
+					<div class="col-md-6" >
+					</div>
 						<div class="col-md-6" >
 						<button class="btn btn-primary" onclick="searchReport()">Search</button>
 
@@ -159,9 +181,8 @@
 								target="_blank">PDF</a> --%>
 
 					</div>
-					
 					</div>
-				</div>
+					</div>
 				
 				
 				<div align="center" id="loader" style="display: none">
