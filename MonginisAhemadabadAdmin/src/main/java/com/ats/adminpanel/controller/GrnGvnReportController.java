@@ -3125,13 +3125,10 @@ public class GrnGvnReportController {
 	}
 
 	
-	List<String> frList = new ArrayList<>();
+	List<PendingGrnGvnItemWise> grnAcGvnList = new ArrayList<PendingGrnGvnItemWise>();
 	@RequestMapping(value = "/getAccPendingItemsGrnGvn", method = RequestMethod.GET)
 	@ResponseBody
 	public List<PendingGrnGvnItemWise> getAccPendingItemsGrnGvn(HttpServletRequest request, HttpServletResponse response) {
-		
-		List<PendingGrnGvnItemWise> grnAcGvnList = new ArrayList<PendingGrnGvnItemWise>();
-		
 		try {
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
@@ -3193,61 +3190,52 @@ public class GrnGvnReportController {
 			List<String> rowData = new ArrayList<String>();
 
 			rowData.add("Sr. No.");
-			rowData.add("GRN No.");
-			rowData.add("Invoice No.");
+			rowData.add("GRN GVN SrNo.");
+			rowData.add("Type");
+			rowData.add("GRN GVN Date");
 			rowData.add("Item Name");
-			rowData.add("GRN%");
-			rowData.add("Req Qty");
-		//	rowData.add("Req Value");
-			rowData.add("Apr Qty");
-		//	rowData.add("Apr Value");
-			rowData.add("GRN Generated");
-			rowData.add("Status");
+			rowData.add("Qty");	
+			rowData.add("GRN GVN Status");
 
 			expoExcel.setRowData(rowData);
 			exportToExcelList.add(expoExcel);
-//			List<PendingItemGrnGvn> excelItems = grnGvnList;
-//			for (int i = 0; i < excelItems.size(); i++) {
-//				expoExcel = new ExportToExcel();
-//				rowData = new ArrayList<String>();
-//				rowData.add("" + (i + 1));
-//
-//				
-//				rowData.add(excelItems.get(i).getGrngvnSrno()+"~"+excelItems.get(i).getGrngvnDate());
-//				rowData.add(excelItems.get(i).getInvoiceNo()+"~"+excelItems.get(i).getBillDate());
-//				rowData.add(excelItems.get(i).getItemName());
-//				rowData.add("" + excelItems.get(i).getGrnPer());
-//				rowData.add("" + excelItems.get(i).getReqQty());
-//			//	rowData.add("" + excelItems.get(i).getTotalAmt());
-//				rowData.add("" + excelItems.get(i).getAprQty());
-//			//	rowData.add("" + excelItems.get(i).getAprAmt());
-//				rowData.add(excelItems.get(i).getIsCreditNote() == 1 ? "Yes" : "No");
-//				
-//				String grnGvnstatus = null;
-//				if (excelItems.get(i).getGrngvnStatus() == 1)
-//					grnGvnstatus = "Pending";
-//				else if (excelItems.get(i).getGrngvnStatus() == 2)
-//					grnGvnstatus = "Approved By Gate";
-//				else if (excelItems.get(i).getGrngvnStatus() == 3)
-//					grnGvnstatus = "Reject By Gate";
-//				else if (excelItems.get(i).getGrngvnStatus() == 4)
-//					grnGvnstatus = "Approved By Store";
-//				else if (excelItems.get(i).getGrngvnStatus() == 5)
-//					grnGvnstatus = "Reject By Store";
-//				else if (excelItems.get(i).getGrngvnStatus() == 6)
-//					grnGvnstatus = "Approved By Acc";
-//				else
-//					grnGvnstatus = "Reject By Acc";
-//
-//				rowData.add(grnGvnstatus);
-//				expoExcel.setRowData(rowData);
-//				exportToExcelList.add(expoExcel);
-//
-//			}
-//
-//			HttpSession session = request.getSession();
-//			session.setAttribute("exportExcelList", exportToExcelList);
-//			session.setAttribute("excelName", "grnGvnReport");
+			List<PendingGrnGvnItemWise> excelItems = grnAcGvnList;
+			for (int i = 0; i < excelItems.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				rowData.add("" + (i + 1));				
+				
+				rowData.add(excelItems.get(i).getGrngvnDate());
+				rowData.add(excelItems.get(i).getIsGrn()==1 ? "GRN" : "GVN");
+				rowData.add("" + excelItems.get(i).getGrngvnDate());
+				rowData.add(excelItems.get(i).getItemName());
+				rowData.add("" + excelItems.get(i).getGrnGvnQty());
+				
+				String grnGvnstatus = null;
+				if (excelItems.get(i).getGrngvnStatus() == 1)
+					grnGvnstatus = "Pending";
+				else if (excelItems.get(i).getGrngvnStatus() == 2)
+					grnGvnstatus = "Approved By Gate";
+				else if (excelItems.get(i).getGrngvnStatus() == 3)
+					grnGvnstatus = "Reject By Gate";
+				else if (excelItems.get(i).getGrngvnStatus() == 4)
+					grnGvnstatus = "Approved By Store";
+				else if (excelItems.get(i).getGrngvnStatus() == 5)
+					grnGvnstatus = "Reject By Store";
+				else if (excelItems.get(i).getGrngvnStatus() == 6)
+					grnGvnstatus = "Approved By Acc";
+				else
+					grnGvnstatus = "Reject By Acc";
+
+				rowData.add(grnGvnstatus);
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+
+			HttpSession session = request.getSession();
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "A/c Pending Item Wise Grn Gvn");
 
 		} catch (Exception e) {
 
@@ -3259,6 +3247,64 @@ public class GrnGvnReportController {
 
 	}
 	
+	@RequestMapping(value = "pdf/showPndItemGrnGvnReportPdf/{fromDate}/{toDate}/{frIds}/{aprvBy}/{isGrn}", method = RequestMethod.GET)
+	public ModelAndView showPndItemGrnGvnReportPdf(@PathVariable("fromDate") String fromDate, @PathVariable("toDate") String toDate,
+			@PathVariable("frIds") String frIds,
+			@PathVariable("aprvBy") int aprvBy , @PathVariable("isGrn") String isGrn, HttpServletRequest request, HttpServletResponse response)
+			throws FileNotFoundException {
+		ModelAndView model = new ModelAndView("reports/grnGvn/pdf/r6");
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+
+			RestTemplate restTemplate = new RestTemplate();
+			String grnType=null;
+			if (isGrn.equalsIgnoreCase("2")) {
+				grnType = "1" + "," + "0";
+
+				map.add("isGrn", grnType);
+			} else {
+				System.err.println("Is Grn not =2");
+				grnType = isGrn;
+				map.add("isGrn", grnType);
+			}
+			int grnStatus = 6;
+			
+			map.add("frIdList", frIds);
+			map.add("fromDate", DateConvertor.convertToYMD(fromDate));
+			map.add("toDate",  DateConvertor.convertToYMD(toDate));
+			map.add("grnStatus", grnStatus);
+			map.add("aprvBy", aprvBy);
+
+			ParameterizedTypeReference<List<PendingGrnGvnItemWise>> typeRef = new ParameterizedTypeReference<List<PendingGrnGvnItemWise>>() {
+			};
+			ResponseEntity<List<PendingGrnGvnItemWise>> responseEntity = null;
+			try {
+			responseEntity = restTemplate
+					.exchange(Constants.url + "getAcPendingItemGrnGvnReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+			}catch (HttpClientErrorException e) {
+				System.out.println(e.getResponseBodyAsString());
+			}
+			grnAcGvnList = responseEntity.getBody();
+			
+			model.addObject("report", grnAcGvnList);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		model.addObject("report", grnAcGvnList);
+		model.addObject("fromDate", fromDate);
+		model.addObject("toDate", toDate);
+		model.addObject("isGrn", isGrn);
+		
+		
+		Setting showHead = SalesReportController.isHeadAllow();
+		if(showHead.getSettingValue()==1) {
+			model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+			model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+		}
+		return model;
+		
+	}
 
 	public static float roundUp(float d) {
 		return BigDecimal.valueOf(d).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();

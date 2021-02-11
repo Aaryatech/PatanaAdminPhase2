@@ -559,21 +559,20 @@
 		}
 
 		function genPdf() {
+			var isGrn = $("#isGrn").val();	
+			var selectedFr = $("#selectFr").val();
 			var from_date = $("#fromDate").val();
 			var to_date = $("#toDate").val();
-
-			var selectedFr = $("#selectFr").val();
-			var routeId = $("#selectRoute").val();
-			var isGrn = $("#isGrn").val();
+			var apprvBy = $("#aprvBy").val();			
 
 			window
-					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showGGreportByDate/'
+					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showPndItemGrnGvnReportPdf/'
 							+ from_date
 							+ '/'
 							+ to_date
 							+ '/'
 							+ selectedFr
-							+ '/' + routeId + '/' + isGrn + '/');
+							+ '/' + apprvBy + '/' + isGrn + '/');
 
 		}
 		function exportToExcel() {
