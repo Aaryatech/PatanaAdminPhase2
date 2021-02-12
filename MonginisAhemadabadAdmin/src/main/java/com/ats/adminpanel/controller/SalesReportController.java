@@ -1460,6 +1460,14 @@ public class SalesReportController {
 				model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
 
 				model.addObject("routeList", routeList);
+				
+				CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+						CategoryListResponse.class);
+				List<MCategoryList> categoryList;
+				categoryList = categoryListResponse.getmCategoryList();
+
+				model.addObject("catList", categoryList);
+				
 
 			} catch (Exception e) {
 
@@ -1483,14 +1491,19 @@ public class SalesReportController {
 
 		try {
 			System.out.println("Inside get Sale Bill Wise");
-			String selectedFr = request.getParameter("fr_id_list");
+			
 			fromDate = request.getParameter("fromDate");
 			toDate = request.getParameter("toDate");
 			String routeId = request.getParameter("route_id");
-
+			String selectedFr = request.getParameter("fr_id_list");
 			selectedFr = selectedFr.substring(1, selectedFr.length() - 1);
 			selectedFr = selectedFr.replaceAll("\"", "");
 
+			String selectedSubCat = request.getParameter("sub_cat_id_list");
+			selectedSubCat = selectedSubCat.substring(1, selectedSubCat.length() - 1);
+			selectedSubCat = selectedSubCat.replaceAll("\"", "");
+			String catId = request.getParameter("cat_id");
+			
 			frList = new ArrayList<>();
 			frList = Arrays.asList(selectedFr);
 
@@ -1530,7 +1543,8 @@ public class SalesReportController {
 			map.add("frIdList", selectedFr);
 			map.add("fromDate", fromDate);
 			map.add("toDate", toDate);
-
+			map.add("subCatIdList", selectedSubCat);
+			map.add("catId", catId);
 			System.out.println(map);
 			ParameterizedTypeReference<List<SalesReportDateMonth>> typeRef = new ParameterizedTypeReference<List<SalesReportDateMonth>>() {
 			};
@@ -1855,9 +1869,11 @@ public class SalesReportController {
 	 * return saleList; }
 	 */
 
-	@RequestMapping(value = "pdf/showSaleBillwiseGrpByDatePdf/{fromDate}/{toDate}/{selectedFr}/{routeId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/showSaleBillwiseGrpByDatePdf/{fromDate}/{toDate}/{selectedFr}/{routeId}"
+			+ "/{selectCat}/{selectedSubCat}", method = RequestMethod.GET)
 	public ModelAndView showSaleBillwiseGrpByDate(@PathVariable String fromDate, @PathVariable String toDate,
-			@PathVariable String selectedFr, @PathVariable String routeId, HttpServletRequest request,
+			@PathVariable String selectedFr, @PathVariable String routeId,
+			@PathVariable String selectCat,@PathVariable String selectedSubCat, HttpServletRequest request,
 			HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("reports/sales/pdf/billwisesalesgrpbydatePdf");
@@ -1995,7 +2011,8 @@ public class SalesReportController {
 			map.add("frIdList", selectedFr);
 			map.add("fromDate", fromDate);
 			map.add("toDate", toDate);
-
+			map.add("subCatIdList", selectedSubCat);
+			map.add("catId", selectCat);
 			ParameterizedTypeReference<List<SalesReportDateMonth>> typeRef = new ParameterizedTypeReference<List<SalesReportDateMonth>>() {
 			};
 			ResponseEntity<List<SalesReportDateMonth>> responseEntity = restTemplate
@@ -2178,7 +2195,13 @@ public class SalesReportController {
 			map.add("frIdList", selectedFr);
 			map.add("fromDate", fromDate);
 			map.add("toDate", toDate);
+			String selectedSubCat = request.getParameter("sub_cat_id_list");
+			selectedSubCat = selectedSubCat.substring(1, selectedSubCat.length() - 1);
+			selectedSubCat = selectedSubCat.replaceAll("\"", "");
+			String catId = request.getParameter("cat_id");
 
+			map.add("subCatIdList", selectedSubCat);
+			map.add("catId", catId);
 			ParameterizedTypeReference<List<SalesReportDateMonth>> typeRef = new ParameterizedTypeReference<List<SalesReportDateMonth>>() {
 			};
 			ResponseEntity<List<SalesReportDateMonth>> responseEntity = restTemplate
@@ -2202,15 +2225,9 @@ public class SalesReportController {
 				saleList.get(i).setNetTotalTax(netTotalTax);
 			}
 
-			System.out.println("sales List Bill Wise " + saleList.toString());
+			//System.out.println("sales List Bill Wise " + saleList.toString());
 
-		} catch (
-
-		Exception e) {
-			System.out.println("get sale Report Bill Wise " + e.getMessage());
-			e.printStackTrace();
-
-		}
+		
 
 		// exportToExcel
 
@@ -2336,7 +2353,13 @@ public class SalesReportController {
 		session.setAttribute("searchByNew", "From Date: " + fromDate + "  To Date: " + toDate + " ");
 		session.setAttribute("mergeUpto1", "$A$1:$N$1");
 		session.setAttribute("mergeUpto2", "$A$2:$N$2");
+		} catch (
 
+				Exception e) {
+					System.out.println("get sale Report Bill Wise " + e.getMessage());
+					e.printStackTrace();
+
+				}
 		return saleList;
 	}
 
@@ -2496,11 +2519,14 @@ public class SalesReportController {
 	 * return saleList;
 	 * 
 	 * }
-	 */
+	 */	
 
-	@RequestMapping(value = "pdf/showSaleBillwiseGrpByMonthPdf/{fromDate}/{toDate}/{selectedFr}/{routeId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/showSaleBillwiseGrpByMonthPdf/{fromDate}/{toDate}/{selectedFr}/{routeId}"
+			+ "/{selectCat}/{selectedSubCat}", method = RequestMethod.GET)
 	public ModelAndView showSaleBillwiseGrpByMonthPdf(@PathVariable String fromDate, @PathVariable String toDate,
-			@PathVariable String selectedFr, @PathVariable String routeId, HttpServletRequest request,
+			@PathVariable String selectedFr, @PathVariable String routeId,
+			@PathVariable String selectCat, @PathVariable String selectedSubCat,
+			HttpServletRequest request,
 			HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("reports/sales/pdf/billwisesalesgrpbymonthPdf");
@@ -2549,6 +2575,8 @@ public class SalesReportController {
 			map.add("fromDate", fromDate);
 			map.add("toDate", toDate);
 
+			map.add("subCatIdList", selectedSubCat);
+			map.add("catId", selectCat);
 			ParameterizedTypeReference<List<SalesReportDateMonth>> typeRef = new ParameterizedTypeReference<List<SalesReportDateMonth>>() {
 			};
 			ResponseEntity<List<SalesReportDateMonth>> responseEntity = restTemplate

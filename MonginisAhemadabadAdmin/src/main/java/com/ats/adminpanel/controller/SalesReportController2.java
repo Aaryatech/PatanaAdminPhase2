@@ -518,7 +518,7 @@ public class SalesReportController2 {
 					.exchange(Constants.url + "getSubCatFrReportApi", HttpMethod.POST, new HttpEntity<>(map), typeRef);
 
 			subCatFrReportList = responseEntity.getBody();
-
+System.err.println("subCatFrReportList " +subCatFrReportList);
 			for (int i = 0; i < subCatFrReportList.size(); i++) {
 
 				float netQty = subCatFrReportList.get(i).getSoldQty()
@@ -560,11 +560,7 @@ public class SalesReportController2 {
 			System.out.println("subCatFrReportList*********************************************"
 					+ subCatFrReportListData.toString());
 
-		} catch (Exception e) {
-			System.out.println("get sale Report Bill Wise " + e.getMessage());
-			e.printStackTrace();
-
-		}
+		
 
 		List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
@@ -649,8 +645,11 @@ public class SalesReportController2 {
 					rowData.add("" + roundUp(subCatFrReportList.get(i).getRetAmt()));
 					rowData.add("" + roundUp(subCatFrReportList.get(i).getNetQty()));
 					rowData.add("" + roundUp(subCatFrReportList.get(i).getNetQty()));
+					try {
 					rowData.add("" + roundUp(subCatFrReportList.get(i).getRetAmtPer()));
-
+					}catch (Exception e) {
+						System.err.println("subCatFrReportList.get(i).getRetAmtPer()" +subCatFrReportList.get(i).getRetAmtPer());
+					}
 					srno = srno + 1;
 
 					expoExcel.setRowData(rowData);
@@ -685,7 +684,11 @@ public class SalesReportController2 {
 		session.setAttribute("searchByNew", "From Date: " + fromDate + "  To Date: " + toDate + " ");
 		session.setAttribute("mergeUpto1", "$A$1:$K$1");
 		session.setAttribute("mergeUpto2", "$A$2:$K$2");
+		} catch (Exception e) {
+			System.out.println("get sale Report Bill Wise " + e.getMessage());
+			e.printStackTrace();
 
+		}
 		return subCatFrReportListData;
 	}
 

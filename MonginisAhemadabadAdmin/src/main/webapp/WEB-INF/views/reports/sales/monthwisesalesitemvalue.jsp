@@ -77,6 +77,7 @@
 									<option value=" ">Select</option>
 
 									<c:forEach items="${catList}" var="cat" varStatus="count">
+									<c:if test="${cat.catId!=5}">
 										<c:choose>
 											<c:when test="${cat.catId==catId}">
 										<option value="${cat.catId}" selected><c:out
@@ -87,6 +88,7 @@
 												value="${cat.catName}" /></option>
 												</c:otherwise>
 												</c:choose>
+									</c:if>
 									</c:forEach>
 								</select>
 							</div>

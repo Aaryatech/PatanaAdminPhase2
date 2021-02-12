@@ -15,6 +15,9 @@
 	<c:url var="getBillList" value="/getSaleBillwiseGrpByDate"></c:url>
 	<c:url var="getFrListofAllFr" value="/getFrListForDatewiseReport"></c:url>
 
+	<c:url var="getGroup2ByCatId" value="/getSubCateListByCatId" />
+
+
 	<!-- BEGIN Sidebar -->
 	<div id="sidebar" class="navbar-collapse collapse">
 
@@ -126,7 +129,42 @@
 				</div>
 
 				<br>
+<div class="row">
+<label class="col-sm-3 col-lg-2 control-label">Category</label>
+							<div class="col-sm-3 col-lg-2">
 
+								<select data-placeholder="Select Category"
+									class="form-control chosen" tabindex="6" id="selectCat"
+									name="selectCat">
+
+									<option value=" ">Select</option>
+
+									<c:forEach items="${catList}" var="cat" varStatus="count">
+										<c:choose>
+											<c:when test="${cat.catId==catId}">
+										<option value="${cat.catId}" selected><c:out
+												value="${cat.catName}" /></option>
+												</c:when>
+												<c:otherwise>
+													<option value="${cat.catId}"><c:out
+												value="${cat.catName}" /></option>
+												</c:otherwise>
+												</c:choose>
+									</c:forEach>
+								</select>
+							</div>
+
+							<label class="col-sm-2 col-lg-1 control-label">Sub
+								Category</label>
+							<div class="col-sm-3 col-lg-5 controls">
+								<select data-placeholder="Select Sub Category" multiple
+									class="form-control chosen" name="item_grp2"
+									id="item_grp2" tabindex="-1" data-rule-required="true">
+								</select>
+							</div>
+							</div>
+							<br>
+							
 				<div class="row">
 					<div class="form-group">
 
@@ -336,6 +374,8 @@
 
 				var selectStatus = document.getElementById("selectStatus").value;
 				//alert(selectStatus);
+					var selectCat=$("#selectCat").val();
+					var selectedSubCat=$("#item_grp2").val();
 
 				$('#loader').show();
 
@@ -348,6 +388,8 @@
 									fromDate : from_date,
 									toDate : to_date,
 									route_id : routeId,
+									sub_cat_id_list: JSON.stringify(selectedSubCat),
+									cat_id: selectCat,
 									ajax : 'true'
 
 								},
@@ -1065,13 +1107,14 @@
 
 				var selectedFr = $("#selectFr").val();
 				var routeId = $("#selectRoute").val();
-
+				var selectCat=$("#selectCat").val();
+var selectedSubCat=$("#item_grp2").val();
 				var from_date = $("#fromDate").val();
 				var to_date = $("#toDate").val();
 				//alert("fr "+selectedFr);
 				//alert(from_date);
 				//alert(to_date);
-				//alert(routeId);
+				//alert(selectedSubCat);
 
 				//document.getElementById('btn_pdf').style.display = "block";
 				$
@@ -1083,8 +1126,9 @@
 									fromDate : from_date,
 									toDate : to_date,
 									route_id : routeId,
+									sub_cat_id_list: JSON.stringify(selectedSubCat),
+									cat_id: selectCat,
 									ajax : 'true'
-
 								},
 								function(data) {
 
@@ -1251,7 +1295,8 @@
 				var routeId = $("#selectRoute").val();
 				var from_date = $("#fromDate").val();
 				var to_date = $("#toDate").val();
-
+				var selectCat=$("#selectCat").val();
+				var selectedSubCat=$("#item_grp2").val();
 				window
 						.open('pdfForReport?url=pdf/showSaleBillwiseGrpByDatePdf/'
 								+ from_date
@@ -1259,7 +1304,7 @@
 								+ to_date
 								+ '/'
 								+ selectedFr
-								+ '/' + routeId + '/');
+								+ '/' + routeId + '/'+selectCat+'/'+selectedSubCat);
 
 			}
 			function exportToExcel() {
@@ -1288,7 +1333,39 @@
 		}
 	</script>
 		
-
+<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							$('#selectCat')
+									.change(
+											function() {
+												$
+														.getJSON(
+																'${getGroup2ByCatId}',
+																{
+																	catId : $(
+																			this)
+																			.val(),
+																	ajax : 'true'
+																},
+																function(data) {
+																	var len = data.length;
+																	$('#item_grp2')
+																    .find('option')
+																    .remove()
+																    .end()
+												                    for ( var i = 0; i < len; i++) {
+												                        $("#item_grp2").append(
+												                                $("<option></option>").attr(
+												                                    "value", data[i].subCatId).text(data[i].subCatName)
+												                            );
+												                    }
+												                    $("#item_grp2").trigger("chosen:updated");
+																});
+											});
+						});
+	</script>
 		<!--basic scripts-->
 		<script
 			src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
