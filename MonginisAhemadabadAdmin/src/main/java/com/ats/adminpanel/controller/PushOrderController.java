@@ -211,14 +211,14 @@ public class PushOrderController {
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
-		map.add("itemGrp1", selectedMainCatId);
-
+		//map.add("itemGrp1", selectedMainCatId);
+		map.add("menuId", menuId);
 		try {
 
 			ParameterizedTypeReference<List<Item>> typeRef = new ParameterizedTypeReference<List<Item>>() {
 			};
 			ResponseEntity<List<Item>> responseEntity = restTemplate.exchange(
-					Constants.url + "getItemsByCatIdAndSortId", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+					Constants.url + "getItemAvailByMenuId", HttpMethod.POST, new HttpEntity<>(map), typeRef);
 
 			items = responseEntity.getBody();
 

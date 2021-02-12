@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -64,6 +65,7 @@ import org.zefer.pd4ml.PD4PageMark;
 import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.commons.DateConvertor;
+import com.ats.adminpanel.commons.ExceUtil;
 import com.ats.adminpanel.model.AllFrIdName;
 import com.ats.adminpanel.model.AllFrIdNameList;
 import com.ats.adminpanel.model.AllRoutesListResponse;
@@ -8098,4 +8100,778 @@ public class SalesReportController {
 		return allowHead;
 	
 }
+	//Sachin 11-02-2021
+		@RequestMapping(value = "getDispatchPReportExcelForBill/{billDate}/{routeId}/{selectedCat}/{frId}", method = RequestMethod.GET)
+		public void getDispatchPReportExcelForBill(@PathVariable String billDate, @PathVariable String routeId,
+				@PathVariable String selectedCat, @PathVariable int frId, HttpServletRequest request,
+				HttpServletResponse response) {
+			System.err.println("In getDispatchPReportExcelForBill 6256");
+			ModelAndView model = new ModelAndView("reports/sales/dispatchReportPPdfBill");/* dispatchReportPPdfBill */
+			RestTemplate restTemplate = new RestTemplate();
+
+			List<PDispatchReport> dispatchReportList = new ArrayList<PDispatchReport>();
+			PDispatchReportList dispatchReports = new PDispatchReportList();
+
+			List<Item> itemExList = new ArrayList<Item>();
+			List<FranchiseForDispatch> frNameIdByRouteIdList = new ArrayList<>();
+			List<SubCategory> subCatExlList = new ArrayList<SubCategory>();
+			String frName=null;
+			try {
+				String convertedDate = "";
+				try {
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(dateFormat.parse(billDate));
+					cal.add(Calendar.DATE, 1);
+					convertedDate = dateFormat.format(cal.getTime());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				System.out.println("Inside get Dispatch Report");
+				AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+						AllRoutesListResponse.class);
+
+				List<Route> routeList = new ArrayList<Route>();
+
+				routeList = allRouteListResponse.getRoute();
+				String routeName = "def";
+				for (int i = 0; i < routeList.size(); i++) {
+
+					if (routeList.get(i).getRouteId() == Integer.parseInt(routeId)) {
+						routeName = routeList.get(i).getRouteName();
+						break;
+
+					}
+				}
+				boolean isAllCatSelected = false;
+				String selectedFr = null;
+
+				if (selectedCat.contains("-1")) {
+					isAllCatSelected = true;
+				} else {
+				}
+				List<String> catList = new ArrayList<>();
+				catList = Arrays.asList(selectedCat);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+
+				map.add("routeId", routeId);
+
+				FranchiseForDispatch[] frNameId = restTemplate.postForObject(Constants.url + "getFranchiseForDispatch", map,
+						FranchiseForDispatch[].class);
+
+				frNameIdByRouteIdList = new ArrayList<>(Arrays.asList(frNameId));
+
+
+				StringBuilder sbForRouteFrId = new StringBuilder();
+				for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+
+					sbForRouteFrId = sbForRouteFrId.append(frNameIdByRouteIdList.get(i).getFrId() + ",");
+
+				}
+
+				String strFrIdRouteWise = sbForRouteFrId.toString();
+				selectedFr = strFrIdRouteWise.substring(0, strFrIdRouteWise.length() - 1);
+
+				if (selectedCat.contains("-1")) {
+					isAllCatSelected = true;
+				}
+
+				map = new LinkedMultiValueMap<String, Object>();
+
+				allFrIdNameList = new AllFrIdNameList();
+				try {
+
+					allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName", AllFrIdNameList.class);
+
+				} catch (Exception e) {
+					System.out.println("Exception in getAllFrIdName" + e.getMessage());
+					e.printStackTrace();
+
+				}
+
+				if (isAllCatSelected) {
+					map = new LinkedMultiValueMap<String, Object>();
+
+					CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+							CategoryListResponse.class);
+					List<MCategoryList> categoryList = categoryListResponse.getmCategoryList();
+
+					StringBuilder cateList = new StringBuilder();
+					for (MCategoryList mCategoryList : categoryList) {
+						cateList = cateList.append(mCategoryList.getCatId().toString() + ",");
+					}
+					String catlist = cateList.toString();
+					selectedCat = catlist.substring(0, catlist.length() - 1);
+					map.add("categories", selectedCat);
+					map.add("productionDate", billDate);
+					map.add("frId", selectedFr);
+
+					ParameterizedTypeReference<List<PDispatchReport>> typeRef = new ParameterizedTypeReference<List<PDispatchReport>>() {
+					};
+
+					ResponseEntity<List<PDispatchReport>> responseEntity = restTemplate.exchange(
+							Constants.url + "getPDispatchItemReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+
+					dispatchReportList = responseEntity.getBody();
+
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("catIdList", selectedCat);
+					ParameterizedTypeReference<List<Item>> typeRef1 = new ParameterizedTypeReference<List<Item>>() {
+					};
+
+					ResponseEntity<List<Item>> responseEntity1 = restTemplate.exchange(
+							Constants.url + "getItemsByCatIdForDisp", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+
+					SubCategory[] subCatList = restTemplate.getForObject(Constants.url + "getAllSubCatList",
+							SubCategory[].class);
+
+					ArrayList<SubCategory> subCatAList = new ArrayList<SubCategory>(Arrays.asList(subCatList));
+					subCatExlList = subCatAList;
+					itemExList = responseEntity1.getBody();
+					model.addObject("dispatchReportList", dispatchReportList);
+					model.addObject("frList", frNameIdByRouteIdList);
+					model.addObject("itemList", responseEntity1.getBody());
+					model.addObject("subCatList", subCatAList);
+
+				} else {
+					System.out.println("selectedCat" + selectedCat.toString());
+					System.out.println("selectedFr" + selectedFr.toString());
+
+					map.add("categories", selectedCat);
+					map.add("productionDate", billDate);
+					map.add("frId", selectedFr);
+
+					ParameterizedTypeReference<List<PDispatchReport>> typeRef = new ParameterizedTypeReference<List<PDispatchReport>>() {
+					};
+
+					ResponseEntity<List<PDispatchReport>> responseEntity = restTemplate.exchange(
+							Constants.url + "getPDispatchItemReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+
+					dispatchReportList = responseEntity.getBody();
+
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("catIdList", selectedCat);
+					ParameterizedTypeReference<List<Item>> typeRef1 = new ParameterizedTypeReference<List<Item>>() {
+					};
+
+					ResponseEntity<List<Item>> responseEntity1 = restTemplate.exchange(
+							Constants.url + "getItemsByCatIdForDisp", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("catId", selectedCat);
+					ParameterizedTypeReference<List<SubCategory>> typeRef2 = new ParameterizedTypeReference<List<SubCategory>>() {
+					};
+
+					ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate
+							.exchange(Constants.url + "getSubCatList", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+
+					model.addObject("dispatchReportList", dispatchReportList);
+					model.addObject("frList", frNameIdByRouteIdList);
+					model.addObject("itemList", responseEntity1.getBody());
+					model.addObject("subCatList", responseEntity2.getBody());
+
+					subCatExlList = responseEntity2.getBody();
+					itemExList = responseEntity1.getBody();
+				}
+
+				map = new LinkedMultiValueMap<String, Object>();
+				map.add("productionDate", billDate);
+				map.add("frId", selectedFr);
+				DispatchSpCake[] spCakeArr = restTemplate.postForObject(Constants.url + "getPDispatchSpCake", map,
+						DispatchSpCake[].class);
+				List<DispatchSpCake> spCakeList = new ArrayList<DispatchSpCake>(Arrays.asList(spCakeArr));
+
+				model.addObject("spCakeList", spCakeList);
+
+				model.addObject("routeName", routeName);
+				model.addObject("frId", frId);
+				model.addObject("convertedDate", convertedDate);
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+				
+				System.err.println("in subCatExlList 6440 " +subCatExlList);
+				//Sac code 3PM
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+				rowData.add("Sr.");
+				rowData.add("Item Name");
+				for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+					if(frNameIdByRouteIdList.get(i).getFrId()==frId) {
+						rowData.add("Disp Qty");
+						break;
+					}
+				}//end of frNameIdByRouteIdList loop
+				rowData.add("Rate");
+				rowData.add("Total");
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+				float allTotal=0;
+				try {
+				for(int i=0;i<subCatExlList.size();i++) {
+					SubCategory subCat=subCatExlList.get(i);
+					//System.err.println("in subCat subcatId " +subCat.getSubCatId());
+					 expoExcel = new ExportToExcel();
+					 rowData = new ArrayList<String>();
+					int flag=0;
+					int srNo=1;
+					
+					for(int d=0;d<itemExList.size();d++) {
+						
+						Item item=itemExList.get(d);
+						//System.err.println("in itemExList subcatId " +item.getItemGrp2());
+						float total=0;
+						float frTotal=0;
+						
+						if(item.getItemGrp2()==subCat.getSubCatId()) {
+							//System.err.println("in match found subcatid");
+							
+							float editQty=0;
+							for (int f = 0; f < frNameIdByRouteIdList.size(); f++) {
+								//System.err.println("in frNameIdByRouteIdList " +frNameIdByRouteIdList.get(f));
+								FranchiseForDispatch fr=frNameIdByRouteIdList.get(f);
+								if(fr.getFrId()==frId) {
+									//System.err.println("in frId match " +frNameIdByRouteIdList.get(f).getFrId());
+									for(int x=0;x<dispatchReportList.size();x++) {
+										PDispatchReport report=dispatchReportList.get(x);
+										//System.err.println("in report sub cat id" +report.getSubCatId());
+										if(report.getItemId()==item.getId()) {
+											//System.err.println("in Item match" +report.getItemId());
+											if(report.getFrId()==fr.getFrId()) {
+												 editQty=report.getEditQty();
+												if(fr.getFrRateCat()==1) {
+													total=report.getEditQty()*item.getItemRate1();
+												}
+												if(fr.getFrRateCat()==2) {
+													total=report.getEditQty()*item.getItemRate2();
+												}
+												if(fr.getFrRateCat()==3) {
+													total=report.getEditQty()*item.getItemRate3();
+												}
+											}//end of if(report.getFrId()==fr.getFrId())
+											
+										}//end of if(report.getItemId()==item.getId())
+										frTotal=report.getEditQty()+frTotal;
+									}//end of loop dispatchReportList
+									
+								}//end of if(fr.getFrId()==frId) 
+							}//end of loop frNameIdByRouteIdList
+							//df
+							if(editQty>0) {
+								if(flag==0) {
+									rowData.add("");
+									rowData.add(""+subCat.getSubCatName());
+									rowData.add("");
+									
+									 System.err.println("in row data set" +subCat.getSubCatName());
+										
+									for (int f = 0; f < frNameIdByRouteIdList.size(); f++) {
+								FranchiseForDispatch fr=frNameIdByRouteIdList.get(f);
+								
+								if(fr.getFrId()==frId) {
+									rowData.add("");
+									rowData.add("");
+								}//end of if(fr.getFrId()==frId)
+									}//frNameIdByRouteIdList end loop
+									expoExcel.setRowData(rowData);
+									exportToExcelList.add(expoExcel);
+									System.err.println("in row data added");
+									
+									flag=1;
+								}//end of flag==0
+								//System.err.println("in new row data ");
+								 expoExcel = new ExportToExcel();
+								 rowData = new ArrayList<String>();
+								rowData.add(""+srNo);
+								srNo=srNo+1;
+								rowData.add(""+item.getItemName());
+								rowData.add(""+editQty);
+								rowData.add(""+item.getItemRate1());
+								rowData.add(""+total);
+								 expoExcel.setRowData(rowData);
+									exportToExcelList.add(expoExcel);
+									//System.err.println("in new row data end ");
+								allTotal=allTotal+total;
+							}//end of editQty>0
+						}//end of if(item.getItemGrp2()==subCat.getSubCatId())
+						
+					}//end of itemExList loop
+					
+				}//end of subCatExlList loop
+				//System.err.println("allTotal " +allTotal);
+				
+				for(int i=0;i<subCatExlList.size();i++) {
+					SubCategory subCat=subCatExlList.get(i);
+					float totalItems=0;
+					float itemTotal=0;
+					for (int f = 0; f < frNameIdByRouteIdList.size(); f++) {
+						FranchiseForDispatch fr=frNameIdByRouteIdList.get(f);
+						
+
+						if(fr.getFrId()==frId) {
+							itemTotal=0;
+							frName=fr.getFrName();
+							for(int x=0;x<dispatchReportList.size();x++) {
+								PDispatchReport report=dispatchReportList.get(x);
+								if(report.getSubCatId()==subCat.getSubCatId()) {
+									if(report.getFrId()==fr.getFrId()) {
+										itemTotal=itemTotal+report.getEditQty();
+									}//end of frid match
+								}//end of if subcat match
+								
+							}//end of for dispatchReportList
+							totalItems=itemTotal+totalItems;
+						}//end of if(fr.getFrId()==frId)
+					}//end of frNameIdByRouteIdList loop
+					 expoExcel = new ExportToExcel();
+					 rowData = new ArrayList<String>();
+					 
+					 rowData.add("");
+						rowData.add(""+subCat.getSubCatName());
+						rowData.add(""+itemTotal);
+						rowData.add("");
+						rowData.add("");
+						 expoExcel.setRowData(rowData);
+							exportToExcelList.add(expoExcel);
+				}//end of subCatExlList loop
+				float itemTotal=0;
+				for (int f = 0; f < frNameIdByRouteIdList.size(); f++) {
+					FranchiseForDispatch fr=frNameIdByRouteIdList.get(f);
+					if(fr.getFrId()==frId) {
+						itemTotal=0;
+						for(int x=0;x<dispatchReportList.size();x++) {
+							PDispatchReport report=dispatchReportList.get(x);
+							if(report.getFrId()==fr.getFrId()) {
+								itemTotal=itemTotal+report.getEditQty();	
+							}
+						}//end of dispatchReportList
+						
+					}//frId Match
+					
+				}
+				 expoExcel = new ExportToExcel();
+				 rowData = new ArrayList<String>();
+				 
+				 rowData.add("");
+					rowData.add("Total");
+					rowData.add(""+itemTotal);
+					rowData.add("");
+					rowData.add(""+allTotal);
+					 expoExcel.setRowData(rowData);
+						exportToExcelList.add(expoExcel);
+						
+						
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+				XSSFWorkbook wb = null;
+				try {
+					
+					model.addObject("routeName", routeName);
+					model.addObject("frId", frId);
+					model.addObject("convertedDate", convertedDate);
+					model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+					model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+					String reportName="Dispatch Sheet " + frName + " Production " + billDate +" Route " + routeName + " Disp " +convertedDate;
+					wb = ExceUtil.createWorkbook(exportToExcelList, "", reportName, "  ", "", 'F');
+
+					ExceUtil.autoSizeColumns(wb, 3);
+					response.setContentType("application/vnd.ms-excel");
+					String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+					response.setHeader("Content-disposition",
+							"attachment; filename=" + reportName + "-" + date + ".xlsx");
+					wb.write(response.getOutputStream());
+
+				} catch (IOException ioe) {
+					throw new RuntimeException("Error writing spreadsheet to output stream");
+				} finally {
+					if (wb != null) {
+						wb.close();
+					}
+				}
+				
+			} catch (Exception e) {
+				System.out.println("get Dispatch Report Exception: " + e.getMessage());
+				e.printStackTrace();
+
+			}
+			//return model;
+
+		}
+
+
+	//Sachin Dispatch Excel-11-02-2021
+		@RequestMapping(value = "getPDispatchReportExcel/{billDate}/{routeId}/{selectedCat}", method = RequestMethod.GET)
+		public void getPDispatchReportExcel(@PathVariable String billDate, @PathVariable String routeId,
+				@PathVariable String selectedCat, HttpServletRequest request, HttpServletResponse response) {
+			ModelAndView model = new ModelAndView("reports/sales/dispatchPReportPdf");
+			RestTemplate restTemplate = new RestTemplate();
+
+			List<PDispatchReport> dispatchReportList = new ArrayList<PDispatchReport>();
+			PDispatchReportList dispatchReports = new PDispatchReportList();
+
+			List<SubCategory> subCatExList = new ArrayList<SubCategory>();
+
+			List<Item> itemExList = new ArrayList<Item>();
+
+			List<FrNameIdByRouteId> frNameIdByRouteIdList = new ArrayList<FrNameIdByRouteId>();
+			try {
+				String convertedDate = "";
+				try {
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(dateFormat.parse(billDate));
+					cal.add(Calendar.DATE, 1);
+					convertedDate = dateFormat.format(cal.getTime());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				System.out.println("Inside get Dispatch Report getPDispatchReportExcel");
+				AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+						AllRoutesListResponse.class);
+
+				List<Route> routeList = new ArrayList<Route>();
+
+				routeList = allRouteListResponse.getRoute();
+				String routeName = "def";
+				for (int i = 0; i < routeList.size(); i++) {
+
+					if (routeList.get(i).getRouteId() == Integer.parseInt(routeId)) {
+						routeName = routeList.get(i).getRouteName();
+						break;
+
+					}
+				}
+				boolean isAllCatSelected = false;
+				String selectedFr = null;
+
+				if (selectedCat.contains("-1")) {
+					isAllCatSelected = true;
+				} else {
+				}
+				List<String> catList = new ArrayList<>();
+				catList = Arrays.asList(selectedCat);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+
+				map.add("routeId", routeId);
+
+				FrNameIdByRouteIdResponse frNameId = restTemplate.postForObject(Constants.url + "getFrNameIdByRouteId", map,
+						FrNameIdByRouteIdResponse.class);
+
+				frNameIdByRouteIdList = frNameId.getFrNameIdByRouteIds();
+
+
+				StringBuilder sbForRouteFrId = new StringBuilder();
+				for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+
+					sbForRouteFrId = sbForRouteFrId.append(frNameIdByRouteIdList.get(i).getFrId().toString() + ",");
+
+				}
+
+				String strFrIdRouteWise = sbForRouteFrId.toString();
+				selectedFr = strFrIdRouteWise.substring(0, strFrIdRouteWise.length() - 1);
+
+				if (selectedCat.contains("-1")) {
+					isAllCatSelected = true;
+				}
+
+				map = new LinkedMultiValueMap<String, Object>();
+
+				allFrIdNameList = new AllFrIdNameList();
+				try {
+					allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName", AllFrIdNameList.class);
+				} catch (Exception e) {
+					System.out.println("Exception in getAllFrIdName" + e.getMessage());
+					e.printStackTrace();
+				}
+				if (isAllCatSelected) {
+					map = new LinkedMultiValueMap<String, Object>();
+					CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+							CategoryListResponse.class);
+					List<MCategoryList> categoryList = categoryListResponse.getmCategoryList();
+
+					StringBuilder cateList = new StringBuilder();
+					for (MCategoryList mCategoryList : categoryList) {
+						cateList = cateList.append(mCategoryList.getCatId().toString() + ",");
+					}
+					String catlist = cateList.toString();
+					selectedCat = catlist.substring(0, catlist.length() - 1);
+					map.add("categories", selectedCat);
+					map.add("productionDate", billDate);
+					map.add("frId", selectedFr);
+
+					ParameterizedTypeReference<List<PDispatchReport>> typeRef = new ParameterizedTypeReference<List<PDispatchReport>>() {
+					};
+
+					ResponseEntity<List<PDispatchReport>> responseEntity = restTemplate.exchange(
+							Constants.url + "getPDispatchItemReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+
+					dispatchReportList = responseEntity.getBody();
+
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("catIdList", selectedCat);
+					ParameterizedTypeReference<List<Item>> typeRef1 = new ParameterizedTypeReference<List<Item>>() {
+					};
+
+					ResponseEntity<List<Item>> responseEntity1 = restTemplate.exchange(
+							Constants.url + "getItemsByCatIdForDisp", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+
+					SubCategory[] subCatList = restTemplate.getForObject(Constants.url + "getAllSubCatList",
+							SubCategory[].class);
+
+					ArrayList<SubCategory> subCatAList = new ArrayList<SubCategory>(Arrays.asList(subCatList));
+
+					
+
+					subCatExList = subCatAList;
+					itemExList = responseEntity1.getBody();
+
+					model.addObject("dispatchReportList", dispatchReportList);
+					model.addObject("frList", frNameIdByRouteIdList);
+					model.addObject("itemList", responseEntity1.getBody());
+					model.addObject("subCatList", subCatAList);
+
+				} else {
+					System.out.println("selectedCat" + selectedCat.toString());
+					System.out.println("selectedFr" + selectedFr.toString());
+
+					map.add("categories", selectedCat);
+					map.add("productionDate", billDate);
+					map.add("frId", selectedFr);
+
+					ParameterizedTypeReference<List<PDispatchReport>> typeRef = new ParameterizedTypeReference<List<PDispatchReport>>() {
+					};
+
+					ResponseEntity<List<PDispatchReport>> responseEntity = restTemplate.exchange(
+							Constants.url + "getPDispatchItemReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+
+					dispatchReportList = responseEntity.getBody();
+					System.out.println("dispatchReportList = " + dispatchReportList.toString());
+
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("catIdList", selectedCat);
+					ParameterizedTypeReference<List<Item>> typeRef1 = new ParameterizedTypeReference<List<Item>>() {
+					};
+
+					ResponseEntity<List<Item>> responseEntity1 = restTemplate.exchange(
+							Constants.url + "getItemsByCatIdForDisp", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("catId", selectedCat);
+					ParameterizedTypeReference<List<SubCategory>> typeRef2 = new ParameterizedTypeReference<List<SubCategory>>() {
+					};
+
+					ResponseEntity<List<SubCategory>> responseEntity2 = restTemplate
+							.exchange(Constants.url + "getSubCatList", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+
+					subCatExList = responseEntity2.getBody();
+					itemExList = responseEntity1.getBody();
+
+					model.addObject("dispatchReportList", dispatchReportList);
+					model.addObject("frList", frNameIdByRouteIdList);
+					model.addObject("itemList", responseEntity1.getBody());
+					model.addObject("subCatList", responseEntity2.getBody());
+				}
+
+				map = new LinkedMultiValueMap<String, Object>();
+				map.add("productionDate", billDate);
+				map.add("frId", selectedFr);
+				DispatchSpCake[] spCakeArr = restTemplate.postForObject(Constants.url + "getPDispatchSpCake", map,
+						DispatchSpCake[].class);
+				List<DispatchSpCake> spCakeList = new ArrayList<DispatchSpCake>(Arrays.asList(spCakeArr));
+
+				model.addObject("spCakeList", spCakeList);
+
+				model.addObject("routeName", routeName);
+				model.addObject("convertedDate", convertedDate);
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+				rowData.add("Sr.");
+				rowData.add("Item Name");
+				for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+					rowData.add(""+frNameIdByRouteIdList.get(i).getFrName());
+				}
+				rowData.add("Total");
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+				
+				float allTotal=0;
+				
+				for(int s=0;s<subCatExList.size();s++) {
+					SubCategory subCat=subCatExList.get(s);
+					  expoExcel = new ExportToExcel();
+					  rowData = new ArrayList<String>();
+					  
+					  rowData.add("");
+					  rowData.add(""+subCat.getSubCatName());
+					  for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+						  rowData.add("");
+					  }//end of frNameIdByRouteIdList loop
+					  	rowData.add("");
+					  	expoExcel.setRowData(rowData);
+						exportToExcelList.add(expoExcel);
+						int srNo=1;
+						for(int i=0;i<itemExList.size();i++) {
+							Item item=itemExList.get(i);
+							 expoExcel = new ExportToExcel();
+							  rowData = new ArrayList<String>();
+							  float total=0;
+							  float frTotal=0;
+							float chkTtlQty=0;
+							float chkTtl=0;
+							
+							if(item.getItemGrp2()==subCat.getSubCatId()) {
+								
+								 for (int f = 0; f < frNameIdByRouteIdList.size(); f++) {
+								
+									 FrNameIdByRouteId fr=frNameIdByRouteIdList.get(f);
+									 
+									 for(int d=0;d<dispatchReportList.size();d++) {
+										 PDispatchReport report=dispatchReportList.get(d);
+										 
+										 if(report.getItemId()==item.getId()) {
+											
+											 if(report.getFrId()==fr.getFrId()) {
+												 
+												 chkTtl=report.getEditQty()+chkTtl; 
+												 
+											 }//end of  if(report.getFrId()==fr.getFrId())
+											 
+										 }//end of if(report.getItemId()==item.getId())
+									 }//end of loop dispatchReportList 
+									 
+								 }//end of frNameIdByRouteIdList loop
+								 
+								 chkTtlQty=chkTtl+chkTtlQty;
+								 
+								 if(chkTtlQty>0) {
+									 rowData.add(""+srNo);
+									 srNo=srNo+1;
+									 rowData.add(""+item.getItemName());
+									 
+									 for(int f=0;f<frNameIdByRouteIdList.size();f++) {
+										FrNameIdByRouteId fr=frNameIdByRouteIdList.get(f);
+										
+										float editQty=0;
+										
+										 for(int d=0;d<dispatchReportList.size();d++) {
+											 PDispatchReport report=dispatchReportList.get(d);
+											 if(report.getItemId()==item.getId()) {
+												
+												 if(report.getFrId()==fr.getFrId()) {
+													editQty=report.getEditQty();
+													 total=total+report.getEditQty();
+													 
+												 }//end of if(report.getFrId()==fr.getFrId())
+											 }//end of  if(report.getItemId()==item.getId())
+											 frTotal=frTotal+report.getEditQty();
+										 }//end of dispatchReportList loop
+										 rowData.add(""+editQty);
+									 }//end of frNameIdByRouteIdList loop
+									 rowData.add(""+total);
+									 expoExcel.setRowData(rowData);
+										exportToExcelList.add(expoExcel);
+									 total=total+allTotal;
+								 }//end of  if(chkTtlQty>0)
+								 
+							}//end of if(item.getItemGrp2()==subCat.getSubCatId())
+						}//end of itemExList loop
+						
+				}//end of subCatExList loop
+				
+				
+				for(int s=0;s<subCatExList.size();s++) {
+					SubCategory subCat=subCatExList.get(s);
+					  expoExcel = new ExportToExcel();
+					  rowData = new ArrayList<String>();
+					  
+					  rowData.add("");
+					  rowData.add(""+subCat.getSubCatName());
+					 float totalItems=0;
+					 for(int f=0;f<frNameIdByRouteIdList.size();f++) {
+							FrNameIdByRouteId fr=frNameIdByRouteIdList.get(f);
+							float itemTotal=0;
+							
+							 for(int d=0;d<dispatchReportList.size();d++) {
+								 PDispatchReport report=dispatchReportList.get(d);
+								 if(report.getSubCatId()==subCat.getSubCatId()) {
+									 if(report.getFrId()==fr.getFrId()) {
+										 itemTotal=itemTotal+report.getEditQty(); 
+									 }//end of if(report.getFrId()==fr.getFrId())
+								 }//end of if(report.getSubCatId()==subCat.getSubCatId())
+							 }//end of dispatchReportList loop
+							 totalItems=totalItems+itemTotal;
+							 rowData.add(""+itemTotal);
+					 }//end of frNameIdByRouteIdList loop
+					 rowData.add(""+totalItems);
+					 expoExcel.setRowData(rowData);
+						exportToExcelList.add(expoExcel);
+				}//end of subCatExList loop
+				  expoExcel = new ExportToExcel();
+				  rowData = new ArrayList<String>();
+				  rowData.add("");
+				  rowData.add("Total");
+				  for(int f=0;f<frNameIdByRouteIdList.size();f++) {
+						FrNameIdByRouteId fr=frNameIdByRouteIdList.get(f);
+						float itemTotal=0;
+						
+						 for(int d=0;d<dispatchReportList.size();d++) {
+							 PDispatchReport report=dispatchReportList.get(d);
+							 
+							 if(report.getFrId()==fr.getFrId()) {
+								 itemTotal=itemTotal+report.getEditQty(); 
+							 }//end of if(report.getFrId()==fr.getFrId())
+						 }//end of dispatchReportList loop
+						 rowData.add(""+itemTotal);
+				  }//end of frNameIdByRouteIdList loop
+				  rowData.add(""+allTotal);
+				  expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+				XSSFWorkbook wb = null;
+				 expoExcel = new ExportToExcel();
+				  rowData = new ArrayList<String>();
+				  rowData.add("Sr No");
+				  rowData.add("Sp Cake Details");
+				  for(int sp=0;sp<spCakeList.size();sp++) {
+					  rowData.add(""+sp+1);
+					  rowData.add(""+spCakeList.get(sp).getSpfName()+"-"+spCakeList.get(sp).getNoOfKgs()+"-"
+							  +spCakeList.get(sp).getSpBackendRate());
+				  }//spCakeList for loop end
+				  expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+				try {
+					String reportName="Dispatch report";
+					wb = ExceUtil.createWorkbook(exportToExcelList, "", reportName, "  ", "", 'F');
+
+					ExceUtil.autoSizeColumns(wb, 3);
+					response.setContentType("application/vnd.ms-excel");
+					String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+					response.setHeader("Content-disposition",
+							"attachment; filename=" + reportName + "-" + date + ".xlsx");
+					wb.write(response.getOutputStream());
+
+				} catch (IOException ioe) {
+					throw new RuntimeException("Error writing spreadsheet to output stream");
+				} finally {
+					if (wb != null) {
+						wb.close();
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("get Dispatch Report Exception: " + e.getMessage());
+				e.printStackTrace();
+
+			}
+			
+
+		}
 }

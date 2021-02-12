@@ -104,7 +104,7 @@
 						<label class=" col-md-2 control-label franchisee_label">Order Date</label>
 						<div class="col-md-4 controls">
 										<input class="form-control date-picker" placeholder="dd-MM-yyyy" id="date" size="19"
-											type="text" name="date" onblur="getFr()" value="" required />
+											type="text" name="date" onblur="getFr()" value="${todayDate}" required />
 									</div>
 									</div>
 									
@@ -123,7 +123,7 @@
 							<input value="2" class="" id="stock_type"
 											type="radio" name="search_by"/>Prev Date
 						</div>
-						
+						<div id="prev_date_div" style="display: none;">
 						<label class=" col-md-2 control-label menu_label">Previous Order
 										Date
 							</label>
@@ -131,6 +131,7 @@
 
 							<input value="${todayDate}" class="form-control date-picker" id="dp2" size="16"
 											type="text" name="order_date"/>
+						</div>
 						</div>
 					 </div>
 					 <br><br>
@@ -339,7 +340,14 @@
 	
 	</script>
 <script type="text/javascript">
-	
+$('input[type=radio][name=search_by]').change(function() {
+    if (this.value ==1) {
+        document.getElementById("prev_date_div").style="display:none"
+    }
+    else if (this.value ==2) {
+    	  document.getElementById("prev_date_div").style="display:block"
+    }
+});
 		function searchOrders() {
 			
 			

@@ -128,8 +128,8 @@
 							target="_blank">PDF</a>
  --%><button class="btn btn-primary" value="PDF" id="PDFButton"
 							onclick="genPdfHTML()">HTML Report</button>
-				<!-- <input type="button" id="expExcel" class="btn btn-primary" value="EXPORT TO Excel" onclick="exportToExcel();" disabled="disabled">
-				 -->							
+				<input type="button" id="expExcel" onclick="genExcel()" class="btn btn-primary" value="EXPORT TO Excel" onclick="exportToExcel();">
+											
 					</div>
 
 
@@ -159,8 +159,8 @@
 						<button class="btn btn-primary" value="PDF" id="PDFButton"
 							onclick="genDispatchPdf()">Dispatch PDF</button>
 						
-						<!-- <input type="button" id="expExcel2" class="btn btn-primary" value="EXPORT TO Excel" onclick="exportToExcel2();" disabled="disabled">
-				 -->
+						<input type="button" id="expExcel2" class="btn btn-primary" value="EXPORT TO Excel" onclick="genExcelFr()" onclick="exportToExcel2();">
+				
 						
 							</div>
 							
@@ -788,6 +788,14 @@
 			document.getElementById("expExcel").disabled=false;
 
 		}
+		function genExcel(){
+			var billDate = $("#billDate").val();
+			var routeId = $("#selectRoute").val();
+			var selectedCat = $("#selectCat").val();
+			
+			window.open('getPDispatchReportExcel/'
+					+ billDate + '/'+routeId+'/'+selectedCat);
+		}
 		
 			function exportToExcel()
 			{
@@ -812,6 +820,16 @@
 				
 				document.getElementById("expExcel2").disabled=false;
 			}
+			
+			function genExcelFr(){
+				var billDate = $("#billDate").val();
+				var routeId = $("#selectRoute").val();
+				var selectedCat = $("#selectCat").val();
+				var frId = $("#fraId").val();
+				window.open('getDispatchPReportExcelForBill/'
+						+ billDate + '/'+routeId+'/'+selectedCat+'/'+frId);
+			}
+			
 			</script>	
 			<script type="text/javascript">
 			function genDispatchPdf()
