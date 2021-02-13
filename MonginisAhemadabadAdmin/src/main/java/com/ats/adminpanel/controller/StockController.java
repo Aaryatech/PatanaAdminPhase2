@@ -30,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -50,9 +51,11 @@ import com.ats.adminpanel.model.GetFrMenus;
 import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.MCategory;
 import com.ats.adminpanel.model.Route;
+import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteId;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteIdResponse;
+import com.ats.adminpanel.model.ggreports.GGReportByDateAndFr;
 import com.ats.adminpanel.model.item.CategoryListResponse;
 import com.ats.adminpanel.model.item.Item;
 import com.ats.adminpanel.model.item.MCategoryList;
@@ -306,21 +309,26 @@ public class StockController {
 	@RequestMapping(value = "/getStockDetails", method = RequestMethod.GET)
 	public @ResponseBody FrachisesCurrStocksList getMenuListByFr(HttpServletRequest request,
 			HttpServletResponse response) {
-		System.out.println("In getStockDetails");
+		
+
 		boolean isMonthCloseApplicable = false;
 		HttpSession session = request.getSession();
 		int selectRate = 0;
 
 		FrachisesCurrStocksList frStockList = new FrachisesCurrStocksList();
 		List<CurrentStockResponse> stock = new ArrayList<CurrentStockResponse>();
-
+		CurrentStockResponse currentStockResponse = new CurrentStockResponse();
+		
+		List<Integer> frIdsList = new ArrayList<Integer>();
+		List<Integer> itemIdList = new ArrayList<Integer>();
+		String frIdString = null;
 		try {
 			String itemIds = request.getParameter("itemsIds");
 			int catId = Integer.parseInt(request.getParameter("catId"));
 			String showOption = "1";// request.getParameter("show_option");
 			selectRate = 1;// Integer.parseInt(request.getParameter("selectRate"));
 
-			String frIdString = request.getParameter("fr_id_list");
+			frIdString = request.getParameter("fr_id_list");
 			String routeId = request.getParameter("route_id");
 
 			frIdString = frIdString.substring(1, frIdString.length() - 1);
@@ -360,19 +368,19 @@ public class StockController {
 			} // end of if
 			
 			
-			System.out.println("params---------" + itemIds + " / " + catId + " / " + frIdString);
+			//System.out.println("params---------" + itemIds + " / " + catId + " / " + frIdString);
 
-			List<Integer> itemIdList = Stream.of(itemIds.split(",")).map(Integer::parseInt)
+			itemIdList = Stream.of(itemIds.split(",")).map(Integer::parseInt)
 					.collect(Collectors.toList());
 
-			List<Integer> frIdsList = Stream.of(frIdString.split(",")).map(Integer::parseInt)
+			frIdsList = Stream.of(frIdString.split(",")).map(Integer::parseInt)
 					.collect(Collectors.toList());
 
 			for (int i = 0; i < frIdsList.size(); i++) {
 
-				System.out.println("Fr id In Loop----------" + frIdsList.get(i));
+				//System.out.println("Fr id In Loop----------" + frIdsList.get(i));
 
-				CurrentStockResponse currentStockResponse = new CurrentStockResponse();
+				currentStockResponse = new CurrentStockResponse();
 
 				int menuId = 0;
 				map = new LinkedMultiValueMap<String, Object>();
@@ -406,6 +414,310 @@ public class StockController {
 
 				Date todaysDate = new Date();
 				// System.out.println(dateFormat.format(todaysDate));
+
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(todaysDate);
+
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+
+				Date firstDay = cal.getTime();
+
+				// System.out.println("First Day of month " + firstDay);
+
+				String strFirstDay = dateFormat.format(firstDay);
+
+				// System.out.println("Year " + yearFormat.format(todaysDate));
+
+				if (showOption.equals("1")) {
+					map = new LinkedMultiValueMap<String, Object>();
+
+					DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+					Date date = new Date();
+					// System.out.println(dateFormat1.format(date));
+
+					Calendar cal1 = Calendar.getInstance();
+					cal1.setTime(date);
+
+					int dayOfMonth = cal1.get(Calendar.DATE);
+
+					int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
+
+					if (runningMonth < calCurrentMonth) {
+
+						isMonthCloseApplicable = true;
+						// System.out.println("Day Of Month End ......");
+
+					} else if (runningMonth == 12 && calCurrentMonth == 1) {
+						isMonthCloseApplicable = true;
+					}
+
+					if (isMonthCloseApplicable) {
+						// System.err.println("### Inside iMonthclose app");
+						String strDate;
+						int year;
+						if (runningMonth == 12) {
+
+							year = (Calendar.getInstance().getWeekYear() - 1);
+
+						} else {
+							year = Calendar.getInstance().getWeekYear();
+						}
+
+						strDate = year + "/" + runningMonth + "/01";
+
+						map.add("fromDate", strDate);
+					} else {
+
+						map.add("fromDate", dateFormat.format(firstDay));
+
+					}
+
+					map.add("frId", frIdsList.get(i));
+					map.add("frStockType", 6);
+					// map.add("fromDate", dateFormat1.format(firstDay));
+					map.add("toDate", dateFormat.format(todaysDate));
+					map.add("currentMonth", String.valueOf(runningMonth));
+					map.add("year", yearFormat.format(todaysDate));
+					map.add("catId", catId);
+					map.add("itemIdList", itemIds);
+
+					System.out.println(map);
+					ParameterizedTypeReference<List<GetCurrentStockDetails>> typeRef2 = new ParameterizedTypeReference<List<GetCurrentStockDetails>>() {
+					};
+					ResponseEntity<List<GetCurrentStockDetails>> responseEntity2 = restTemplate.exchange(
+							Constants.url + "getAdminCurrentStock", HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+
+					currentStockDetailList = responseEntity2.getBody();
+				//	System.out.println("Current Stock Details : " + currentStockDetailList.toString());
+
+				} else {
+
+					// System.out.println("inside get stock between dates");
+
+					String fromDate = request.getParameter("fromDate");
+
+					String toDate = request.getParameter("toDate");
+
+					SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");
+					String fr = null;
+					String to = null;
+					try {
+						fr = sdf1.format(sdf2.parse(fromDate));
+
+						to = sdf1.format(sdf2.parse(toDate));
+					} catch (ParseException e) {
+
+						e.printStackTrace();
+					}
+					// System.out.println("FromDate " + fr);
+
+					// System.out.println("toDate " + to);
+					map = new LinkedMultiValueMap<String, Object>();
+					map.add("frId", frIdsList.get(i));
+					map.add("fromDate", fr);
+					map.add("toDate", to);
+					map.add("itemIdList", itemIds);
+					map.add("catId", catId);
+					map.add("frStockType", 6);
+
+					try {
+						ParameterizedTypeReference<List<GetCurrentStockDetails>> typeRef = new ParameterizedTypeReference<List<GetCurrentStockDetails>>() {
+						};
+						ResponseEntity<List<GetCurrentStockDetails>> responseEntity = restTemplate.exchange(
+								Constants.url + "/getStockBetweenDates", HttpMethod.POST, new HttpEntity<>(map),
+								typeRef);
+
+						currentStockDetailList = responseEntity.getBody();
+					//	System.out.println("Current Stock Details Monthwise : " + currentStockDetailList.toString());
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+				currentStockResponse.setMonthClosed(isMonthCloseApplicable);
+				currentStockResponse.setCurrentStockDetailList(currentStockDetailList);
+				currentStockResponse.setFrId(frIdsList.get(i));
+				stock.add(currentStockResponse);
+			}
+			List<AllFrIdName> frList = allFrIdNameList.getFrIdNamesList();
+			frStockList.setFrList(frList);
+			frStockList.setRouteFrId(frIdsList);
+			frStockList.setItemIdList(itemIdList);
+			frStockList.setFrStockList(stock);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+		
+		try {
+		List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+		ExportToExcel expoExcel = new ExportToExcel();
+		List<String> rowData = new ArrayList<String>();
+
+		rowData.add("Sr No");
+		rowData.add("Item Id");
+		rowData.add("Item Name");
+		for (int j = 0; j < frIdsList.size(); j++) {
+			for (int k = 0; k < frStockList.getFrList().size(); k++) {
+				if(frStockList.getFrList().get(k).getFrId()==frIdsList.get(j)) {
+					rowData.add(frStockList.getFrList().get(k).getFrName());
+				}
+			}
+		}	
+
+		expoExcel.setRowData(rowData);
+		exportToExcelList.add(expoExcel);
+		FrachisesCurrStocksList excelItems = frStockList;
+		for (int i = 0; i < excelItems.getItemIdList().size(); i++) {
+			expoExcel = new ExportToExcel();
+			rowData = new ArrayList<String>();
+			rowData.add("" + (i + 1));
+			int flag = 0;
+			rowData.add(" "+excelItems.getItemIdList().get(i));
+			
+				for (int k = 0; k < frStockList.getFrStockList().size(); k++) {
+					for (int j = 0; j <  frIdsList.size() ; j++) {				
+					if(frIdsList.get(j)==frStockList.getFrStockList().get(k).getFrId()) {
+					
+						List<GetCurrentStockDetails> curStockResp = frStockList.getFrStockList().get(k).getCurrentStockDetailList();
+						
+						for (int l = 0; l < curStockResp.size(); l++) {
+							int regCurrentStock = curStockResp.get(l).getCurrentRegStock();
+							int reOrderQty =  curStockResp.get(l).getReOrderQty();
+							
+							if(curStockResp.get(l).getId()==excelItems.getItemIdList().get(i)) {
+								if (flag == 0) {
+									rowData.add(curStockResp.get(l).getItemName());	
+									
+									flag = 1;
+								}
+								
+								if (regCurrentStock < 0) {
+									rowData.add(" "+0);
+								}else {
+									rowData.add(" "+regCurrentStock);	
+								}
+								
+							}
+						}
+					}
+				}
+				
+			}
+			
+			expoExcel.setRowData(rowData);
+			exportToExcelList.add(expoExcel);
+
+		}
+		session = request.getSession();
+		session.setAttribute("exportExcelList", exportToExcelList);
+		session.setAttribute("excelName", "Stock Detail");
+		}catch (Exception e) {
+			System.out.println("Excel Exception : "+e.getMessage());
+			e.printStackTrace();
+		}
+		return frStockList;
+	}
+	
+	@RequestMapping(value = "pdf/showCurrentStockPdf/{selectedFr}/{routeId}/{catId}/{itemsIds}/{selectRate}", method = RequestMethod.GET)
+	public ModelAndView showCurrentStockPdf(HttpServletRequest request,
+			HttpServletResponse response, @PathVariable String selectedFr, @PathVariable String routeId, @PathVariable int catId, @PathVariable String itemsIds,
+			@PathVariable int selectRate) {
+		System.out.println("In getStockDetails Pdf");
+		
+		ModelAndView model = new ModelAndView("stock/pdf/currentStock");
+		
+		boolean isMonthCloseApplicable = false;
+		HttpSession session = request.getSession();
+		
+		//int selectRate = 0;
+
+		FrachisesCurrStocksList frStockList = new FrachisesCurrStocksList();
+		List<CurrentStockResponse> stock = new ArrayList<CurrentStockResponse>();
+		CurrentStockResponse currentStockResponse = new CurrentStockResponse();
+		
+		List<Integer> frIdsList = new ArrayList<Integer>();
+		List<Integer> itemIdList = new ArrayList<Integer>();
+		String frIdString = null;
+		try {
+			String itemIds = itemsIds;			
+			String showOption = "1";// request.getParameter("show_option");
+			selectRate = 1;// Integer.parseInt(request.getParameter("selectRate"));
+
+			frIdString = selectedFr;		
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			
+			if (!routeId.equalsIgnoreCase("0")) {
+
+				map = new LinkedMultiValueMap<String, Object>();
+
+				RestTemplate restTemplate = new RestTemplate();
+
+				map.add("routeId", routeId);
+
+				FrNameIdByRouteIdResponse frNameId = restTemplate.postForObject(Constants.url + "getFrNameIdByRouteId",
+						map, FrNameIdByRouteIdResponse.class);
+
+				List<FrNameIdByRouteId> frNameIdByRouteIdList = frNameId.getFrNameIdByRouteIds();
+
+				StringBuilder sbForRouteFrId = new StringBuilder();
+				for (int i = 0; i < frNameIdByRouteIdList.size(); i++) {
+
+					sbForRouteFrId = sbForRouteFrId.append(frNameIdByRouteIdList.get(i).getFrId().toString() + ",");
+
+				}
+
+				String strFrIdRouteWise = sbForRouteFrId.toString();
+				frIdString = strFrIdRouteWise.substring(0, strFrIdRouteWise.length() - 1);
+
+			} // end of if
+			
+			itemIdList = Stream.of(itemIds.split(",")).map(Integer::parseInt)
+					.collect(Collectors.toList());
+
+			frIdsList = Stream.of(frIdString.split(",")).map(Integer::parseInt)
+					.collect(Collectors.toList());
+
+			for (int i = 0; i < frIdsList.size(); i++) {
+
+				currentStockResponse = new CurrentStockResponse();
+
+				int menuId = 0;
+				map = new LinkedMultiValueMap<String, Object>();
+
+				map.add("frId", frIdsList.get(i));
+				RestTemplate restTemplate = new RestTemplate();
+
+				ParameterizedTypeReference<List<PostFrItemStockHeader>> typeRef1 = new ParameterizedTypeReference<List<PostFrItemStockHeader>>() {
+				};
+				ResponseEntity<List<PostFrItemStockHeader>> responseEntity1 = restTemplate.exchange(
+						Constants.url + "getCurrentMonthOfCatId", HttpMethod.POST, new HttpEntity<>(map), typeRef1);
+				List<PostFrItemStockHeader> list = responseEntity1.getBody();
+				// System.out.println("## catId" + intCatId);
+
+				map = new LinkedMultiValueMap<String, Object>();
+				map.add("frId", frIdsList.get(i));
+				map.add("catId", catId);
+
+				for (int j = 0; j < list.size(); j++) {
+					PostFrItemStockHeader postheader = list.get(j);
+					if (postheader.getCatId() == catId) {
+
+						runningMonth = postheader.getMonth();
+					}
+				}
+
+				
+
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+				DateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+				Date todaysDate = new Date();
+				
 
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(todaysDate);
@@ -532,190 +844,35 @@ public class StockController {
 				currentStockResponse.setCurrentStockDetailList(currentStockDetailList);
 				currentStockResponse.setFrId(frIdsList.get(i));
 				stock.add(currentStockResponse);
+				
+				model.addObject("currStockResp", currentStockResponse);
 			}
-			List<AllFrIdName> frList = allFrIdNameList.getFrIdNamesList();
+			AllFrIdNameList fr = getFrNameId();
+			List<AllFrIdName> frList = fr.getFrIdNamesList();
+			
 			frStockList.setFrList(frList);
 			frStockList.setRouteFrId(frIdsList);
 			frStockList.setItemIdList(itemIdList);
 			frStockList.setFrStockList(stock);
+			
+			model.addObject("frStockList", frStockList);
+			model.addObject("frIdsList", frIdsList);
+			model.addObject("frList", frList);
+			model.addObject("curStkFrList", frStockList.getFrStockList());
+			model.addObject("currStkItem", frStockList.getItemIdList());
+			
+			Setting showHead = SalesReportController.isHeadAllow();
+			if(showHead.getSettingValue()==1) {
+				model.addObject("FACTORYNAME", Constants.FACTORYNAME);
+				model.addObject("FACTORYADDRESS", Constants.FACTORYADDRESS);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
-		ExportToExcel expoExcel = new ExportToExcel();
-		List<String> rowData = new ArrayList<String>();
-
-		rowData.add("Sr No");
-		rowData.add("Item Id");
-		rowData.add("Item Name");
-		rowData.add("Rate/MRP");
-		rowData.add("Op Stock Qty");
-		rowData.add("Op Stock Value");
-		rowData.add("Pur Qty");
-		rowData.add("Pur Value");
-		rowData.add("Grn/Gvn Qty");
-		rowData.add("Grn/Gvn Value");
-		rowData.add("Regular Sale");
-		rowData.add("Regular Sale Value");
-		rowData.add("Cur Stock");
-		rowData.add("Cur Stock Value");
-		expoExcel.setRowData(rowData);
-
-		exportToExcelList.add(expoExcel);
-
-		double totalOpStock = 0;
-		double totalOpStockValue = 0;
-		double pureQtyTotal = 0;
-		double pureTotalValue = 0;
-		double grnGvnTotal = 0;
-		double grnGvnTotalValue = 0;
-		double regularSaleTotal = 0;
-		double regularSaleTotalValue = 0;
-		double reorderTotalQty = 0;
-		double totalCurrentStock = 0;
-		double totalCurrentStockValue = 0;
-
-		for (int i = 0; i < currentStockDetailList.size(); i++) {
-			expoExcel = new ExportToExcel();
-			rowData = new ArrayList<String>();
-
-			rowData.add("" + (i + 1));
-			rowData.add("" + currentStockDetailList.get(i).getItemId());
-			rowData.add("" + currentStockDetailList.get(i).getItemName());
-			if (selectRate == 1) {
-
-				totalOpStock = totalOpStock + currentStockDetailList.get(i).getRegOpeningStock();
-
-				totalOpStockValue = totalOpStockValue + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegOpeningStock());
-				pureQtyTotal = pureQtyTotal + currentStockDetailList.get(i).getRegTotalPurchase();
-				pureTotalValue = pureTotalValue + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegTotalPurchase());
-
-				grnGvnTotal = grnGvnTotal + currentStockDetailList.get(i).getRegTotalGrnGvn();
-
-				grnGvnTotalValue = grnGvnTotalValue + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegTotalGrnGvn());
-
-				regularSaleTotal = regularSaleTotal + currentStockDetailList.get(i).getRegTotalSell();
-				reorderTotalQty = reorderTotalQty + currentStockDetailList.get(i).getReOrderQty();
-				regularSaleTotalValue = regularSaleTotalValue + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegTotalSell());
-				totalCurrentStock = totalCurrentStock + currentStockDetailList.get(i).getCurrentRegStock();
-				totalCurrentStockValue = totalCurrentStockValue + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getCurrentRegStock());
-
-				rowData.add("" + currentStockDetailList.get(i).getSpOpeningStock());
-
-				rowData.add("" + currentStockDetailList.get(i).getRegOpeningStock());
-				rowData.add("" + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegOpeningStock()));
-
-				rowData.add("" + currentStockDetailList.get(i).getRegTotalPurchase());
-				rowData.add("" + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegTotalPurchase()));
-
-				rowData.add("" + currentStockDetailList.get(i).getRegTotalGrnGvn());
-				rowData.add("" + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegTotalGrnGvn()));
-
-				rowData.add("" + currentStockDetailList.get(i).getRegTotalSell());
-				rowData.add("" + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getRegTotalSell()));
-
-				/*
-				 * rowData.add("" + currentStockDetailList.get(i).getReOrderQty());
-				 * 
-				 * rowData.add("" + currentStockDetailList.get(i).getRegTotalSell());
-				 * rowData.add("" + (currentStockDetailList.get(i).getSpOpeningStock()
-				 * currentStockDetailList.get(i).getRegTotalSell()));
-				 */
-				rowData.add("" + currentStockDetailList.get(i).getCurrentRegStock());
-				rowData.add("" + (currentStockDetailList.get(i).getSpOpeningStock()
-						* currentStockDetailList.get(i).getCurrentRegStock()));
-
-			} else {
-
-				totalOpStock = totalOpStock + currentStockDetailList.get(i).getRegOpeningStock();
-				totalOpStockValue = totalOpStockValue + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegOpeningStock());
-				pureQtyTotal = pureQtyTotal + currentStockDetailList.get(i).getRegTotalPurchase();
-				pureTotalValue = pureTotalValue + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegTotalPurchase());
-				grnGvnTotal = grnGvnTotal + currentStockDetailList.get(i).getRegTotalGrnGvn();
-				grnGvnTotalValue = grnGvnTotalValue + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegTotalGrnGvn());
-				regularSaleTotal = regularSaleTotal + currentStockDetailList.get(i).getRegTotalSell();
-				regularSaleTotalValue = regularSaleTotalValue + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegTotalSell());
-				reorderTotalQty = reorderTotalQty + currentStockDetailList.get(i).getReOrderQty();
-				totalCurrentStock = totalCurrentStock + currentStockDetailList.get(i).getCurrentRegStock();
-
-				totalCurrentStockValue = totalCurrentStockValue + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getCurrentRegStock());
-
-				rowData.add("" + currentStockDetailList.get(i).getSpTotalPurchase());
-
-				rowData.add("" + currentStockDetailList.get(i).getRegOpeningStock());
-				rowData.add("" + (currentStockDetailList.get(i).getRegOpeningStock()
-						* currentStockDetailList.get(i).getSpTotalPurchase()));
-
-				rowData.add("" + currentStockDetailList.get(i).getRegTotalPurchase());
-				rowData.add("" + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegTotalPurchase()));
-
-				rowData.add("" + currentStockDetailList.get(i).getRegTotalGrnGvn());
-				rowData.add("" + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegTotalGrnGvn()));
-
-				rowData.add("" + currentStockDetailList.get(i).getRegTotalSell());
-				rowData.add("" + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getRegTotalSell()));
-				/*
-				 * rowData.add("" + currentStockDetailList.get(i).getReOrderQty());
-				 * 
-				 * rowData.add("" + currentStockDetailList.get(i).getRegTotalSell());
-				 * rowData.add("" + (currentStockDetailList.get(i).getSpTotalPurchase()
-				 * currentStockDetailList.get(i).getRegTotalSell()));
-				 */
-
-				rowData.add("" + currentStockDetailList.get(i).getCurrentRegStock());
-				rowData.add("" + (currentStockDetailList.get(i).getSpTotalPurchase()
-						* currentStockDetailList.get(i).getCurrentRegStock()));
-			}
-			expoExcel.setRowData(rowData);
-			exportToExcelList.add(expoExcel);
-
-		}
-
-		expoExcel = new ExportToExcel();
-		rowData = new ArrayList<String>();
-
-		rowData.add("");
-		rowData.add("");
-		rowData.add("");
-		rowData.add("Total");
-		rowData.add(" " + roundUp((float) totalOpStock));
-		rowData.add(" " + roundUp((float) totalOpStockValue));
-		rowData.add(" " + roundUp((float) pureQtyTotal));
-		rowData.add(" " + roundUp((float) pureTotalValue));
-		rowData.add(" " + roundUp((float) grnGvnTotal));
-		rowData.add(" " + roundUp((float) grnGvnTotalValue));
-		rowData.add(" " + roundUp((float) regularSaleTotal));
-		rowData.add(" " + roundUp((float) regularSaleTotalValue));
-
-		rowData.add(" " + roundUp((float) totalCurrentStock));
-		rowData.add(" " + roundUp((float) totalCurrentStockValue));
-
-		expoExcel.setRowData(rowData);
-		exportToExcelList.add(expoExcel);
-
-		session = request.getSession();
-		session.setAttribute("exportExcelList", exportToExcelList);
-		session.setAttribute("excelName", "Stock Details");
-		return frStockList;
+	
+		return model;
 	}
+
 
 	@RequestMapping(value = "/getItemsBySubCatIdAjax", method = RequestMethod.GET)
 	public @ResponseBody List<Item> getItemsBySubCatIdAjax(HttpServletRequest request, HttpServletResponse response) {

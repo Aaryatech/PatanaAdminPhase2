@@ -287,8 +287,6 @@
 						</div>
 						<div class="form-group" style="display: none;" id="range">
 
-
-
 							<div class="col-sm-3  controls">
 								<input type="button" id="expExcel" class="btn btn-primary"
 									value="Export To Excel" onclick="exportToExcel();"
@@ -338,16 +336,18 @@
 
 							},
 							function(data) {
+								
 								$('#loader').hide();
 								//alert(JSON.stringify(data.frStockList));
 								document.getElementById("expExcel").disabled = false;
 								document.getElementById("PDFButton").disabled = false;
+								document.getElementById("range").style.display = "block";
 
 								if (data == "") {
 									alert("No records found !!");
 									document.getElementById("expExcel").disabled = true;
 									document.getElementById("PDFButton").disabled = true;
-
+									document.getElementById("range").style.display = "none";
 								}
 
 								var len = data.length;
@@ -420,8 +420,7 @@
 
 									for (var i = 0; i < data.frStockList.length; i++) {
 
-										for (var k = 0; k < frArr.length; k++) {
-
+										for (var k = 0; k < frArr.length; k++) {											
 											if (data.frStockList[i].frId == parseInt(frArr[k])) {
 
 												var list = data.frStockList[i].currentStockDetailList;
@@ -554,27 +553,38 @@
 
 	<script type="text/javascript">
 		function genPdf() {
-			var from_date = $("#fromDate").val();
-			var to_date = $("#toDate").val();
 			var selectedFr = $("#selectFr").val();
 			var routeId = $("#selectRoute").val();
 			var catId = $("#selectCat").val();
-			var sub_cat = $("#item_grp2").val();
+			var itemsIds = $("#itemsIds").val();
+	
+			var selectRate = 1;
+			var stType = 1;
+			
+			if(routeId>0){
+				selectedFr = 0;
+			}else{
+				selectedFr = selectedFr.join()
+			}
+			
 			window
-					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showSaleReportItemwisePdf/'
-							+ from_date
-							+ '/'
-							+ to_date
-							+ '/'
+					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showCurrentStockPdf/'
 							+ selectedFr
-							+ '/' + routeId + '/' + catId + '/' + sub_cat);
+							+ '/' 
+							+ routeId 
+							+ '/' 
+							+ catId 
+							+ '/' 
+							+ itemsIds.join()
+							+ '/' 
+							+ selectRate);
 
 			//window.open('${pageContext.request.contextPath}/pdfForReport?url=showSaleReportItemwisePdf/'+from_date+'/'+to_date);
 
 		} //window.open('pdfForReport?url=showSaleBillwiseByFrPdf/'+from_date+'/'+to_date);
 		function exportToExcel() {
 
-			window.open("${pageContext.request.contextPath}/exportToExcelNew");
+			window.open("${pageContext.request.contextPath}/exportToExcel");
 			document.getElementById("expExcel").disabled = true;
 		}
 	</script>
