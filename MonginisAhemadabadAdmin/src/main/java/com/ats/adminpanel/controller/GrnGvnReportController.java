@@ -3167,7 +3167,7 @@ public class GrnGvnReportController {
 			map.add("grnStatus", grnStatus);
 			map.add("aprvBy", aprvBy);
 			
-			System.out.println(selectedFr+" / "+fromDate+" / "+toDate+" / "+grnStatus+" / "+aprvBy+" / "+grnType);
+		//	System.out.println(selectedFr+" / "+fromDate+" / "+toDate+" / "+grnStatus+" / "+aprvBy+" / "+grnType);
 			
 			
 			ParameterizedTypeReference<List<PendingGrnGvnItemWise>> typeRef = new ParameterizedTypeReference<List<PendingGrnGvnItemWise>>() {
@@ -3182,7 +3182,7 @@ public class GrnGvnReportController {
 			grnAcGvnList = responseEntity.getBody();
 			
 
-			System.err.println("A/c Pending grnGvnList ------------------- " + grnAcGvnList);
+			//System.err.println("A/c Pending grnGvnList ------------------- " + grnAcGvnList);
 
 			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
