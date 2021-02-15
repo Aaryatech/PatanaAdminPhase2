@@ -279,6 +279,7 @@ var optVal= $("#selectMenu option:selected").val();
 	$(function() {
 	    $("#selectMenu").change(function() {
 	    	  $('#loader').show();
+	    	  document.getElementById("searchFr").disabled=false;
 	    	var fd = new FormData();
 	    	fd.append('menuId', $('option:selected', this).val());
 	    	$

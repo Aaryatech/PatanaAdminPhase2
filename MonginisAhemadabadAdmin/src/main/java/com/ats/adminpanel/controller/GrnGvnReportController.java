@@ -59,6 +59,8 @@ import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.billing.FrBillHeaderForPrint;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteId;
 import com.ats.adminpanel.model.franchisee.FrNameIdByRouteIdResponse;
+import com.ats.adminpanel.model.franchisee.Menu;
+import com.ats.adminpanel.model.ggreports.GGProdWiseReport;
 import com.ats.adminpanel.model.ggreports.GGReportByDateAndFr;
 import com.ats.adminpanel.model.ggreports.GGReportGrpByFrId;
 import com.ats.adminpanel.model.ggreports.GGReportGrpByItemId;
@@ -3305,7 +3307,152 @@ public class GrnGvnReportController {
 		return model;
 		
 	}
+	
+	//Sachin 15-02-2021
+	@RequestMapping(value = "/showGGProdwiseQtyReport", method = RequestMethod.GET)
+	public ModelAndView showGGProdwiseQtyReport(HttpServletRequest request, HttpServletResponse response) {
 
+		ModelAndView model = null;
+		HttpSession session = request.getSession();
+
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		com.ats.adminpanel.model.Info view = AccessControll.checkAccess("showSaleReportGrpByDate",
+				"showSaleReportGrpByDate", "1", "0", "0", "0", newModuleList);
+
+		if (view.getError() == true) {
+
+			model = new ModelAndView("accessDenied");
+
+		} else {
+			model = new ModelAndView("reports/grnGvn/GGProdwiseQtyReport");
+			System.out.println("inside showGGProdwiseQtyReport ");
+
+			try {
+				ZoneId z = ZoneId.of("Asia/Calcutta");
+
+				LocalDate date = LocalDate.now(z);
+				DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d-MM-uuuu");
+				String todaysDate = date.format(formatters);
+
+				RestTemplate restTemplate = new RestTemplate();
+
+				// get Routes
+
+				AllRoutesListResponse allRouteListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+						AllRoutesListResponse.class);
+
+				List<Route> routeList = new ArrayList<Route>();
+
+				routeList = allRouteListResponse.getRoute();
+
+				// end get Routes
+
+				allFrIdNameList = new AllFrIdNameList();
+				try {
+
+					allFrIdNameList = restTemplate.getForObject(Constants.url + "getAllFrIdName",
+							AllFrIdNameList.class);
+
+				} catch (Exception e) {
+					System.out.println("Exception in getAllFrIdName" + e.getMessage());
+					e.printStackTrace();
+
+				}
+
+				System.out.println(" Fr " + allFrIdNameList.getFrIdNamesList());
+
+				model.addObject("todaysDate", todaysDate);
+				model.addObject("unSelectedFrList", allFrIdNameList.getFrIdNamesList());
+
+				model.addObject("routeList", routeList);
+				
+				CategoryListResponse categoryListResponse = restTemplate.getForObject(Constants.url + "showAllCategory",
+						CategoryListResponse.class);
+				List<MCategoryList> categoryList;
+				categoryList = categoryListResponse.getmCategoryList();
+
+				model.addObject("catList", categoryList);
+				
+			} catch (HttpClientErrorException e) {
+
+				System.out.println("Exc in show showGGProdwiseQtyReport"
+						+ "http Exception   " + e.getResponseBodyAsString());
+				
+			}
+			 catch (Exception e) {
+
+				System.out.println("Exc in show showGGProdwiseQtyReport   " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return model;
+
+	}
+
+	@RequestMapping(value = "/getGGProdWiseQtyReport", method = RequestMethod.GET)
+	@ResponseBody
+	public List<GGProdWiseReport> getGGProdWiseQtyReport(HttpServletRequest request, HttpServletResponse response) {
+		String fromDate, toDate;
+		List<GGProdWiseReport> ggItemQtyReportList=null;
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+
+			RestTemplate restTemplate = new RestTemplate();
+			
+			fromDate = request.getParameter("fromDate");
+			toDate = request.getParameter("toDate");
+			String routeId = request.getParameter("route_id");
+			String selectedFr = request.getParameter("fr_id_list");
+			selectedFr = selectedFr.substring(1, selectedFr.length() - 1);
+			selectedFr = selectedFr.replaceAll("\"", "");
+
+			String selectedSubCat = request.getParameter("sub_cat_id_list");
+			selectedSubCat = selectedSubCat.substring(1, selectedSubCat.length() - 1);
+			selectedSubCat = selectedSubCat.replaceAll("\"", "");
+			String catId = request.getParameter("cat_id");
+			
+			String selectedItems = request.getParameter("item_id_list");
+			selectedItems = selectedItems.substring(1, selectedItems.length() - 1);
+			selectedItems = selectedItems.replaceAll("\"", "");
+			
+			map.add("fromDate", DateConvertor.convertToYMD(fromDate));
+			map.add("toDate", DateConvertor.convertToYMD(toDate));
+			map.add("isGrn", 1);
+			map.add("frIdList", selectedFr);
+			map.add("itemIdList", selectedItems);
+			map.add("aprvBy", 1);
+			System.err.println("map"+map);
+			ParameterizedTypeReference<List<GGProdWiseReport>> typeRef = new ParameterizedTypeReference<List<GGProdWiseReport>>() {
+			};
+			ResponseEntity<List<GGProdWiseReport>> responseEntity = null;
+			try {
+			responseEntity = restTemplate
+					.exchange(Constants.url + "getGGProdWiseQtyReport", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+			}catch (HttpClientErrorException e) {
+				System.out.println(e.getResponseBodyAsString());
+			}
+			ggItemQtyReportList = responseEntity.getBody();
+			
+		}catch (HttpClientErrorException e) {
+			System.err.println("ec "+e.getResponseBodyAsString());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ggItemQtyReportList;
+	}
+	
+	@RequestMapping(value = "/getItemListByCateId", method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<Item> getItemListByCateId(HttpServletRequest request, HttpServletResponse response) {
+	
+	MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+	map.add("itemGrp1", 1);
+	RestTemplate restTemplate = new RestTemplate();
+	Item[] item = restTemplate.postForObject(Constants.url + "getItemsByCatId", map, Item[].class);
+	ArrayList<Item> tempItemList = new ArrayList<Item>(Arrays.asList(item));
+	return tempItemList;
+	}
 	public static float roundUp(float d) {
 		return BigDecimal.valueOf(d).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
