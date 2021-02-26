@@ -6,7 +6,8 @@
 
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<body>
-	
+	<c:url value="/chkUnqRoutePrefix" var="chkUnqRoutePrefix"></c:url>
+	<c:url value="/chkUnqRouteShortName" var="chkUnqRouteShortName"></c:url>
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 	<div class="container" id="main-container">
 
@@ -60,63 +61,88 @@
 						<div class="box-content">
 							<form action="editRouteProcess" method="post"
 								class="form-horizontal" id="validation-form">
-
+							<input type="hidden" name="route_id" id="route_id"
+											value="${route.routeId}" />
 
 
 								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">Enter
-										Route Name</label>
-									<div class="col-sm-9 col-lg-10 controls">
+									<label class="col-sm-3 col-lg-2 control-label">Route</label>
+									<div class="col-sm-9 col-lg-8 controls">
 										<input type="text" name="route_name" id="route_name"
-											value="${route.routeName }" placeholder="Route"
-											class="form-control" data-rule-required="true" />
+											placeholder="Route" class="form-control"
+											data-rule-required="true" value="${route.routeName}"/>
 									</div>
 								</div>
-								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">ABC Type</label>
-									<div class="col-sm-9 col-lg-10 controls">
-										<select   class="form-control chosen" name="acbType"   id="acbType"  >
-											 <c:choose>
-											 	<c:when test="${route.abcType==1}">
-											 		<option   value="1" selected >A</option>
-													<option   value="2">B</option>
-													<option   value="3">C</option>
-											 	</c:when>
-											 	<c:when test="${route.abcType==2}">
-											 		<option   value="1"  >A</option>
-													<option   value="2" selected>B</option>
-													<option   value="3">C</option>
-											 	</c:when>
-											 	<c:when test="${route.abcType==3}">
-											 		<option   value="1"  >A</option>
-													<option   value="2" >B</option>
-													<option   value="3" selected>C</option>
-											 	</c:when>
-											 	<c:otherwise>
-											 		<option   value="1"  >A</option>
-													<option   value="2" >B</option>
-													<option   value="3"  >C</option>
-											 	</c:otherwise>
-											 </c:choose>
-											
-											 
-											</select>
+								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">Prefix</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="prefix" id="prefix"
+											placeholder="Route" class="form-control"
+											data-rule-required="true" value="${route.routePrefix}"/>
+											<span for="prefix" id="unq_prefix" style="display: none; color: #b94a48;">Prefix already exits</span>
 									</div>
 								</div>
 								
 								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Short Name</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="short_name" id="short_name"
+											placeholder="Route Short Name" class="form-control"
+											data-rule-required="true" value="${route.shortName}"/>
+											<span for="short_name" id="unq_short_name" style="display: none; color: #b94a48;">Short Name already exits</span>
+									</div>
+								</div>
+								
+								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">Min Km</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="min_km" id="min_km"
+											placeholder="Min Km" class="form-control"
+											data-rule-required="true" value="${route.minKm}"/>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Max Km</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="max_km" id="max_km"
+											placeholder="Max Km" class="form-control"
+											data-rule-required="true" value="${route.maxKm}"/>
+									</div>
+								</div>
+								
+								
+								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">ABC Type</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<select   class="form-control chosen" name="acbType" id="acbType"  >
+											 <c:forEach items="${valList}" var="list">
+											 	<c:choose>
+											 		<c:when test="${list.abcId==route.abcType}">
+											 			<option selected="selected"   value="${list.abcId}">${list.abcVal}</option>
+											 		</c:when>
+											 		<c:otherwise>											 		
+											 			<option   value="${list.abcId}">${list.abcVal}</option>
+											 		</c:otherwise>
+											 	</c:choose>
+											 	
+											 </c:forEach>										 
+										</select>
+									</div>
+								</div>
+								
+								<div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Sequence No.</label>
-									<div class="col-sm-9 col-lg-10 controls">
+									<div class="col-sm-9 col-lg-3 controls">
 										<input type="number" name="seqNo" id="seqNo"
-											placeholder="Route" class="form-control" value="${route.seqNo}"
-											data-rule-required="true" />
+											placeholder="Route" class="form-control"
+											data-rule-required="true" value="${route.seqNo}"/>
 									</div>
 								</div>
 								<div class="form-group">
 
 									<div class="col-sm-9 col-lg-10 controls">
-										<input type="hidden" name="route_id" id="route_id"
-											value="${route.routeId}" />
+										
 									</div>
 								</div>
 								<div class="form-group">
@@ -144,26 +170,26 @@
 									</div>
 
 									<div class="box-content">
-
+										<jsp:include page="/WEB-INF/views/include/tableSearch.jsp"></jsp:include>
 										<div class="clearfix"></div>
 										<div class="table-responsive" style="border: 0">
 											<table width="100%" class="table table-advance" id="table1">
-												<thead>
-													<tr>
-														<th width="45" style="width: 18px">#</th>
-														<th width="939" align="left">Name</th>
-														<th width="81" align="right">Sequence No</th>
-														<th width="81" align="right">ABC Type</th>
-														<th width="81" align="left">Action</th>
+												<thead style="background-color: #f3b5db;">
+													<tr>																						
+														<th style="text-align: center;">#</th>
+														<th style="text-align: center;">Name</th>
+														<th style="text-align: center;">Sequence No</th>
+														<th style="text-align: center;">ABC Type</th>
+														<th style="text-align: center;">Action</th>
 													</tr>
 												</thead>
 												<tbody>
-													<c:forEach items="${routeList}" var="routeList">
+													<c:forEach items="${routeList}" var="routeList" varStatus="count">
 														<tr>
-															<td>1</td>
-															<td align="left"><c:out
+															<td>${count.index+1}</td>
+															<td align="center"><c:out
 																	value="${routeList.routeName}"></c:out></td>
-															<td align="right"><c:out
+															<td align="center"><c:out
 																	value="${routeList.seqNo}"></c:out></td>
 																	<c:set value="-" var="type"> </c:set>
 															<c:choose>
@@ -177,16 +203,26 @@
 																	<c:set value="C" var="type"> </c:set>
 																</c:when>
 															</c:choose>
-															
-															<td align="left"><c:out
+
+															<c:set value="0" var="flag" />
+															<c:forEach items="${routeIds}" var="routeIds">
+																<c:choose>
+																	<c:when test="${routeList.routeId==routeIds}">
+																		<c:set value="1" var="flag" />
+																	</c:when>
+
+																</c:choose>
+
+															</c:forEach>
+															<td align="center"><c:out
 																	value="${type}"></c:out></td>
-															<td align="left"><a
+															<td align="center"><a
 																href="${pageContext.request.contextPath}/updateRoute/${routeList.routeId}"><span
 																	class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
-
+															<c:if test="${flag==0}">
 																<a href="${pageContext.request.contextPath}/deleteRoute/${routeList.routeId}"
 																onClick="return confirm('Are you sure want to delete this record');"><span
-																	class="glyphicon glyphicon-remove"></span></a></td>
+																	class="glyphicon glyphicon-remove"></span></a></c:if></td>
 														</tr>
 
 													</c:forEach>
@@ -271,6 +307,48 @@
 		
 			<spring:url value="/resources/assets/jquery-validation/dist/additional-methods.min.js" var="jqueryAdd" />
 		    <script src="${jqueryAdd}"></script> --%>
-
+<script>
+$( "#prefix" ).change(function() {
+	var routePrefix = $("#prefix").val();
+	var routeId = $("#route_id").val();	
+	$
+			.getJSON(
+					'${chkUnqRoutePrefix}',
+					{
+						routePrefix : routePrefix,								
+						routeId : routeId,
+						ajax : 'true'
+					},
+					function(data) {						
+						if(data.error){
+							$( "#unq_prefix" ).show();
+							$( "#prefix" ).val('');
+						}else{
+							$( "#unq_prefix" ).hide();
+						}
+					});
+	});
+	
+$( "#short_name" ).change(function() {
+	var shortName = $("#short_name").val();
+	var routeId = $("#route_id").val();	
+	$
+			.getJSON(
+					'${chkUnqRouteShortName}',
+					{
+						shortName : shortName,								
+						routeId : routeId,
+						ajax : 'true'
+					},
+					function(data) {						
+						if(data.error){
+							$( "#unq_short_name" ).show();
+							$( "#short_name" ).val('');
+						}else{
+							$( "#unq_short_name" ).hide();
+						}
+					});
+	});
+</script>
 </body>
 </html>

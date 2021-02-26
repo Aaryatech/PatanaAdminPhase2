@@ -6,6 +6,18 @@
 
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<body>
+	<style>
+	.modal-content{
+	    margin-top: 10%;
+	    margin-left: 35%;
+	    width: 30%;
+	    height: 50%;
+	}
+	</style>
+	
+	<c:url value="/chkUnqRoutePrefix" var="chkUnqRoutePrefix"></c:url>
+	<c:url value="/chkUnqRouteShortName" var="chkUnqRouteShortName"></c:url>
+	<c:url value="/getRoutePrintIds" var="getRoutePrintIds"></c:url>
 	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 
@@ -61,52 +73,84 @@
 						<div class="box-content">
 							<form action="addRouteProcess" class="form-horizontal"
 								method="post" id="validation-form">
-
-
-
+								
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Route</label>
-									<div class="col-sm-9 col-lg-10 controls">
+									<div class="col-sm-9 col-lg-8 controls">
 										<input type="text" name="route_name" id="route_name"
 											placeholder="Route" class="form-control"
 											data-rule-required="true" />
 									</div>
 								</div>
-								
-								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">ABC Type</label>
-									<div class="col-sm-9 col-lg-10 controls">
-										<select   class="form-control chosen" name="acbType"   id="acbType"  >
-											 
-											<option   value="1">A</option>
-											<option   value="2">B</option>
-											<option   value="3">C</option>
-											 
-											</select>
+								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">Prefix</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="prefix" id="prefix"
+											placeholder="Route" class="form-control"
+											data-rule-required="true" />
+											<span for="prefix" id="unq_prefix" style="display: none; color: #b94a48;">Prefix already exits</span>
 									</div>
 								</div>
 								
 								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Short Name</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="short_name" id="short_name"
+											placeholder="Route Short Name" class="form-control"
+											data-rule-required="true" />
+										<span for="short_name" id="unq_short_name" style="display: none; color: #b94a48;">Short Name already exits</span>
+									</div>
+								</div>
+								
+								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">Min Km</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="min_km" id="min_km"
+											placeholder="Min Km" class="form-control"
+											data-rule-required="true" />
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Max Km</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="max_km" id="max_km"
+											placeholder="Max Km" class="form-control"
+											data-rule-required="true" />
+									</div>
+								</div>
+								
+								
+								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">ABC Type</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<select   class="form-control chosen" name="acbType" id="acbType"  >
+											 <c:forEach items="${valList}" var="list">
+											 	<option   value="${list.abcId}">${list.abcVal}</option>
+											 </c:forEach>										 
+										</select>
+									</div>
+								</div>
+								
+								<div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Sequence No.</label>
-									<div class="col-sm-9 col-lg-10 controls">
+									<div class="col-sm-9 col-lg-3 controls">
 										<input type="number" name="seqNo" id="seqNo"
 											placeholder="Route" class="form-control"
 											data-rule-required="true" />
 									</div>
 								</div>
 
+								<br><br>
 								<div class="form-group">
 									<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2">
 										<button type="submit" class="btn btn-primary" style="width: 70px">
 										 Submit
 										</button>
-										<!--<button type="button" class="btn">Cancel</button>-->
+										
 									</div>
 								</div>
-
-</form><!-- newly added /form to be tested -->
-
-
+								
 								<div class="box">
 									<div class="box-title">
 										<h3>
@@ -120,14 +164,13 @@
 									</div>
 
 									<div class="box-content">
-<jsp:include page="/WEB-INF/views/include/tableSearch.jsp"></jsp:include>
+									<jsp:include page="/WEB-INF/views/include/tableSearch.jsp"></jsp:include>
 										<div class="clearfix"></div>
 										<div class="table-responsive" style="border: 0">
 											<table width="100%" class="table table-advance" id="table1">
-												<thead style="background-color: #2196F3;">
+												<thead style="background-color: #f3b5db;">
 													<tr>
-									<th width="45" style="width: 18px">Select</th>
-										
+														<th width="45" style="width: 18px">Select</th>										
 														<th style="text-align: center;">#</th>
 														<th style="text-align: center;">Name</th>
 														<th style="text-align: center;">Sequence No</th>
@@ -136,9 +179,23 @@
 													</tr>
 												</thead>
 												<tbody>
+												
 													<c:forEach items="${routeList}" var="routeList" varStatus="count">
+													<c:set value="0" var="flag"/>
+														<c:forEach items="${routeIds}" var="routeIds">
+															<c:choose>
+																<c:when test="${routeList.routeId==routeIds}">
+																	<c:set value="1" var="flag" />
+																</c:when>
+
+															</c:choose>
+
+														</c:forEach>
 														<tr>
-									<td><input type="checkbox" class="chk" name="select_to_print" id="${routeList.routeId}"	value="${routeList.routeId}"/></td>
+														
+													<td><c:if test="${flag==0}">
+														<input type="checkbox" class="chk" name="select_to_print" id="${routeList.routeId}"	value="${routeList.routeId}"/>
+													</c:if></td>
 														
 															<td style="text-align: center;"><c:out value="${count.index+1}"/></td>
 															<td style="text-align: center;"><c:out
@@ -162,11 +219,13 @@
 																	value="${type}"></c:out></td>
 															<td style="text-align: center;"><a
 																href="${pageContext.request.contextPath}/updateRoute/${routeList.routeId}"><span
-																	class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
-
-																<a href="${pageContext.request.contextPath}/deleteRoute/${routeList.routeId}"
-																onClick="return confirm('Are you sure want to delete this record');"><span
-																	class="glyphicon glyphicon-remove"></span></a></td>
+																	class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;	
+																<c:if test="${flag==0}">
+																	<a href="${pageContext.request.contextPath}/deleteRoute/${routeList.routeId}"
+																	onClick="return confirm('Are you sure want to delete this record');"><span
+																		class="glyphicon glyphicon-remove"></span></a>
+																	</c:if>
+															</td>
 														</tr>
 
 													</c:forEach>
@@ -179,6 +238,10 @@
 										<input type="button" margin-right: 5px;" id="btn_delete"
 											class="btn btn-primary" onclick="deleteById()" 
 											value="Delete" />
+									&nbsp;	&nbsp;	&nbsp;	&nbsp;
+										<input type="button" margin-right: 5px;" id="btn_exl_pdf"
+											class="btn btn-primary" onclick="getHeaders()" 
+											value="Excel / Pdf" />
 									</div>
 								</div>
 						</div>
@@ -194,6 +257,177 @@
 		</div>
 		<!-- END Content -->
 	</div>
+	<table width="100%" class="table table-advance" id="printtable2">
+		<thead style="background-color: #f3b5db;" style="display: none;">
+			<tr>
+				<th>Route</th>
+				<th>Prefix</th>
+				<th>Short Name</th>
+				<th>Min Km.</th>
+				<th>Max Km.</th>
+				<th>ABC Type</th>
+				<th>Sequence No.</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+
+	<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content" id="modal_theme_primary">
+    <span class="close">&times;</span>
+    <div class="box">
+									<div class="box-title">
+										<h3>
+											<i class="fa fa-table"></i> Select Columns
+										</h3>
+										<div class="box-tool">
+											<a data-action="collapse" href="#"><i
+												class="fa fa-chevron-up"></i></a>
+											<!--<a data-action="close" href="#"><i class="fa fa-times"></i></a>-->
+										</div>
+									</div>
+
+				<div class="box-content">
+					<div class="clearfix"></div>
+					<div class="table-responsive" style="border: 0">
+						<table width="100%" class="table table-advance" id="modelTable">
+							<thead style="background-color: #f3b5db;">
+								<tr>
+									<th width="15"><input type="checkbox" name="selAll"
+										id="selAllChk" />
+									</th>
+									<th>Headers</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+						<span class="validation-invalid-label" id="error_modelchks"
+										style="display: none;">Select Check Box.</span>
+					</div>
+				</div>
+				<div class="form-group" style="background-color: white;">
+									&nbsp;	&nbsp;	&nbsp;	&nbsp;
+										<input type="button" margin-right: 5px;"
+											class="btn btn-primary" id="expExcel" onclick="getIdsReport(1)" 
+											value="Excel" />
+									&nbsp;	&nbsp;	&nbsp;	&nbsp;
+										<input type="button" margin-right: 5px;"
+											class="btn btn-primary" onclick="getIdsReport(2)" 
+											value="Pdf" />
+									</div>
+									</div>
+								
+  </div>
+
+</div>
+<script>
+				function getHeaders(){
+					
+					openModel();
+					$('#modelTable td').remove();
+				var thArray = [];
+	
+				$('#printtable2 > thead > tr > th').each(function(){
+				    thArray.push($(this).text())
+				})
+				
+					
+				var seq = 0;
+					for (var i = 0; i < thArray.length; i++) {
+						seq=i+1;					
+						var tr1 = $('<tr></tr>');
+						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html('<input type="checkbox" class="chkcls" name="chkcls'
+								+ seq
+								+ '" id="catCheck'
+								+ seq
+								+ '" value="'
+								+ seq
+								+ '">') );
+						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html(innerHTML=thArray[i]));
+						$('#modelTable tbody').append(tr1);
+					}
+				}
+				
+				$(document).ready(
+
+						function() {
+
+							$("#selAllChk").click(
+									function() {
+										$('#modelTable tbody input[type="checkbox"]')
+												.prop('checked', this.checked);
+
+									});
+						});
+				
+				  function getIdsReport(val) {
+					  var isError = false;
+						var checked = $("#modal_theme_primary input:checked").length > 0;
+					
+						if (!checked) {
+							$("#error_modelchks").show()
+							isError = true;
+						} else {
+							$("#error_modelchks").hide()
+							isError = false;
+						}
+
+						if(!isError){
+					  var elemntIds = [];										
+								
+								$(".chkcls:checkbox:checked").each(function() {
+									elemntIds.push($(this).val());
+								}); 
+												
+						$
+						.getJSON(
+								'${getRoutePrintIds}',
+								{
+									elemntIds : JSON.stringify(elemntIds),
+									val : val,
+									ajax : 'true'
+								},
+								function(data) {
+									if(data!=null){
+										//$("#modal_theme_primary").modal('hide');
+										if(val==1){
+											window.open("${pageContext.request.contextPath}/exportToExcelNew");
+											//document.getElementById("expExcel").disabled = true;
+										}else{			
+											 window.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/getRouteListPdf/'+elemntIds.join());
+											 $('#selAllChk').prop('checked', false);
+										}
+									}
+								});
+						}
+					}		
+				</script>
+<script>
+//Get the modal
+var modal = document.getElementById("myModal");
+function openModel(){
+	modal.style.display = "block";
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
 	<!-- END Container -->
 
 	<!--basic scripts-->
@@ -260,6 +494,75 @@
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap-daterangepicker/daterangepicker.js"></script>
 
+<script type="text/javascript">
+
+$( "#prefix" ).change(function() {
+	var routePrefix = $("#prefix").val();
+	var routeId = 0;	
+	$
+			.getJSON(
+					'${chkUnqRoutePrefix}',
+					{
+						routePrefix : routePrefix,								
+						routeId : routeId,
+						ajax : 'true'
+					},
+					function(data) {						
+						if(data.error){
+							$( "#unq_prefix" ).show();
+							$( "#prefix" ).val('');
+						}else{
+							$( "#unq_prefix" ).hide();
+						}
+					});
+	});
+	
+$( "#short_name" ).change(function() {
+	var shortName = $("#short_name").val();
+	var routeId = 0;	
+	$
+			.getJSON(
+					'${chkUnqRouteShortName}',
+					{
+						shortName : shortName,								
+						routeId : routeId,
+						ajax : 'true'
+					},
+					function(data) {						
+						if(data.error){
+							$( "#unq_short_name" ).show();
+							$( "#short_name" ).val('');
+						}else{
+							$( "#unq_short_name" ).hide();
+						}
+					});
+	});
+		
+
+		function genPdf() {
+			var from_date = $("#fromDate").val();
+			var to_date = $("#toDate").val();
+
+			var selectedFr = $("#selectFr").val();
+			var routeId = $("#selectRoute").val();
+			var isGrn = $("#isGrn").val();
+
+			window
+					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showGGreportByDate/'
+							+ from_date
+							+ '/'
+							+ to_date
+							+ '/'
+							+ selectedFr
+							+ '/' + routeId + '/' + isGrn + '/');
+
+		}
+		function exportToExcel() {
+
+			window.open("${pageContext.request.contextPath}/exportToExcel");
+			document.getElementById("expExcel").disabled = true;
+		}
+	</script>
 <script type="text/javascript">
 function deleteById()
 {
