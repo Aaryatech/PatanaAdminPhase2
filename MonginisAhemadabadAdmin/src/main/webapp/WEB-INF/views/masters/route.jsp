@@ -10,7 +10,7 @@
 	.modal-content{
 	    margin-top: 10%;
 	    margin-left: 35%;
-	    width: 30%;
+	    width: 55%;
 	    height: 50%;
 	}
 	</style>
@@ -18,6 +18,7 @@
 	<c:url value="/chkUnqRoutePrefix" var="chkUnqRoutePrefix"></c:url>
 	<c:url value="/chkUnqRouteShortName" var="chkUnqRouteShortName"></c:url>
 	<c:url value="/getRoutePrintIds" var="getRoutePrintIds"></c:url>
+	<c:url value="/getFranchiseByRoutIds" var="getFranchiseByRoutIds"></c:url>
 	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 
@@ -198,8 +199,10 @@
 													</c:if></td>
 														
 															<td style="text-align: center;"><c:out value="${count.index+1}"/></td>
-															<td style="text-align: center;"><c:out
-																	value="${routeList.routeName}"></c:out></td>
+															<td style="text-align: center;">
+															<a href="javascript:void(0);" onclick="showFranchise(${routeList.routeId})">
+															<c:out
+																	value="${routeList.routeName}"></c:out></a></td>
 															<td style="text-align: center;"><c:out
 																	value="${routeList.seqNo}"></c:out></td>
 																	<c:set value="-" var="type"> </c:set>
@@ -282,12 +285,7 @@
 									<div class="box-title">
 										<h3>
 											<i class="fa fa-table"></i> Select Columns
-										</h3>
-										<div class="box-tool">
-											<a data-action="collapse" href="#"><i
-												class="fa fa-chevron-up"></i></a>
-											<!--<a data-action="close" href="#"><i class="fa fa-times"></i></a>-->
-										</div>
+										</h3>										
 									</div>
 
 				<div class="box-content">
@@ -324,6 +322,47 @@
   </div>
 
 </div>
+
+
+<!-- Franchise Model -->
+<div id="frModal" class="modal">
+  <!-- Modal content -->  
+  <div class="modal-content" id="modal_fr">
+  
+    <div class="box">
+									<div class="box-title">
+										<h3>
+											<i class="fa fa-table"></i> Route Alloted Franchises
+										</h3>										
+									</div>
+
+				<div class="box-content">
+					<div class="clearfix"></div>
+					<div class="table-responsive" style="border: 0">
+						<table width="100%" class="table table-advance" id="frtable_grid">
+							<thead style="background-color: #f3b5db;">
+								<tr>
+									<th width="15">Sr No.</th>
+									<th width="85" style="text-align: center;">Franchise</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+			</div>		
+			<div class="form-group" style="background-color: white;">
+					&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
+						margin-right: 5px;"
+											class="btn btn-primary"
+						id="btn_close" onclick="clsFrModal()" value="Close" />
+
+				</div>						
+  </div>  
+</div>
+
 <script>
 				function getHeaders(){
 					
@@ -537,31 +576,41 @@ $( "#short_name" ).change(function() {
 						}
 					});
 	});
+	
+var modalFr = document.getElementById("frModal");
+	function showFranchise(routeId){	
+		$('#frtable_grid td').remove();
+		$
+		.getJSON(
+				'${getFranchiseByRoutIds}',
+				{							
+					routeId : routeId,
+					ajax : 'true'
+				},
+				function(data) {	
+					if(data==""){
+						alert("No Franchise Found");
+					}else{
+						modalFr.style.display = "block";						
+					}
+					$.each(data, function(key, fr) {
+						
+						var index = key + 1;	
+						var tr = $('<tr></tr>');
+						tr.append($('<td></td>').html(index));
+						
+						tr.append($('<td style="text-align:left;"></td>').html(
+								fr.frName+"-"+fr.frCode));
+						
+						$('#frtable_grid tbody').append(tr);
+
+					})
+				});
+	}	
+	function clsFrModal() {
+		modalFr.style.display = "none";
+	}
 		
-
-		function genPdf() {
-			var from_date = $("#fromDate").val();
-			var to_date = $("#toDate").val();
-
-			var selectedFr = $("#selectFr").val();
-			var routeId = $("#selectRoute").val();
-			var isGrn = $("#isGrn").val();
-
-			window
-					.open('${pageContext.request.contextPath}/pdfForReport?url=pdf/showGGreportByDate/'
-							+ from_date
-							+ '/'
-							+ to_date
-							+ '/'
-							+ selectedFr
-							+ '/' + routeId + '/' + isGrn + '/');
-
-		}
-		function exportToExcel() {
-
-			window.open("${pageContext.request.contextPath}/exportToExcel");
-			document.getElementById("expExcel").disabled = true;
-		}
 	</script>
 <script type="text/javascript">
 function deleteById()

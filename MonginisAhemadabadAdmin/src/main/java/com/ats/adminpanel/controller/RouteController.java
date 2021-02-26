@@ -24,6 +24,7 @@ import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.model.AllRoutesListResponse;
 import com.ats.adminpanel.model.ExportToExcel;
+import com.ats.adminpanel.model.Franchisee;
 import com.ats.adminpanel.model.SpecialCake;
 import com.ats.adminpanel.model.accessright.ModuleJson;
 import com.ats.adminpanel.model.Info;
@@ -61,7 +62,9 @@ public class RouteController {
 		model = new ModelAndView("masters/route");
 		return "redirect:/addroute";
 	}
-
+	
+	
+	List<Franchisee> franchiseList= new ArrayList<Franchisee>();
 	@RequestMapping(value = "/addroute", method = RequestMethod.GET)
 	public ModelAndView addroute(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView model = null;
@@ -97,7 +100,15 @@ public class RouteController {
 				
 				
 				List<Integer> routeIds = restTemplate.getForObject(Constants.url + "/getFrRouteItList",
-						List.class);		
+						List.class);
+				
+				try {
+				Franchisee[] frArr = restTemplate.getForObject(Constants.url + "/getAllFranchiseeList",
+						Franchisee[].class);				
+				franchiseList = new ArrayList<Franchisee>(Arrays.asList(frArr));				
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
  
 				model.addObject("routeList", routeList);
 				model.addObject("valList", valList);
@@ -285,6 +296,26 @@ public class RouteController {
 			e.printStackTrace();
 		}
 		return printRouteList;
+	}
+	
+	@RequestMapping(value = "/getFranchiseByRoutIds", method = RequestMethod.GET)
+	public @ResponseBody List<Franchisee> getFranchiseByRoutIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		List<Franchisee> frList = new ArrayList<Franchisee>();
+		try {
+			int routeId = Integer.parseInt(request.getParameter("routeId")); 
+			
+			for (int i = 0; i < franchiseList.size(); i++) {
+				if(franchiseList.get(i).getFrRouteId()==routeId) {
+					frList.add(franchiseList.get(i));
+				}
+			}		
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return frList;
 	}
 	
 	

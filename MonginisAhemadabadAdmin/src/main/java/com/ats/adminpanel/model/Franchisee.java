@@ -4,33 +4,33 @@ package com.ats.adminpanel.model;
 
 public class Franchisee {
 
-    private Integer frId;
+    private int frId;
     private String frName;
     private String frCode;
     private String frOpeningDate;
     private float frRate;
     private String frImage;
-    private Integer frRouteId;
+    private int frRouteId;
     private String frCity;
-    private Integer frKg1;
-    private Integer frKg2;
-    private Integer frKg3;
-    private Integer frKg4;
+    private int frKg1;
+    private int frKg2;
+    private int frKg3;
+    private int frKg4;
     private String frEmail;
     private String routeName;
     private String frPassword;
     private String frMob;
     private String frOwner;
 
-    private Integer frRateCat;
-    private Integer grnTwo;
-    private Integer delStatus;
+    private int frRateCat;
+    private int grnTwo;
+    private int delStatus;
     private String frRmn1;
     private String showItems;
     private String notShowItems;
-    private Integer frOpening;
+    private int frOpening;
     private String frPasswordKey;
-    private Integer isSameDayApplicable;
+    private int isSameDayApplicable;
     private int isSameState;
     
       private String ownerBirthDate;
@@ -39,15 +39,15 @@ public class Franchisee {
       
       private String frAgreementDate;
       
-	  private Integer frGstType;
+	  private int frGstType;
 	  
       private String frGstNo;
       
-	  private Integer stockType;
+	  private int stockType;
 	  
       private String frAddress;
       
-      private Integer frTarget;
+      private String frTarget;
 	
       
 
@@ -94,11 +94,11 @@ public class Franchisee {
 	}
 
 	
-	public Integer getFrGstType() {
+	public int getFrGstType() {
 		return frGstType;
 	}
 
-	public void setFrGstType(Integer frGstType) {
+	public void setFrGstType(int frGstType) {
 		this.frGstType = frGstType;
 	}
 
@@ -110,11 +110,11 @@ public class Franchisee {
 		this.frGstNo = frGstNo;
 	}
 
-	public Integer getStockType() {
+	public int getStockType() {
 		return stockType;
 	}
 
-	public void setStockType(Integer stockType) {
+	public void setStockType(int stockType) {
 		this.stockType = stockType;
 	}
 
@@ -129,19 +129,19 @@ public class Franchisee {
 
 	
 
-	public Integer getFrTarget() {
+	public String getFrTarget() {
 		return frTarget;
 	}
 
-	public void setFrTarget(Integer frTarget) {
+	public void setFrTarget(String frTarget) {
 		this.frTarget = frTarget;
 	}
 
-	public Integer getFrId() {
+	public int getFrId() {
         return frId;
     }
 
-    public void setFrId(Integer frId) {
+    public void setFrId(int frId) {
         this.frId = frId;
     }
 
@@ -186,11 +186,11 @@ public class Franchisee {
         this.frImage = frImage;
     }
 
-    public Integer getFrRouteId() {
+    public int getFrRouteId() {
         return frRouteId;
     }
 
-    public void setFrRouteId(Integer frRouteId) {
+    public void setFrRouteId(int frRouteId) {
         this.frRouteId = frRouteId;
     }
 
@@ -202,35 +202,35 @@ public class Franchisee {
         this.frCity = frCity;
     }
 
-    public Integer getFrKg1() {
+    public int getFrKg1() {
         return frKg1;
     }
 
-    public void setFrKg1(Integer frKg1) {
+    public void setFrKg1(int frKg1) {
         this.frKg1 = frKg1;
     }
 
-    public Integer getFrKg2() {
+    public int getFrKg2() {
         return frKg2;
     }
 
-    public void setFrKg2(Integer frKg2) {
+    public void setFrKg2(int frKg2) {
         this.frKg2 = frKg2;
     }
 
-    public Integer getFrKg3() {
+    public int getFrKg3() {
         return frKg3;
     }
 
-    public void setFrKg3(Integer frKg3) {
+    public void setFrKg3(int frKg3) {
         this.frKg3 = frKg3;
     }
 
-    public Integer getFrKg4() {
+    public int getFrKg4() {
         return frKg4;
     }
 
-    public void setFrKg4(Integer frKg4) {
+    public void setFrKg4(int frKg4) {
         this.frKg4 = frKg4;
     }
 
@@ -266,27 +266,27 @@ public class Franchisee {
         this.frOwner = frOwner;
     }
 
-    public Integer getFrRateCat() {
+    public int getFrRateCat() {
         return frRateCat;
     }
 
-    public void setFrRateCat(Integer frRateCat) {
+    public void setFrRateCat(int frRateCat) {
         this.frRateCat = frRateCat;
     }
 
-    public Integer getGrnTwo() {
+    public int getGrnTwo() {
         return grnTwo;
     }
 
-    public void setGrnTwo(Integer grnTwo) {
+    public void setGrnTwo(int grnTwo) {
         this.grnTwo = grnTwo;
     }
 
-    public Integer getDelStatus() {
+    public int getDelStatus() {
         return delStatus;
     }
 
-    public void setDelStatus(Integer delStatus) {
+    public void setDelStatus(int delStatus) {
         this.delStatus = delStatus;
     }
 
@@ -314,11 +314,11 @@ public class Franchisee {
         this.notShowItems = notShowItems;
     }
 
-    public Integer getFrOpening() {
+    public int getFrOpening() {
         return frOpening;
     }
 
-    public void setFrOpening(Integer frOpening) {
+    public void setFrOpening(int frOpening) {
         this.frOpening = frOpening;
     }
 
@@ -330,11 +330,11 @@ public class Franchisee {
         this.frPasswordKey = frPasswordKey;
     }
 
-    public Integer getIsSameDayApplicable() {
+    public int getIsSameDayApplicable() {
         return isSameDayApplicable;
     }
 
-    public void setIsSameDayApplicable(Integer isSameDayApplicable) {
+    public void setIsSameDayApplicable(int isSameDayApplicable) {
         this.isSameDayApplicable = isSameDayApplicable;
     }
 
