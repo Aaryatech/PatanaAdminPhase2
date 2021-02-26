@@ -89,8 +89,15 @@ th {
 			</tr>
 		</thead>
 		<tbody>
+		<c:set value="" var="abcType"/>
 			<c:forEach items="${printRouteList}" var="printRouteList" varStatus="count">
 				<tr>
+				<c:forEach items="${valList}" var="valList">
+					<c:if test="${printRouteList.abcType==valList.abcId}">
+						<c:set value="${valList.abcVal}" var="abcType"/>
+					</c:if>
+				</c:forEach>
+				
 					<td>${count.index+1}</td>
 					<c:forEach items="${routeIds}" var="routeIds">
 										
@@ -115,7 +122,7 @@ th {
 					</c:if>
 					
 					<c:if test="${routeIds==6}">						
-						<td style="text-align: center;">${printRouteList.abcType==1 ? 'A' : printRouteList.abcType==2 ? 'B' : C}</td>
+						<td style="text-align: center;">${abcType}</td>
 					</c:if>
 					
 					<c:if test="${routeIds==7}">						

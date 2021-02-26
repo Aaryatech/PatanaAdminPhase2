@@ -202,6 +202,12 @@ public class RouteController {
 			selctId = selctId.replaceAll("\"", "");
 			
 			RestTemplate restTemplate = new RestTemplate();
+			
+			RouteAbcVal[] valArr = restTemplate.getForObject(Constants.url + "/showRouteAbcValList",
+					RouteAbcVal[].class);
+
+			List<RouteAbcVal> valList = new ArrayList<RouteAbcVal>(Arrays.asList(valArr));			
+			
 
 			RouteMaster[] allRouteListResponse = restTemplate.getForObject(Constants.url + "/showRouteListNew",
 					RouteMaster[].class);
@@ -248,12 +254,22 @@ public class RouteController {
 			
 			exportToExcelList.add(expoExcel);
 			int srno = 1;
+			String routeAbcType = null;
 			for (int i = 0; i < printRouteList.size(); i++) {
 				expoExcel = new ExportToExcel();
 				rowData = new ArrayList<String>();
 				
+				
+				for (int k = 0; k < valList.size(); k++) {
+					if(printRouteList.get(i).getAbcType()==valList.get(k).getAbcId()) {
+						routeAbcType=valList.get(k).getAbcVal();
+					}
+						
+				}
+				
 				rowData.add(" "+srno);
 				for (int j = 0; j < routeIds.size(); j++) {		
+					
 					
 					if(routeIds.get(j)==1)
 					rowData.add(" " + printRouteList.get(i).getRouteName());
@@ -271,7 +287,7 @@ public class RouteController {
 					rowData.add(" " + printRouteList.get(i).getMaxKm());
 					
 					if(routeIds.get(j)==6)
-					rowData.add(" " + printRouteList.get(i).getAbcType());
+					rowData.add(" " + routeAbcType);
 						
 					if(routeIds.get(j)==7)
 					rowData.add(" " + printRouteList.get(i).getSeqNo());				
@@ -286,7 +302,7 @@ public class RouteController {
 			session.setAttribute("exportExcelListNew", exportToExcelList);
 			session.setAttribute("excelNameNew", "Route List");
 			session.setAttribute("reportNameNew", "Route List");
-			session.setAttribute("searchByNew", "All Company");
+			session.setAttribute("", "");
 			session.setAttribute("mergeUpto1", "$A$1:$L$1");
 			session.setAttribute("mergeUpto2", "$A$2:$L$2");
 			session.setAttribute("excelName", "Route Excel");
@@ -303,7 +319,8 @@ public class RouteController {
 			HttpServletResponse response) {
 		
 		List<Franchisee> frList = new ArrayList<Franchisee>();
-		try {
+		try {		
+			
 			int routeId = Integer.parseInt(request.getParameter("routeId")); 
 			
 			for (int i = 0; i < franchiseList.size(); i++) {
@@ -324,8 +341,14 @@ public class RouteController {
 			HttpServletResponse response, @PathVariable String selctId) {
 		ModelAndView model = new ModelAndView("masters/masterPdf/routePdf");
 		try {
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			
 			RestTemplate restTemplate = new RestTemplate();
+			
+			RouteAbcVal[] valArr = restTemplate.getForObject(Constants.url + "/showRouteAbcValList",
+					RouteAbcVal[].class);
+
+			List<RouteAbcVal> valList = new ArrayList<RouteAbcVal>(Arrays.asList(valArr));
+			
 			RouteMaster[] allRouteListResponse = restTemplate.getForObject(Constants.url + "/showRouteListNew",
 					RouteMaster[].class);
 
@@ -335,9 +358,9 @@ public class RouteController {
 			        .map(Long::parseLong)
 			        .collect(Collectors.toList());
 			
-			
-				model.addObject("printRouteList", printRouteList);
-				model.addObject("routeIds", routeIds);
+			model.addObject("valList", valList);
+			model.addObject("printRouteList", printRouteList);
+			model.addObject("routeIds", routeIds);
 				
 		}catch (Exception e) {
 			e.printStackTrace();

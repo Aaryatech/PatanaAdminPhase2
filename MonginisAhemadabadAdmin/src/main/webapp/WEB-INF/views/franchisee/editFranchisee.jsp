@@ -147,14 +147,18 @@
 												<select class="form-control input-sm" name="fr_route_id"
 													id="fr_route_id" data-rule-required="true">
 
-													<option selected value="${franchiseeList.frRouteId}">${frRouteName}</option>
+													
 													<c:forEach items="${routeList}" var="routeList">
-														<option value="${routeList.routeId}"><c:out value="${routeList.routeName}"/></option>
-
-
+														<c:choose>
+															<c:when
+																test="${routeList.routeId==franchiseeList.frRouteId}">
+																<option selected value="${routeList.routeId}">${routeList.routeName}---${routeList.exVar2}---${routeList.seqNo}</option>
+															</c:when>
+															<c:otherwise>
+																<option value="${routeList.routeId}">${routeList.routeName}---${routeList.exVar2}---${routeList.seqNo}</option>
+															</c:otherwise>
+														</c:choose>
 													</c:forEach>
-
-
 												</select>
 											</div>
 										</div>
@@ -243,51 +247,51 @@
 											</div>
 										</div>
 
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">Pastries</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_1" id="kg_1" placeholder="Qty"
-													value="${franchiseeList.frKg1}" class="form-control"
-													data-rule-required="true" data-rule-number="true"
-													onKeyPress="return isNumberCommaDot(event)" />
+										<div style="display: none;">
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">Pastries</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_1" id="kg_1" placeholder="Qty"
+														value="${franchiseeList.frKg1}" class="form-control"
+														data-rule-required="true" data-rule-number="true"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
+											</div>
+	
+	
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">1/2 Kg
+													Cake</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_2" id="kg_2" placeholder="Qty"
+														value="${franchiseeList.frKg2}" class="form-control"
+														data-rule-required="true" data-rule-number="true"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
+											</div>
+	
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">1 Kg
+													Cake</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_3" id="kg_3" placeholder="Qty"
+														value="${franchiseeList.frKg3}" class="form-control"
+														data-rule-required="true" data-rule-number="true"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
+											</div>
+	
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">Above
+													1 Kg Cake</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_4" id="kg_4" placeholder="Qty"
+														value="${franchiseeList.frKg4}" class="form-control"
+														data-rule-required="true" data-rule-number="true"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
 											</div>
 										</div>
-
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">1/2 Kg
-												Cake</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_2" id="kg_2" placeholder="Qty"
-													value="${franchiseeList.frKg2}" class="form-control"
-													data-rule-required="true" data-rule-number="true"
-													onKeyPress="return isNumberCommaDot(event)" />
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">1 Kg
-												Cake</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_3" id="kg_3" placeholder="Qty"
-													value="${franchiseeList.frKg3}" class="form-control"
-													data-rule-required="true" data-rule-number="true"
-													onKeyPress="return isNumberCommaDot(event)" />
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">Above
-												1 Kg Cake</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_4" id="kg_4" placeholder="Qty"
-													value="${franchiseeList.frKg4}" class="form-control"
-													data-rule-required="true" data-rule-number="true"
-													onKeyPress="return isNumberCommaDot(event)" />
-											</div>
-										</div>
-
 
 										<div class="form-group" style="display:none;">
 											<label class="col-sm-3 col-lg-2 control-label"
@@ -362,7 +366,7 @@
 										</div>
 										
                                           <div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">FDA License Date</label>
+											<label class="col-sm-3 col-lg-2 control-label">FDA License Expire Date</label>
 											<div class="col-sm-5 col-lg-4 controls">
 												<input class="form-control date-picker" id="fr_license_date" size="16"
 													type="text" name="fr_license_date"value="${franchiseeList.fbaLicenseDate}"
@@ -503,38 +507,20 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">GRN 2
-												Applicable ?</label>
+											<label class="col-sm-3 col-lg-2 control-label">Dispatch
+												Applicable</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												
-												<c:choose>
-													<c:when test="${strGrnTwo.equals('1')}">
-
-														<label class="radio-inline"> <input type="radio"
-															name="grn_two" id="optionsRadios1" value="1" checked/>
-															Applicable
-														</label>
-
-
+												
 														<label class="radio-inline"> <input type="radio"
 															name="grn_two" id="optionsRadios1" 
-															value="0" /> Not Applicable
-														</label>
-
-
-													</c:when>
-													<c:otherwise>
-														<label class="radio-inline"> <input type="radio"
-															name="grn_two" id="optionsRadios1" 
-															value="1" /> Applicable
+															value="1" ${strGrnTwo.equals('1') ? 'checked' : ''}/> Regular
 														</label>
 														<label class="radio-inline"> <input type="radio"
-															name="grn_two" id="optionsRadios1" value="0" checked/> Not
-															Applicable
+															name="grn_two" id="optionsRadios1" value="0"  ${strGrnTwo.equals('0') ? 'checked' : ''}/>Non
+															-Regular
 														</label>
-													</c:otherwise>
-
-												</c:choose>
+													
 
 											</div>
 										</div>

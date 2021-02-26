@@ -218,7 +218,7 @@
 													id="fr_route_id" data-rule-required="true">
 
 													<c:forEach items="${routeList}" var="routeList">
-														<option value="${routeList.routeId}"><c:out value="${routeList.routeName}"/></option>
+														<option value="${routeList.routeId}"><c:out value="${routeList.routeName}---${routeList.exVar2}---${routeList.seqNo}"/></option>
 
 
 													</c:forEach>
@@ -273,47 +273,48 @@
 											</div>
 										</div>
 
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">Pastries</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_1" id="kg_1" placeholder="Qty"
-													class="form-control" data-rule-required="true"
-													data-rule-number="true" value="0"
-													onKeyPress="return isNumberCommaDot(event)" />
+									<div style="display: none;">
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">Pastries</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_1" id="kg_1" placeholder="Qty"
+														class="form-control" data-rule-required="true"
+														data-rule-number="true" value="0"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
 											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">1/2 Kg
-												Cake</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_2" id="kg_2" value="0" placeholder="Qty"
-													value="" class="form-control" data-rule-required="true"
-													data-rule-number="true"
-													onKeyPress="return isNumberCommaDot(event)" />
+	
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">1/2 Kg
+													Cake</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_2" id="kg_2" value="0" placeholder="Qty"
+														value="0" class="form-control" data-rule-required="true"
+														data-rule-number="true"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
 											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">1 Kg
-												Cake</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_3" id="kg_3" value="0" placeholder="Qty"
-													class="form-control" data-rule-required="true"
-													data-rule-number="true" 
-													onKeyPress="return isNumberCommaDot(event)" />
+	
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">1 Kg
+													Cake</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_3" id="kg_3" value="0" placeholder="Qty"
+														class="form-control" data-rule-required="true"
+														data-rule-number="true" 
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
 											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">Above
-												1 Kg Cake</label>
-											<div class="col-sm-9 col-lg-10 controls">
-												<input type="text" name="kg_4" id="kg_4" placeholder="Qty"
-													class="form-control" data-rule-required="true"
-													data-rule-number="true" value="0"
-													onKeyPress="return isNumberCommaDot(event)" />
+	
+											<div class="form-group">
+												<label class="col-sm-3 col-lg-2 control-label">Above
+													1 Kg Cake</label>
+												<div class="col-sm-9 col-lg-10 controls">
+													<input type="text" name="kg_4" id="kg_4" placeholder="Qty"
+														class="form-control" data-rule-required="true"
+														data-rule-number="true" value="0"
+														onKeyPress="return isNumberCommaDot(event)" />
+												</div>
 											</div>
 										</div>
 
@@ -396,7 +397,7 @@
 										
 										<div class="form-group">
 											<label class="col-sm-3 col-lg-2 control-label">FDA
-												License Date</label>
+												License Expire Date</label>
 											<div class="col-sm-5 col-lg-4 controls">
 												<input class="form-control date-picker"
 													id="fba_license_date" size="16" type="text"
@@ -483,15 +484,14 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 col-lg-2 control-label">GRN 2
-												Applicable ?</label>
+											<label class="col-sm-3 col-lg-2 control-label">Dispatch Applicable</label>
 											<div class="col-sm-9 col-lg-10 controls">
 												<label class="radio-inline"> <input type="radio"
-													name="grn_two" id="optionsRadios1" value="1"  />
-													Applicable
+													name="grn_two" id="optionsRadios1" value="1" checked/>
+													Regular
 												</label> <label class="radio-inline"> <input type="radio"
-													name="grn_two" id="optionsRadios1" value="0" checked> Not
-													Applicable
+													name="grn_two" id="optionsRadios1" value="0"> Non
+												-Regular
 												</label>
 											</div>
 										</div>

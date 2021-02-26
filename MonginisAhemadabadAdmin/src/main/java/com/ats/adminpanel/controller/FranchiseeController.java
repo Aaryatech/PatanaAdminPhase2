@@ -52,6 +52,7 @@ import com.ats.adminpanel.model.GetConfiguredSpDayCk;
 import com.ats.adminpanel.model.GetFrMenuConfigure;
 import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.Route;
+import com.ats.adminpanel.model.RouteMaster;
 import com.ats.adminpanel.model.ItemIdOnly;
 import com.ats.adminpanel.model.MCategory;
 import com.ats.adminpanel.model.SpCakeResponse;
@@ -103,9 +104,11 @@ public class FranchiseeController {
 		Constants.subAct = 2;
 
 		RestTemplate restTemplate = new RestTemplate();
-		AllRoutesListResponse allRoutesListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
-				AllRoutesListResponse.class);
-
+		
+		RouteMaster[] routeArr = restTemplate.getForObject(Constants.url + "showRouteListAndAbcType",
+				RouteMaster[].class);
+		List<RouteMaster> routeList = new ArrayList<RouteMaster>(Arrays.asList(routeArr));
+		
 		Integer maxFrId = restTemplate.getForObject(Constants.url + "getUnigueFrCode", Integer.class);
 
 		int maxFrIdLenth = String.valueOf(maxFrId).length();
@@ -116,10 +119,8 @@ public class FranchiseeController {
 			String j = "0";
 			frCode.append(j);
 		}
-		frCode.append(String.valueOf(maxFrId));
-
-		List<Route> routeList = new ArrayList<Route>();
-		routeList = allRoutesListResponse.getRoute();
+		frCode.append(String.valueOf(maxFrId));		
+		
 		FrItemStockConfiResponse frItemStockConfiResponse = restTemplate
 				.getForObject(Constants.url + "getfrItemConfSetting", FrItemStockConfiResponse.class);
 		List<FrItemStockConfigure> frItemStockConfigures = new ArrayList<FrItemStockConfigure>();
@@ -1769,6 +1770,10 @@ catch (Exception e) {
 
 		map.add("frId", frId);
 		RestTemplate restTemplate = new RestTemplate();
+		
+		RouteMaster[] routeArr = restTemplate.getForObject(Constants.url + "showRouteListAndAbcType",
+				RouteMaster[].class);
+		List<RouteMaster> routeList = new ArrayList<RouteMaster>(Arrays.asList(routeArr));
 
 		FranchiseeList franchiseeList = restTemplate.getForObject(Constants.url + "getFranchisee?frId={frId}",
 				FranchiseeList.class, frId);
@@ -1780,29 +1785,29 @@ catch (Exception e) {
 		AllRoutesListResponse allRoutesListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
 				AllRoutesListResponse.class);
 
-		List<Route> routeList = new ArrayList<Route>();
-		routeList = allRoutesListResponse.getRoute();
-		// logger.info("Route List" + routeList.toString());
-
-		int frrouteid = franchiseeList.getFrRouteId();
-		StringBuilder frRouteName = new StringBuilder();
-
-		for (int i = 0; i < routeList.size(); i++) {
-
-			if (routeList.get(i).getRouteId() == (franchiseeList.getFrRouteId()))
-
-				frRouteName.append(routeList.get(i).getRouteName());
-		}
-		logger.info("route name is" + frRouteName);
-		model.addObject("frRouteName", frRouteName);
-
-		for (int j = 0; j < routeList.size(); j++) {
-
-			if (routeList.get(j).getRouteId() == franchiseeList.getFrRouteId()) {
-				routeList.remove(j);
-
-			}
-		}
+//		List<Route> routeList = new ArrayList<Route>();
+//		routeList = allRoutesListResponse.getRoute();
+//		// logger.info("Route List" + routeList.toString());
+//
+//		int frrouteid = franchiseeList.getFrRouteId();
+//		StringBuilder frRouteName = new StringBuilder();
+//
+//		for (int i = 0; i < routeList.size(); i++) {
+//
+//			if (routeList.get(i).getRouteId() == (franchiseeList.getFrRouteId()))
+//
+//				frRouteName.append(routeList.get(i).getRouteName());
+//		}
+//		logger.info("route name is" + frRouteName);
+//		model.addObject("frRouteName", frRouteName);
+//
+//		for (int j = 0; j < routeList.size(); j++) {
+//
+//			if (routeList.get(j).getRouteId() == franchiseeList.getFrRouteId()) {
+//				routeList.remove(j);
+//
+//			}
+//		}
 
 		model.addObject("routeList", routeList);
 

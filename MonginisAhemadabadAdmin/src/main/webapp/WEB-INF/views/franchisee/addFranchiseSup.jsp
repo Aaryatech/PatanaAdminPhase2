@@ -154,15 +154,26 @@
 											data-rule-required="true" value="${frSup.frPanNo}" />
 									</div>
 								</div>
+								
 								<div class="col2">
+									<label class="col-sm-3 col-lg-2 control-label">No. In
+										Route</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="no_in_route" id="no_in_route"
+											placeholder="No. In Route" class="form-control"
+											data-rule-required="true" value="${frSup.noInRoute}" />
+									</div>
+								</div>
+								
+								<div class="col2" style="display: none;">
 									<label class="col-sm-3 col-lg-2 control-label">Country</label>
 									<div class="col-sm-9 col-lg-3 controls">
 										<input type="text" name="fr_country" id="fr_country"
 											placeholder="Country" class="form-control"
-											data-rule-required="true" value="India" />
+											data-rule-required="true" value="NA" />
 									</div>
-
 								</div>
+								
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">State</label>
 									<div class="col-sm-9 col-lg-3 controls">
@@ -172,64 +183,57 @@
 									</div>
 
 								</div>
-								<div class="col2">
-									<label class="col-sm-3 col-lg-2 control-label">Owner
-										Password</label>
-									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="pass1" id="pass1"
-											placeholder="User1 Password" class="form-control"
-											data-rule-required="true" value="${frSup.pass1}" />
+								<div style="display: none;">
+									<div class="col2">
+										<label class="col-sm-3 col-lg-2 control-label">Owner
+											Password</label>
+										<div class="col-sm-9 col-lg-3 controls">
+											<input type="text" name="pass1" id="pass1"
+												placeholder="User1 Password" class="form-control"
+												data-rule-required="true" value="${frSup.pass1}" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 col-lg-2 control-label">Captain
+											Password</label>
+										<div class="col-sm-9 col-lg-3 controls">
+											<input type="text" name="pass2" id="pass2"
+												placeholder="User2 Password" class="form-control"
+												data-rule-required="true" value="${frSup.pass2}" />
+										</div>
+									</div>
+									<div class="col2">
+										<label class="col-sm-3 col-lg-2 control-label">CSP
+											Password</label>
+										<div class="col-sm-9 col-lg-3 controls">
+											<input type="text" name="pass3" id="pass3"
+												placeholder="User3 Password" class="form-control"
+												data-rule-required="true" value="${frSup.pass3}" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 col-lg-2 control-label">Pest
+											Control Date</label>
+										<div class="col-sm-9 col-lg-3 controls">
+	
+											<input class="form-control date-picker" id="pest_control_date"
+												size="16" type="text" name="pest_control_date" required
+												placeholder="Pest Control Date"
+												value="${frSup.pestControlDate}"
+												onblur="return onPestControlDateChange()" />
+										</div>
+									</div>
+								
+									<div class="col2">
+										<label class="col-sm-3 col-lg-2 control-label">Frequency</label>
+										<div class="col-sm-9 col-lg-3 controls">
+											<input type="text" name="frequency" id="frequency"
+												placeholder="Frequency" class="form-control"
+												data-rule-required="true" value="1" readonly />
+											<%-- ${frSup.frequency} --%>
+										</div>
 									</div>
 								</div>
-								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">Captain
-										Password</label>
-									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="pass2" id="pass2"
-											placeholder="User2 Password" class="form-control"
-											data-rule-required="true" value="${frSup.pass2}" />
-									</div>
-								</div>
-								<div class="col2">
-									<label class="col-sm-3 col-lg-2 control-label">CSP
-										Password</label>
-									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="pass3" id="pass3"
-											placeholder="User3 Password" class="form-control"
-											data-rule-required="true" value="${frSup.pass3}" />
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">Pest
-										Control Date</label>
-									<div class="col-sm-9 col-lg-3 controls">
-
-										<input class="form-control date-picker" id="pest_control_date"
-											size="16" type="text" name="pest_control_date" required
-											placeholder="Pest Control Date"
-											value="${frSup.pestControlDate}"
-											onblur="return onPestControlDateChange()" />
-									</div>
-								</div>
-								<div class="col2">
-									<label class="col-sm-3 col-lg-2 control-label">Frequency</label>
-									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="frequency" id="frequency"
-											placeholder="Frequency" class="form-control"
-											data-rule-required="true" value="1" readonly />
-										<%-- ${frSup.frequency} --%>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">No. In
-										Route</label>
-									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="no_in_route" id="no_in_route"
-											placeholder="No. In Route" class="form-control"
-											data-rule-required="true" value="${frSup.noInRoute}" />
-									</div>
-								</div>
-
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Applicable
 										to Dispatch </label>
