@@ -343,7 +343,11 @@
 							<thead style="background-color: #f3b5db;">
 								<tr>
 									<th width="15">Sr No.</th>
-									<th width="85" style="text-align: center;">Franchise</th>
+									<th style="text-align: center;">Franchise</th>
+									<th style="text-align: center;">Code</th>
+									<th style="text-align: center;">City</th>
+									<th style="text-align: center;">Owner name</th>
+									<th style="text-align: center;">Mobile No.</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -600,7 +604,19 @@ var modalFr = document.getElementById("frModal");
 						tr.append($('<td></td>').html(index));
 						
 						tr.append($('<td style="text-align:left;"></td>').html(
-								fr.frName+"-"+fr.frCode));
+								fr.frName));
+						
+						tr.append($('<td style="text-align:center;"></td>').html(
+								fr.frCode));
+						
+						tr.append($('<td style="text-align:left;"></td>').html(
+								fr.frCity));
+						
+						tr.append($('<td style="text-align:left;"></td>').html(
+								fr.frOwner));
+						
+						tr.append($('<td style="text-align:center;"></td>').html(
+								fr.frTarget));
 						
 						$('#frtable_grid tbody').append(tr);
 
