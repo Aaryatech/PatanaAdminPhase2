@@ -325,16 +325,16 @@
 
 
 <!-- Franchise Model -->
-<div id="frModal" class="modal">
-  <!-- Modal content -->  
-  <div class="modal-content" id="modal_fr">
-  
-    <div class="box">
-									<div class="box-title">
-										<h3>
-											<i class="fa fa-table"></i> Route Alloted Franchises
-										</h3>										
-									</div>
+	<div id="frModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content" id="modal_fr">
+
+			<div class="box">
+				<div class="box-title">
+					<h3>
+						<i class="fa fa-table"></i> Route Alloted Franchises
+					</h3>
+				</div>
 
 				<div class="box-content">
 					<div class="clearfix"></div>
@@ -355,19 +355,19 @@
 						</table>
 					</div>
 				</div>
-				
-			</div>		
+
+			</div>
 			<div class="form-group" style="background-color: white;">
-					&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
-						margin-right: 5px;"
+				&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
+					margin-right: 5px;"
 											class="btn btn-primary"
-						id="btn_close" onclick="clsFrModal()" value="Close" />
+					id="btn_close" onclick="clsFrModal()" value="Close" />
 
-				</div>						
-  </div>  
-</div>
+			</div>
+		</div>
+	</div>
 
-<script>
+	<script>
 				function getHeaders(){
 					
 					openModel();

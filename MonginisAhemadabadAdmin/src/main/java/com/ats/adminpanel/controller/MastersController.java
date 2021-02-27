@@ -41,6 +41,7 @@ import com.ats.adminpanel.model.flavours.AllFlavoursListResponse;
 import com.ats.adminpanel.model.flavours.Flavour;
 import com.ats.adminpanel.model.item.AllItemsListResponse;
 import com.ats.adminpanel.model.item.CategoryListResponse;
+import com.ats.adminpanel.model.item.GetItemUomAndSup;
 import com.ats.adminpanel.model.item.Item;
 import com.ats.adminpanel.model.item.SubCategory;
 import com.ats.adminpanel.model.masters.AllRatesResponse;
@@ -752,7 +753,7 @@ public class MastersController {
 
 			SubCategory resp = restTemplate.postForObject(Constants.url + "getSubCategoryByPrefix", map,
 					SubCategory.class);
-			System.out.println("Prefix-------------"+resp);
+			
 			if(resp!=null) {
 				info.setError(true);
 				info.setMessage("Prefix Found");
@@ -766,7 +767,29 @@ public class MastersController {
 		}
 		return info;
 	}
+	
+	@RequestMapping(value = { "/getProductsBySubCatId" }, method = RequestMethod.GET)
+	public @ResponseBody List<GetItemUomAndSup> getProductsBySubCatId(HttpServletRequest request,
+			HttpServletResponse response) {
+		List<GetItemUomAndSup> itemsList = new ArrayList<GetItemUomAndSup>();
+		try {
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();			
+			map.add("subCatId", request.getParameter("subCatId"));
+			RestTemplate restTemplate = new RestTemplate();
 
+			GetItemUomAndSup[] getItems = restTemplate.postForObject(Constants.url + "getAllItemsBySubCatId", map,
+					GetItemUomAndSup[].class);
+			
+			itemsList = new ArrayList<GetItemUomAndSup>(Arrays.asList(getItems));
+			
+		}catch (Exception e) {
+			System.out.println("Excep in /getSubCategoryByPrefix : "+e.getMessage());
+			e.printStackTrace();
+		}
+		return itemsList;
+	}
+	
 
 	@RequestMapping(value = "/deleteSubCategory/{subCatId}", method = RequestMethod.GET)
 	public String deleteSubCategory(@PathVariable int subCatId) {

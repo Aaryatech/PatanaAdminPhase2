@@ -8,6 +8,7 @@
 	<body>
 	
 	<c:url value="/getSubCategoryByPrefix" var="getSubCategoryByPrefix"/>
+	<c:url value="/getProductsBySubCatId" var="getProductsBySubCatId"/>
 	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 	<div class="container" id="main-container">
@@ -151,60 +152,66 @@
 									
 									</div>
 									<div class="table-wrap">
-									
-										<table id="table1" class="table table-advance" >
-											<thead>
-												<tr class="bgpink">
-											<th class="col-md-1">#</th>
-								            <th class="col-md-4" style="text-align: center;">Name</th>
-									        <th class="col-md-4" style="text-align: center;">Category Name</th>
-									        <th class="col-md-1" style="text-align: center;">Action</th>
-												</tr>
-												</thead>
-												<tbody>
-						  <c:set var="cnt" value="0"></c:set>
-					           <c:forEach items="${catList}" var="catList" varStatus="count">
-				           
-				             <c:forEach items="${catList.subCategoryList}" var="subCatList" varStatus="count">
-				             
-				              <c:set value="0" var="flag"/>
-														<c:forEach items="${subCatIds}" var="subCatIds">
-															<c:choose>
-																<c:when test="${subCatList.subCatId==subCatIds}">
-																	<c:set value="1" var="flag" />
-																</c:when>
 
-															</c:choose>
-
-														</c:forEach>
-														
-				              <c:set var="cnt" value="${cnt+1}"></c:set>
-				              <c:choose>
-				              <c:when test="${subCatList.catId==catList.catId}">
-									<tr>
-										<td><c:out value="${cnt}" /></td>
-										<td style="text-align: left; padding-left: 15%;"><c:out value="${subCatList.subCatName}" /></td>
-										<td style="text-align: left; padding-left: 13%;"><c:out
-												value="${catList.catName}" /></td>
-
-
-										<td style="text-align: center;"><a
-											href="updateSubCategory/${subCatList.subCatId}"><span
-												class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
-
-											<c:if test="${flag==0}"><a href="deleteSubCategory/${subCatList.subCatId}"
-											onClick="return confirm('Are you sure want to delete this record');"><span
-												class="glyphicon glyphicon-remove"></span></a></c:if>
-										</td>
+							<table id="table1" class="table table-advance">
+								<thead>
+									<tr class="bgpink">
+										<th class="col-md-1">#</th>
+										<th class="col-md-4" style="text-align: center;">Name</th>
+										<th class="col-md-4" style="text-align: center;">Category
+											Name</th>
+										<th class="col-md-1" style="text-align: center;">Action</th>
 									</tr>
-										</c:when>
-				              
-				              </c:choose>
-							</c:forEach>
-								</c:forEach> 
-							</tbody>
-						</table>
-					</div>
+								</thead>
+								<tbody>
+									<c:set var="cnt" value="0"></c:set>
+									<c:forEach items="${catList}" var="catList" varStatus="count">
+
+										<c:forEach items="${catList.subCategoryList}" var="subCatList"
+											varStatus="count">
+
+											<c:set value="0" var="flag" />
+											<c:forEach items="${subCatIds}" var="subCatIds">
+												<c:choose>
+													<c:when test="${subCatList.subCatId==subCatIds}">
+														<c:set value="1" var="flag" />
+													</c:when>
+
+												</c:choose>
+
+											</c:forEach>
+
+											<c:set var="cnt" value="${cnt+1}"></c:set>
+											<c:choose>
+												<c:when test="${subCatList.catId==catList.catId}">
+													<tr>
+														<td><c:out value="${cnt}" /></td>
+														<td style="text-align: left; padding-left: 15%;"><a
+															href="javascript:void(0);"
+															onclick="showProducts(${subCatList.subCatId})"> <c:out
+																	value="${subCatList.subCatName}" /></a></td>
+														<td style="text-align: left; padding-left: 13%;"><c:out
+																value="${catList.catName}" /></td>
+
+
+														<td style="text-align: center;"><a
+															href="updateSubCategory/${subCatList.subCatId}"><span
+																class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+
+															<c:if test="${flag==0}">
+																<a href="deleteSubCategory/${subCatList.subCatId}"
+																	onClick="return confirm('Are you sure want to delete this record');"><span
+																	class="glyphicon glyphicon-remove"></span></a>
+															</c:if></td>
+													</tr>
+												</c:when>
+
+											</c:choose>
+										</c:forEach>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
 				</div>
 				</div>
          </div>
@@ -220,6 +227,53 @@
 	<!-- END Container -->
 
 	<!--basic scripts-->
+	<!-- Product Model -->
+	<div id="itemModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content" id="modal_fr">
+
+			<div class="box">
+				<div class="box-title">
+					<h3>
+						<i class="fa fa-table"></i> Sub Category Alloted Products
+					</h3>
+				</div>
+
+				<div class="box-content">
+					<div class="clearfix"></div>
+					<div class="table-responsive" style="border: 0">
+						<table width="100%" class="table table-advance" id="frtable_grid">
+							<thead style="background-color: #f3b5db;">
+								<tr>
+									<th width="15">Sr No.</th>
+									<th style="text-align: center;">Item</th>
+									<th style="text-align: center;">UOM</th>
+									<th style="text-align: center;">MRP1</th>
+									<th style="text-align: center;">MRP2</th>
+									<th style="text-align: center;">MRP3</th>
+									<th style="text-align: center;">Tax Applicable</th>
+									<th style="text-align: center;">HSN Code</th>
+									<th style="text-align: center;">Shelf Life</th>
+									<th style="text-align: center;">Sequence No.</th>
+									<th style="text-align: center;">Is Active</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</div>
+			<div class="form-group" style="background-color: white;">
+				&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
+					margin-right: 5px;"
+											class="btn btn-primary"
+					id="btn_close" onclick="clsitemModal()" value="Close" />
+
+			</div>
+		</div>
+	</div>
 	<script
 		src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script>
@@ -304,6 +358,75 @@ $( "#prefix" ).change(function() {
 						}
 					});
 	});
+	
+var modalFr = document.getElementById("itemModal");
+function showProducts(subCatId){	
+	$('#frtable_grid td').remove();
+	$
+	.getJSON(
+			'${getProductsBySubCatId}',
+			{							
+				subCatId : subCatId,
+				ajax : 'true'
+			},
+			function(data) {	
+				if(data==""){
+					alert("No Item Found");
+				}else{
+					modalFr.style.display = "block";						
+				}
+				$.each(data, function(key, item) {
+					
+					var index = key + 1;	
+					var tr = $('<tr></tr>');
+					tr.append($('<td></td>').html(index));
+					
+					tr.append($('<td style="text-align:left;"></td>').html(
+							item.itemName+'-'+item.itemId));
+					
+					tr.append($('<td style="text-align:left;"></td>').html(
+							item.uom));
+					
+					tr.append($('<td style="text-align:right;"></td>').html(
+							item.itemMrp1));
+					
+					tr.append($('<td style="text-align:right;"></td>').html(
+							item.itemMrp2));
+					
+					tr.append($('<td style="text-align:right;"></td>').html(
+							item.itemMrp3));
+					
+					tr.append($('<td style="text-align:right;"></td>').html(
+							item.itemTax1+item.itemTax2));
+					
+					tr.append($('<td style="text-align:center;"></td>').html(
+							item.itemHsncd));
+					
+					tr.append($('<td style="text-align:right;"></td>').html(
+							item.shelfLife));
+					
+					tr.append($('<td style="text-align:right;"></td>').html(
+							item.itemSortId));					
+					
+					
+					tr.append($('<td style="text-align:left;"></td>').html(
+							item.itemIsUsed == 1 ? 'Active' :
+								item.itemIsUsed == 4 ? 'Inactive' :
+									item.itemIsUsed == 11 ? 'Monday Active' :
+										item.itemIsUsed == 12 ? 'Tuesday Active' :
+											item.itemIsUsed == 13 ? 'Wednesday Active' :
+												item.itemIsUsed == 14 ? 'Thursday Active' :
+													item.itemIsUsed == 15 ? 'Friday Activee' :
+														item.itemIsUsed == 16 ? 'Saturday Active' : 'Sunday Active'));	
+					
+					$('#frtable_grid tbody').append(tr);
+
+				})
+			});
+}	
+function clsitemModal() {
+	modalFr.style.display = "none";
+}
 </script>
 </body>
 
