@@ -87,7 +87,7 @@
 									<label class="col-sm-3 col-lg-2 control-label">Prefix</label>
 									<div class="col-sm-9 col-lg-3 controls">
 										<input type="text" name="prefix" id="prefix"
-											placeholder="Route" class="form-control"
+											placeholder="Prefix" class="form-control"
 											data-rule-required="true" />
 											<span for="prefix" id="unq_prefix" style="display: none; color: #b94a48;">Prefix already exits</span>
 									</div>

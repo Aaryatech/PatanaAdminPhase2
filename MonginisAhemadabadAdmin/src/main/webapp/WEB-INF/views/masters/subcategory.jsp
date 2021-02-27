@@ -7,6 +7,8 @@
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<body>
 	
+	<c:url value="/getSubCategoryByPrefix" var="getSubCategoryByPrefix"/>
+	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 	<div class="container" id="main-container">
 		<!-- BEGIN Sidebar -->
@@ -53,9 +55,9 @@
 								method="post" id="validation-form">
 
                         <input type="hidden" name="subCatId" id="subCatId" value="${subCategory.subCatId}"/>
-                              <div class="form-group">
+                              <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Category</label>
-									<div class="col-sm-9 col-lg-10 controls">
+									<div class="col-sm-9 col-lg-3 controls">
 										<select data-placeholder="Select Category"
 											class="form-control chosen" name="cat_id" tabindex="-1"
 											id="cat_id" data-rule-required="true">
@@ -75,14 +77,33 @@
 										</select>
 									</div>
 								</div>
-						
+								
 								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Prefix</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="prefix" id="prefix"
+											placeholder="Prefix" class="form-control"
+											data-rule-required="true" value="${subCategory.prefix}"/>
+											<span for="prefix" id="unq_prefix" style="display: none; color: #b94a48;">Prefix already exits</span>
+									</div>
+								</div>
+						
+								<div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label" for="item_name">Sub Category
 										Name</label>
-									<div class="col-sm-9 col-lg-10 controls">
+									<div class="col-sm-9 col-lg-3 controls">
 										<input type="text" name="sub_cat_name" id="sub_cat_name"
 											placeholder="Sub Category Name" class="form-control"
 											data-rule-required="true" value="${subCategory.subCatName}"/>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-3 col-lg-2 control-label">Sequence No.</label>
+									<div class="col-sm-9 col-lg-3 controls">
+										<input type="text" name="seqNo" id="seqNo"
+											placeholder="Sequence No." class="form-control"
+											data-rule-required="true" value="${subCategory.seqNo}" />
 									</div>
 								</div>
                               
@@ -246,6 +267,32 @@
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap-daterangepicker/daterangepicker.js"></script>
 
+<script type="text/javascript">
+$( "#prefix" ).change(function() {
+	var prefix = $("#prefix").val();
+	var subCatId = $("#subCatId").val();	
+	if(subCatId==""){
+		subCatId=0;
+	}
+	$
+			.getJSON(
+					'${getSubCategoryByPrefix}',
+					{
+						prefix : prefix,								
+						subCatId : subCatId,
+						ajax : 'true'
+					},
+					function(data) {	
+						
+						if(data.error){
+							$( "#unq_prefix" ).show();
+							$( "#prefix" ).val('');
+						}else{
+							$( "#unq_prefix" ).hide();
+						}
+					});
+	});
+</script>
 </body>
 
 </html>
