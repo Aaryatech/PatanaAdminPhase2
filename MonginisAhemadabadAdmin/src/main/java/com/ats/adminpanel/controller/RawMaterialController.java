@@ -746,7 +746,11 @@ public class RawMaterialController {
 			RestTemplate rest = new RestTemplate();
 			RawMaterialUomList rawMaterialUomList = rest.getForObject(Constants.url + "/rawMaterial/getRmUomList",
 					RawMaterialUomList.class);
-
+			
+			List<Integer> uomIds = rest.getForObject(Constants.url + "/getAllotedUomIdsToItems",
+					List.class);
+			model.addObject("uomIds", uomIds);
+			
 			model.addObject("rmUomList", rawMaterialUomList.getRawMaterialUom());
 		}
 		return model;
@@ -782,6 +786,24 @@ public class RawMaterialController {
 
 		}
 
+	}
+	
+	@RequestMapping(value = "/deleteSelUom/{uomIds}", method = RequestMethod.GET)
+	public String deleteRoute(@PathVariable String uomIds) {
+		
+		RestTemplate rest = new RestTemplate();
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		map.add("uomIds", uomIds);
+		Info info = rest.postForObject(Constants.url + "/rawMaterial/deleteMultiRmUom", map, Info.class);
+		if (info.isError()) {
+
+			return "redirect:/showAddRmUmo";
+
+		} else {
+			return "redirect:/showAddRmUmo";
+
+		}
 	}
 
 	// ------------------------------Delete RM Tax

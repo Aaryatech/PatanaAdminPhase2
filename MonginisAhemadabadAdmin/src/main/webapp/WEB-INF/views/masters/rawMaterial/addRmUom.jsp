@@ -116,39 +116,66 @@
 												</table>
 									
 									</div>
-									<div class="table-wrap">
 									
-										<table id="table1" class="table table-advance">
-											<thead>
-												<tr class="bgpink">
-										<th width="55" style="width: 18px" >Sr.No.</th>
+									<div class="table-wrap">
+
+											<table id="table1" class="table table-advance">
+												<thead>
+													<tr class="bgpink">														
+														<th width="55" style="width: 18px">Sr.No.</th>
 														<th style="text-align: center;">Unit Of Measure</th>
 														<th style="text-align: center;">Action</th>
-												</tr>
+													</tr>
 												</thead>
 												<tbody>
-					  <c:forEach items="${rmUomList}" var="rmUomList" varStatus="count">
-														<tr>
+												
+												
+												
+													<c:forEach items="${rmUomList}" var="rmUomList"
+														varStatus="count">
 														
-															<td><c:out value="${count.index+1}"/></td>
+														<c:set value="0" var="flag"/>
+														<c:forEach items="${uomIds}" var="uomIds">
+															<c:choose>
+																<c:when test="${rmUomList.uomId==uomIds}">
+																	<c:set value="1" var="flag" />
+																</c:when>
+															</c:choose>
+														</c:forEach>
+														
+														<tr>
+															<td><c:if test="${flag==0}"><input type="checkbox" class="chk"
+																name="select_to_print" id="${rmUomList.uomId}"
+																value="${rmUomList.uomId}" /></c:if>
+																&nbsp;&nbsp;&nbsp;
+																<c:out value="${count.index+1}" /></td>
 															<td style="text-align: center;"><c:out
 																	value="${rmUomList.uom}"></c:out></td>
-															
-															<td style="text-align: center;"><a href="updateRmUom/${rmUomList.uomId}"><span
-														class="glyphicon glyphicon-edit"></span></a>&nbsp;
-                                                        
-                                                        <a href="deleteRmUom/${rmUomList.uomId}"
-													    onClick="return confirm('Are you sure want to delete this record');"><span
-														class="glyphicon glyphicon-remove"></span></a></td>	
+
+															<td style="text-align: center;"><a
+																href="updateRmUom/${rmUomList.uomId}"><span
+																	class="glyphicon glyphicon-edit"></span></a>&nbsp; 
+																	
+															<c:if test="${flag==0}"><a
+																href="deleteRmUom/${rmUomList.uomId}"
+																onClick="return confirm('Are you sure want to delete this record');"><span
+																	class="glyphicon glyphicon-remove"></span></a></c:if></td>
 														</tr>
-												</c:forEach> 
+													</c:forEach>
 
-							</tbody>
+												</tbody>
 
-						</table>
-					</div>
+											</table>
+										</div>
+										
 				</div>
-				
+				<div class="form-group" style="background-color: white;">
+									&nbsp;	&nbsp;	&nbsp;	&nbsp;
+										<input type="button" margin-right: 5px;" id="btn_delete"
+											class="btn btn-primary" onclick="deleteById()" 
+											value="Delete" />
+									
+									</div>
 						</div>
 									<%-- <div class="box-content">
 
@@ -259,13 +286,38 @@
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap-daterangepicker/date.js"></script>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/resources/assets/bootstrap-daterangepicker/daterangepicker.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/common.js"></script>
+
 
 			<script type="text/javascript"
 				src="${pageContext.request.contextPath}/resources/assets/jquery-validation/dist/jquery.validate.min.js"></script>
 			<script type="text/javascript"
 				src="${pageContext.request.contextPath}/resources/assets/jquery-validation/dist/additional-methods.min.js"></script>
 	
+	<script type="text/javascript">
+function deleteById()
+{
+	
+		var checkedVals = $('.chk:checkbox:checked').map(function() {
+		    return this.value;
+		}).get();
+		checkedVals=checkedVals.join(",");
+		
+		if(checkedVals=="")
+			{
+			alert("Please Select Route")
+			}
+		else
+			{
+			var res = confirm('Are you sure want to delete this records');
+
+			if(res){
+				window.location.href='${pageContext.request.contextPath}/deleteSelUom/'+checkedVals;
+			}
+		}
+	
+
+}
+</script>
 </body>
 </html>
 
