@@ -3388,7 +3388,44 @@ public class GrnGvnReportController {
 		return model;
 
 	}
+	@RequestMapping(value = "/getItemsBySubCatIdAJAX", method = RequestMethod.GET)
+	public @ResponseBody List<Item> getItemsBySubCatIdAjax(HttpServletRequest request, HttpServletResponse response) {
 
+		List<Item> itemsList = new ArrayList<Item>();
+		String selectedCat = request.getParameter("subCatId");
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		RestTemplate restTemplate = new RestTemplate();
+
+		boolean isAllCatSelected = false;
+		if (selectedCat.contains("-1")) {
+			isAllCatSelected = true;
+
+			map.add("catId", "-1");
+		} else {
+			
+			/*
+			 * selectedCat = selectedCat.substring(1, selectedCat.length() - 1); selectedCat
+			 * = selectedCat.replaceAll("\"", "");
+			 */
+			System.out.println("selectedCat" + selectedCat.toString());
+
+			map.add("subCatId", selectedCat);
+		}
+
+		System.out.println("CatIds ------------- " + selectedCat);
+
+		ParameterizedTypeReference<List<Item>> typeRef2 = new ParameterizedTypeReference<List<Item>>() {
+		};
+
+		ResponseEntity<List<Item>> responseEntity2 = restTemplate.exchange(Constants.url + "getItemsBySubCatIdList",
+				HttpMethod.POST, new HttpEntity<>(map), typeRef2);
+
+		itemsList = responseEntity2.getBody();
+		System.out.println("List Found-------------------" + itemsList);
+
+		return itemsList;
+	}
 	@RequestMapping(value = "/getGGProdWiseQtyReport", method = RequestMethod.GET)
 	@ResponseBody
 	public List<GGProdWiseReport> getGGProdWiseQtyReport(HttpServletRequest request, HttpServletResponse response) {
@@ -3411,13 +3448,18 @@ public class GrnGvnReportController {
 			selectedSubCat = selectedSubCat.replaceAll("\"", "");
 			String catId = request.getParameter("cat_id");
 			
+			
 			String selectedItems = request.getParameter("item_id_list");
 			selectedItems = selectedItems.substring(1, selectedItems.length() - 1);
 			selectedItems = selectedItems.replaceAll("\"", "");
 			
 			map.add("fromDate", DateConvertor.convertToYMD(fromDate));
 			map.add("toDate", DateConvertor.convertToYMD(toDate));
-			map.add("isGrn", 1);
+			String selectStatus = request.getParameter("selectStatus");
+			if(selectStatus.equalsIgnoreCase("-1")) {
+				selectStatus="0,1,2";
+			}
+			map.add("isGrn", selectStatus);
 			map.add("frIdList", selectedFr);
 			map.add("itemIdList", selectedItems);
 			map.add("aprvBy", 1);

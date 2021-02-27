@@ -2128,6 +2128,13 @@ catch (Exception e) {
 			List<Menu> menuList = franchiseeAndMenuList.getAllMenu();
 			logger.info("menu Response " + menuList.toString());
 
+			ConfigureFrListResponse congigureFrList = restTemplate
+					.getForObject(Constants.url + "findConfiguredMenuFrList", ConfigureFrListResponse.class);
+			List<ConfigureFrBean> configureFrList = new ArrayList<ConfigureFrBean>();
+			configureFrList = congigureFrList.getConfigureFrBean();
+
+			mav.addObject("confMenuIdList", configureFrList);
+			
 			for (FranchiseeList franchisee : franchiseeAndMenuList.getAllFranchisee()) {
 				frIdArray.add(String.valueOf(franchisee.getFrId()));
 				// logger.info("frIdArray"+frIdArray.toString());
@@ -2142,16 +2149,18 @@ catch (Exception e) {
 			int catId = 6;
 			int menuId = frMenu.getMenuId();
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-			map.add("itemGrp1", catId);
-
-			Item[] item = restTemplate.postForObject(Constants.url + "getItemsByCatId", map, Item[].class);
-			ArrayList<Item> itemList = new ArrayList<Item>(Arrays.asList(item));
-			logger.info("Filter Item List " + itemList.toString());
-
+			/*
+			 * MultiValueMap<String, Object> map = new LinkedMultiValueMap<String,
+			 * Object>(); map.add("itemGrp1", catId);
+			 * 
+			 * Item[] item = restTemplate.postForObject(Constants.url + "getItemsByCatId",
+			 * map, Item[].class); ArrayList<Item> itemList = new
+			 * ArrayList<Item>(Arrays.asList(item)); logger.info("Filter Item List " +
+			 * itemList.toString());
+			 */
 			mav.addObject("catId", catId);
 			mav.addObject("menuList", menuList);
-			mav.addObject("itemList", itemList);
+		//	mav.addObject("itemList", itemList);
 			mav.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
 
 		} catch (Exception e) {
@@ -2483,6 +2492,15 @@ catch (Exception e) {
 
 		GetConfiguredSpDayCk getConfiguredSpDayCk = restTemplate.postForObject(Constants.url + "getConfSpDayCake", map,
 				GetConfiguredSpDayCk.class);
+		
+		//Sachin
+		map = new LinkedMultiValueMap<>();
+		map.add("menuId", getConfiguredSpDayCk.getMenuId());
+
+		ItemIdOnly[] itemArr = restTemplate.postForObject(Constants.url + "/getItemsByMenuId", map, ItemIdOnly[].class);
+		List<ItemIdOnly> menuItems = new ArrayList<ItemIdOnly>(Arrays.asList(itemArr));
+		model.addObject("menuItems", menuItems);
+		//End Sachin
 
 		// ------------------------------------------------------------------------
 

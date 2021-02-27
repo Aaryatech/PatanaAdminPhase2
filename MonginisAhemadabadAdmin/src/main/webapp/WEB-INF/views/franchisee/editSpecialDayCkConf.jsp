@@ -276,7 +276,7 @@ select {
                                                       <option value=""> </option>
 													<optgroup label="All FItems">
 														<option value=""></option>
-														<c:forEach
+														<%-- <c:forEach
 															items="${selectedItemList}"
 															var="selectedItem">
 															<option selected value="${selectedItem.id}">${selectedItem.itemName}</option>
@@ -287,6 +287,22 @@ select {
 															var="remItem">
 															<option value="${remItem.id}">${remItem.itemName}</option>
 
+														</c:forEach> --%>
+														<c:forEach items="${menuItems}" var="menuItems">
+														<c:set value="0" var="isFind" ></c:set>
+															<c:forEach items="${getConfiguredSpDayCk.itemId}" var="itemIds">
+																<c:if test="${itemIds==menuItems.id}">
+																<c:set value="1" var="isFind" ></c:set>
+																</c:if>
+															</c:forEach>
+															<c:choose>
+														<c:when test="${isFind==1}">
+															<option selected value="${menuItems.id}">${menuItems.itemName}</option>
+															</c:when>
+															<c:otherwise>
+															<option value="${menuItems.id}">${menuItems.itemName}</option>
+															</c:otherwise>
+															</c:choose>
 														</c:forEach>
 													</optgroup>
 												</select>

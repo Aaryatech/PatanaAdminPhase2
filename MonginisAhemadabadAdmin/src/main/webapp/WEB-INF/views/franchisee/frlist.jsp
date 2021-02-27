@@ -144,7 +144,7 @@ body{
 										<div class="box">
 											<div class="box-title">
 												<h3>
-													<i class="fa fa-table"></i> Configured Menu List
+													<i class="fa fa-table"></i> Configured Menu List1
 												</h3>
 												<div class="box-tool">
 													<a data-action="collapse" href="#"><i
@@ -228,7 +228,7 @@ body{
 																			<c:when test="${isEdit==1}">
 
 																				<td style="text-align: center;"><a
-																					href="updateFranchiseeConf/${configureFrList.settingId}"><span
+																					href="updateFranchiseeConf/${configureFrList.menuId}"><span
 																						class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 
 
@@ -236,7 +236,7 @@ body{
 																			</c:when>
 																			<c:otherwise>
 																				<td style="text-align: center;"><a
-																					href="updateFranchiseeConf/${configureFrList.settingId}" class="disableClick"><span
+																					href="updateFranchiseeConf/${configureFrList.menuId}" class="disableClick"><span
 																						class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 
 																			</c:otherwise>

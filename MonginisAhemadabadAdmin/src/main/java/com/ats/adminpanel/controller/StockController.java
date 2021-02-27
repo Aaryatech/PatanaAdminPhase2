@@ -889,8 +889,11 @@ public class StockController {
 
 			map.add("catId", "-1");
 		} else {
-			selectedCat = selectedCat.substring(1, selectedCat.length() - 1);
-			selectedCat = selectedCat.replaceAll("\"", "");
+			
+			  selectedCat = selectedCat.substring(1, selectedCat.length() - 1); 
+			  selectedCat
+			  = selectedCat.replaceAll("\"", "");
+			 
 			System.out.println("selectedCat" + selectedCat.toString());
 
 			map.add("subCatId", selectedCat);

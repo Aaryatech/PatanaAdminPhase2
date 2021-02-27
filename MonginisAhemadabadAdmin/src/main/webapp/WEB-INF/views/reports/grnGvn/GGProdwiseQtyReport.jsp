@@ -16,7 +16,7 @@
 	<c:url var="getFrListofAllFr" value="/getFrListForDatewiseReport"></c:url>
 
 	<c:url var="getGroup2ByCatId" value="/getSubCateListByCatId" />
-	<c:url var="getItemsBySubCatIdAjax" value="/getItemsBySubCatIdAjax" />
+	<c:url var="getItemsBySubCatIdAjax" value="/getItemsBySubCatIdAJAX" />
 
 
 
@@ -115,10 +115,10 @@
 
 						<select data-placeholder="Choose Franchisee"
 							class="form-control chosen" multiple="multiple" tabindex="6"
-							id="selectFr" name="selectFr"
-							onchange="setAllFrSelected(this.value)" onchange="disableRoute()">
-
-							<option value="-1"><c:out value="All" /></option>
+							id="selectFr" name="selectFr" onchange="disableRoute()">
+							
+<!-- onchange="setAllFrSelected(this.value)" onchange="disableRoute()" -->
+							<%-- <option value="-1"><c:out value="All" /></option> --%>
 
 							<c:forEach items="${unSelectedFrList}" var="fr" varStatus="count">
 								<option value="${fr.frId}"><c:out value="${fr.frName}" /></option>
@@ -142,6 +142,7 @@
 							<option value=" ">Select</option>
 
 							<c:forEach items="${catList}" var="cat" varStatus="count">
+							<c:if test="${cat.catId!=5}">
 								<c:choose>
 									<c:when test="${cat.catId==catId}">
 										<option value="${cat.catId}" selected><c:out
@@ -152,6 +153,7 @@
 												value="${cat.catName}" /></option>
 									</c:otherwise>
 								</c:choose>
+								</c:if>
 							</c:forEach>
 						</select>
 					</div>
@@ -172,8 +174,9 @@
 
 						<select data-placeholder="Choose Items"
 							class="form-control chosen" multiple="multiple" tabindex="6"
-							id="item_ids" name="item_ids">
+							id="item_ids" name="item_ids" onchange="clearSelectedItems(this.value)">
 							<option value="-1"><c:out value="All" /></option>
+								<option value="0"><c:out value="Clear Selection" /></option>
 							<%-- <c:forEach items="${unSelectedFrList}" var="fr" varStatus="count">
 								<option value="${fr.frId}"><c:out value="${fr.frName}" /></option>
 							</c:forEach> --%>
@@ -204,12 +207,10 @@
 
 							<!-- <button class="btn search_btn" onclick="showChart()">Graph</button> -->
 
-							<button class="btn btn-primary" value="PDF" id="PDFButton"
-								onclick="genPdf()">PDF</button>
+							<!-- <button class="btn btn-primary" value="PDF" id="PDFButton"
+								onclick="genPdf()">PDF</button> -->
 
-							<%-- <a href="${pageContext.request.contextPath}/pdfForReport?url=showSaleBillwiseGrpByDatePdf"
-								target="_blank">PDF</a> --%>
-
+							
 						</div>
 
 					</div>
@@ -293,8 +294,14 @@
 
 
 		<script type="text/javascript">
+		
 			function searchReport() {
 				//	var isValid = validate();
+				var frIdArr = [];
+					$.each($("#selectFr option:selected"), function() {
+						frIdArr.push($(this).val());
+					});
+				//alert(frIdArr.length)
 				var selectedFr = $("#selectFr").val();
 				var routeId = $("#selectRoute").val();
 				var from_date = $("#fromDate").val();
@@ -304,6 +311,9 @@
 				var selectedSubCat = $("#item_grp2").val();
 				var item_ids = $("#item_ids").val();
 				//alert(item_ids)
+				if(frIdArr.length>7){
+					alert("Please Select Maximum 7 Franchise")
+				}else{
 				$('#loader').show();
 				$('#table_grid td').remove();
 				$.getJSON('${getGGProdWiseQtyReport}', {
@@ -314,31 +324,29 @@
 					sub_cat_id_list : JSON.stringify(selectedSubCat),
 					cat_id : selectCat,
 					item_id_list : JSON.stringify(item_ids),
+					selectStatus: selectStatus,
 					ajax : 'true'
 				}, function(data) {
 					//alert("data" +JSON.stringify(data));
-					var frIdArr = [];
-					$.each($("#selectFr option:selected"), function() {
-						frIdArr.push($(this).val());
-					});
-					console.log(frIdArr);
+					
+					//console.log(frIdArr);
 					var frNameArr = [];
 					$.each($("#selectFr option:selected"), function() {
 						frNameArr.push($(this).text());
 					});
-					console.log(frNameArr);
+					//console.log(frNameArr);
 					var itemIdArr = [];
 					$.each($("#item_ids option:selected"), function() {
 						itemIdArr.push($(this).val());
 					});
-					console.log(itemIdArr);
+					//console.log(itemIdArr);
 
 					var itemNameArr = [];
 					$.each($("#item_ids option:selected"), function() {
 						itemNameArr.push($(this).text());
 					});
-					console.log(itemNameArr);
-					console.log(data);
+					//console.log(itemNameArr);
+					//console.log(data);
 
 					$('#table_grid th').remove();
 					var tr = $('<tr class=bgpink></tr>');
@@ -378,9 +386,10 @@
 						}//end of frIdArr loop
 						$('#table_grid tbody').append(tr);
 					}//end of itemIdArr loop
-
+					$('#loader').hide();
 				});
-
+				}
+				$('#loader').hide();
 			}
 		</script>
 
@@ -469,6 +478,8 @@
 				var to_date = $("#toDate").val();
 				var selectCat = $("#selectCat").val();
 				var selectedSubCat = $("#item_grp2").val();
+				var selectStatus = document.getElementById("selectStatus").value;
+
 				window
 						.open('pdfForReport?url=pdf/showSaleBillwiseGrpByDatePdf/'
 								+ from_date
@@ -481,7 +492,7 @@
 								+ '/'
 								+ selectCat
 								+ '/'
-								+ selectedSubCat);
+								+ selectedSubCat+'/'+selectStatus);
 
 			}
 			function exportToExcel() {
@@ -557,20 +568,20 @@
 		</script>
 		<script type="text/javascript">
 			function maxAllowedMultiselect(obj, maxAllowedCount) {
-				var selectedOptions = jQuery('#' + obj.id
+				var selectedOptions = ('#' + obj.id
 						+ " option[value!=\'\']:selected");
 				if (selectedOptions.length >= maxAllowedCount) {
 					if (selectedOptions.length > maxAllowedCount) {
 						selectedOptions.each(function(i) {
 							if (i >= maxAllowedCount) {
-								jQuery(this).prop("selected", false);
+								(this).prop("selected", false);
 							}
 						});
 					}
-					jQuery('#' + obj.id + ' option[value!=\'\']').not(
+					('#' + obj.id + ' option[value!=\'\']').not(
 							':selected').prop("disabled", true);
 				} else {
-					jQuery('#' + obj.id + ' option[value!=\'\']').prop(
+					('#' + obj.id + ' option[value!=\'\']').prop(
 							"disabled", false);
 				}
 			}
@@ -601,6 +612,9 @@
 																						'option')
 																				.remove()
 																				.end()
+				 $("#item_ids") .append( $( "<option></option>") .attr( "value", -1) .text( "ALL"));
+				 $("#item_ids") .append( $( "<option></option>") .attr( "value", 0) .text( "Clear Selection"));
+				 
 																		for (var i = 0; i < len; i++) {
 																			$(
 																					"#item_ids")
@@ -622,6 +636,66 @@
 							});
 		</script>
 
+<script type="text/javascript">
+			$(document)
+					.ready(
+							function() {
+								$('#item_ids')
+										.change(
+												function() {
+													if(parseInt($(this).val())<0){
+													$
+															.getJSON(
+																	'${getItemsBySubCatIdAjax}',
+																	{
+																		subCatId : $("#item_grp2").val(),
+																		ajax : 'true'
+																	},
+																	function(
+																			data) {
+																		var len = data.length;
+																		$(
+																				'#item_ids')
+																				.find( 'option')
+																				.remove()
+																				.end()
+				 $("#item_ids").append( $( "<option></option>") .attr( "value", -1) .text( "ALL"));
+				 
+																		for (var i = 0; i < len; i++) {
+																			$(
+																					"#item_ids")
+																					.append(
+																							$(
+																									"<option selected></option>")
+																									.attr(
+																											"value",
+																											data[i].id)
+																									.text(
+																											data[i].itemName));
+																		}
+																		 $("#item_ids").append( $( "<option onchange='clearSelectedItems(0)'></option>") .attr( "value", 0) .text( "Clear Selection"));
+
+																		$(
+																				"#item_ids")
+																				.trigger(
+																						"chosen:updated");
+																	});
+													}  /* else if(parseInt($(this).val())==0){
+														//alert("Ok Else")
+														 $("#item_ids option:selected").removeAttr("selected");
+											    	    	$("#item_ids").trigger("chosen:updated");
+											    	    	//$('#loader').hide();
+													}  */
+												});
+							});
+			function clearSelectedItems(value1){
+				//alert("Ok" +value1);
+				if(parseInt(value1)==0){
+				$("#item_ids option:selected").removeAttr("selected");
+    	    	$("#item_ids").trigger("chosen:updated");
+				}
+			}
+		</script>
 		<!--basic scripts-->
 		<script
 			src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>

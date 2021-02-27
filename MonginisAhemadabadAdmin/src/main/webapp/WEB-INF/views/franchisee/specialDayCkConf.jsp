@@ -248,10 +248,10 @@ select {
 													class="form-control chosen"  id="menu_id" onchange="getItemsByMenuId()"
 													>
                                                    <option value=""> </option>
-													<optgroup label="All Menu">
+													<optgroup label="Select Menu">
 														
 														<c:forEach
-															items="${allFranchiseeAndMenuList.getAllMenu()}"
+															items="${confMenuIdList}"
 															var="menuList">
 															<option value="${menuList.menuId}">${menuList.menuTitle}</option>
 
