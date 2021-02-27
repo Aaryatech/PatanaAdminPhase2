@@ -10,6 +10,7 @@
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 
 	<c:url var="findFranchiseeData" value="/findFranchiseeData" />
+	<c:url var="getFrSupState" value="/getFrSupState" />
 
 
 	<div class="container" id="main-container">
@@ -112,9 +113,6 @@
 
 						</div>
 
-
-
-
 						<div class="box-content">
 							<form action="${pageContext.request.contextPath}/addFrSupProcess"
 								class="form-horizontal" method="post" id="validation-form">
@@ -177,9 +175,25 @@
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">State</label>
 									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="fr_state" id="fr_state"
+										<%-- <input type="text" name="fr_state" id="fr_state"
 											placeholder="State" class="form-control"
-											data-rule-required="true" value="${state}" />
+											data-rule-required="true" value="${state}" /> --%>
+										<select class="form-control chosen" data-live-search="true"
+											title="Please Select" name="fr_state" id="fr_state"
+										 required>
+
+											<c:forEach items="${stateList}" var="stateList">
+												<c:choose>
+													<c:when
+														test="${stateList.stateId eq frSup.frState}">
+														<option value="${stateList.stateId}" selected>${stateList.stateName}</option>
+													</c:when>
+													<c:otherwise>
+														<option value="${stateList.stateId}">${stateList.stateName}</option>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</select>
 									</div>
 
 								</div>
@@ -190,7 +204,7 @@
 										<div class="col-sm-9 col-lg-3 controls">
 											<input type="text" name="pass1" id="pass1"
 												placeholder="User1 Password" class="form-control"
-												data-rule-required="true" value="${frSup.pass1}" />
+												data-rule-required="true" value="NA"  /><%-- value="${frSup.pass1}" --%>
 										</div>
 									</div>
 									<div class="form-group">
@@ -199,7 +213,7 @@
 										<div class="col-sm-9 col-lg-3 controls">
 											<input type="text" name="pass2" id="pass2"
 												placeholder="User2 Password" class="form-control"
-												data-rule-required="true" value="${frSup.pass2}" />
+												data-rule-required="true" value="NA"  /><%-- value="${frSup.pass2}" --%>
 										</div>
 									</div>
 									<div class="col2">
@@ -208,7 +222,7 @@
 										<div class="col-sm-9 col-lg-3 controls">
 											<input type="text" name="pass3" id="pass3"
 												placeholder="User3 Password" class="form-control"
-												data-rule-required="true" value="${frSup.pass3}" />
+												data-rule-required="true" value="NA" /><%-- value="${frSup.pass3}" --%>
 										</div>
 									</div>
 									<div class="form-group">
@@ -219,8 +233,8 @@
 											<input class="form-control date-picker" id="pest_control_date"
 												size="16" type="text" name="pest_control_date" required
 												placeholder="Pest Control Date"
-												value="${frSup.pestControlDate}"
-												onblur="return onPestControlDateChange()" />
+												value="NA"
+												onblur="return onPestControlDateChange()" /><%-- ${frSup.pestControlDate} --%>
 										</div>
 									</div>
 								
@@ -352,13 +366,13 @@
 														<th style="text-align: center;">Franchisee</th>
 														<th style="text-align: center;">PAN No.</th>
 														<th style="text-align: center;">State</th>
-														<th style="text-align: center;">Country</th>
+														<th style="text-align: center;">Country</th><!-- 
 														<th style="text-align: center;">PestControl Date</th>
 														<th style="text-align: center;">Frequency</th>
 														<th style="text-align: center;">Remainder Date</th>
 														<th style="text-align: center;">Pass1</th>
 														<th style="text-align: center;">Pass2</th>
-														<th style="text-align: center;">Pass3</th>
+														<th style="text-align: center;">Pass3</th> -->
 														<th style="text-align: center;">Action</th>
 													</tr>
 												</thead>
@@ -374,7 +388,7 @@
 															<td align="left"><c:out value="${frSupList.frState}"></c:out></td>
 															<td style="text-align: center;"><c:out
 																	value="${frSupList.frCountry}"></c:out></td>
-															<td style="text-align: center;"><c:out
+															<%-- <td style="text-align: center;"><c:out
 																	value="${frSupList.pestControlDate}"></c:out></td>
 															<td  style="text-align: center; padding-left: 2%;"><c:out
 																	value="${frSupList.frequency}"></c:out></td>
@@ -382,7 +396,7 @@
 																	value="${frSupList.remainderDate}"></c:out></td>
 															<td style="text-align: left; padding-left: 2%;"><c:out value="${frSupList.pass1}"></c:out></td>
 															<td style="text-align: left; padding-left: 2%;"><c:out value="${frSupList.pass2}"></c:out></td>
-															<td style="text-align: left; padding-left: 2%;"><c:out value="${frSupList.pass3}"></c:out></td>
+															<td style="text-align: left; padding-left: 2%;"><c:out value="${frSupList.pass3}"></c:out></td> --%>
 
 															<c:choose>
 																<c:when test="${isEdit==1}">
@@ -564,6 +578,35 @@ function disableFranchise(isEdit,frIdForSupp) {
 		}
 
 }
+
+/* $( "#fr_id" ).change(function() {
+	var frId = $("#fr_id").val();
+	
+	alert( "Handler for .change() called." +frId);
+	  if (frId>0) {
+			
+			$.getJSON('${getFrSupState}', {
+			
+			ajax : 'true'
+			}, function(data) {
+			
+			var len = data.length;
+			
+			//alert(len);
+			
+			$('#selectFr').find('option').remove().end()
+			$("#selectFr").append(
+			$("<option value='-1'>All</option>"));
+			for (var i = 0; i < len; i++) {
+			$("#selectFr").append(
+			$("<option selected ></option>").attr(
+			"value", data[i].frId).text(
+			data[i].frName));
+			}
+			$("#selectFr").trigger("chosen:updated");
+			});
+			}
+	}); */
 </script>
 <script type="text/javascript">
 /* $(document).ready(function() { 
