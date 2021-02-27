@@ -196,7 +196,7 @@
 									<label class="col-sm-3 col-lg-2 control-label">Item Code</label>
 									<div class="col-sm-9 col-lg-10 controls">
 										<input type="text" name="item_id" id="item_id"
-											placeholder="Item Id" class="form-control"
+											placeholder="Item Code" class="form-control"
 											data-rule-required="true" value="${itemId}" />
 									</div>
 								</div>
@@ -623,6 +623,27 @@ function calMrp()
 	//document.getElementById("item_rate2").setAttribute('value', (calRate2).toFixed(2));
 	document.getElementById("item_rate3").setAttribute('value', (calRate3).toFixed(2));
 }
+
+$( "#prdRadios2" ).on( "click", function() {
+	  var thirdPatyRadio = $('input[name="product_type"]:checked').val();	
+	  
+	  if(thirdPatyRadio == 1){
+	    	$('#item_id').prop('readonly', false);
+	    }else{
+	    	$('#item_id').prop('readonly', true);
+	    }
+	});
+	
+$( "#prdRadios1" ).on( "click", function() {
+	  var thirdPatyRadio = $('input[name="product_type"]:checked').val();	  
+	  if(thirdPatyRadio != 1){
+	    	$('#item_id').prop('readonly', true);
+	    }else{
+	    	$('#item_id').prop('readonly', false);
+	    }
+	});
+
+
 </script>
 
 </body>
