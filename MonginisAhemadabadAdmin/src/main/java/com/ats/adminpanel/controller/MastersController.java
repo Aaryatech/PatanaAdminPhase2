@@ -687,8 +687,13 @@ public class MastersController {
 					subCatList.addAll(categoryListResponse.getmCategoryList().get(i).getSubCategoryList());
 
 				}
+				
+				List<Integer> subCatIds = restTemplate.getForObject(Constants.url + "getSubCatIdsAllotedItem",
+						List.class);
+				
 				mav.addObject("catList", categoryListResponse.getmCategoryList());
 				mav.addObject("subCatList", subCatList);
+				mav.addObject("subCatIds", subCatIds);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -718,8 +723,15 @@ public class MastersController {
 				subCatList.addAll(categoryListResponse.getmCategoryList().get(i).getSubCategoryList());
 
 			}
+			
+			
+			List<Integer> subCatIds = restTemplate.getForObject(Constants.url + "getSubCatIdsAllotedItem",
+					List.class);
+			
 			model.addObject("catList", categoryListResponse.getmCategoryList());
 			model.addObject("subCatList", subCatList);
+			
+			model.addObject("subCatIds", subCatIds);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

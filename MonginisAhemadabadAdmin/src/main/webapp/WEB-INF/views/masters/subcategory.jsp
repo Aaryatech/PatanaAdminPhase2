@@ -136,7 +136,7 @@
 							<div class="clearfix"></div>
 							
 								<div id="table-scroll" class="table-scroll">
-							 
+							
 									<div id="faux-table" class="faux-table" aria="hidden">
 									<table id="table2" class="table table-advance" >
 											<thead>
@@ -166,6 +166,18 @@
 					           <c:forEach items="${catList}" var="catList" varStatus="count">
 				           
 				             <c:forEach items="${catList.subCategoryList}" var="subCatList" varStatus="count">
+				             
+				              <c:set value="0" var="flag"/>
+														<c:forEach items="${subCatIds}" var="subCatIds">
+															<c:choose>
+																<c:when test="${subCatList.subCatId==subCatIds}">
+																	<c:set value="1" var="flag" />
+																</c:when>
+
+															</c:choose>
+
+														</c:forEach>
+														
 				              <c:set var="cnt" value="${cnt+1}"></c:set>
 				              <c:choose>
 				              <c:when test="${subCatList.catId==catList.catId}">
@@ -180,9 +192,9 @@
 											href="updateSubCategory/${subCatList.subCatId}"><span
 												class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 
-											<a href="deleteSubCategory/${subCatList.subCatId}"
+											<c:if test="${flag==0}"><a href="deleteSubCategory/${subCatList.subCatId}"
 											onClick="return confirm('Are you sure want to delete this record');"><span
-												class="glyphicon glyphicon-remove"></span></a>
+												class="glyphicon glyphicon-remove"></span></a></c:if>
 										</td>
 									</tr>
 										</c:when>
