@@ -107,23 +107,23 @@ public class FranchiseeController {
 		Constants.subAct = 2;
 
 		RestTemplate restTemplate = new RestTemplate();
-		
+
 		RouteMaster[] routeArr = restTemplate.getForObject(Constants.url + "showRouteListAndAbcType",
 				RouteMaster[].class);
 		List<RouteMaster> routeList = new ArrayList<RouteMaster>(Arrays.asList(routeArr));
-		
+
 		Integer maxFrId = restTemplate.getForObject(Constants.url + "getUnigueFrCode", Integer.class);
 
 		int maxFrIdLenth = String.valueOf(maxFrId).length();
 		maxFrIdLenth = 5 - maxFrIdLenth;
-		StringBuilder frCode = new StringBuilder(""+Constants.CODE);
+		StringBuilder frCode = new StringBuilder("" + Constants.CODE);
 
 		for (int i = 0; i < maxFrIdLenth; i++) {
 			String j = "0";
 			frCode.append(j);
 		}
-		frCode.append(String.valueOf(maxFrId));		
-		
+		frCode.append(String.valueOf(maxFrId));
+
 		FrItemStockConfiResponse frItemStockConfiResponse = restTemplate
 				.getForObject(Constants.url + "getfrItemConfSetting", FrItemStockConfiResponse.class);
 		List<FrItemStockConfigure> frItemStockConfigures = new ArrayList<FrItemStockConfigure>();
@@ -259,7 +259,7 @@ public class FranchiseeController {
 	@RequestMapping(value = "/configureFranchisee")
 	public ModelAndView addconfigureFranchisee(HttpServletRequest request, HttpServletResponse response) {
 
-		//logger.info("/configureFranchisee request mapping.");
+		// logger.info("/configureFranchisee request mapping.");
 
 		ModelAndView mav = new ModelAndView("franchisee/configureFr");
 		Constants.mainAct = 2;
@@ -271,7 +271,8 @@ public class FranchiseeController {
 					FranchiseeAndMenuList.class);
 
 			List<Menu> menuList = restTemplate.getForObject(Constants.url + "getNonConfMenus", List.class);
-			//logger.info("Franchisee Response " + franchiseeAndMenuList.getAllFranchisee());
+			// logger.info("Franchisee Response " +
+			// franchiseeAndMenuList.getAllFranchisee());
 
 			mav.addObject("menuList", menuList);
 			mav.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
@@ -633,7 +634,7 @@ public class FranchiseeController {
 		logger.info("20] frAgreementDate " + frAgreementDate);
 
 		int frGstType = Integer.parseInt(request.getParameter("fr_gst_type"));
-		logger.info("21] frGstType " + frGstType);		
+		logger.info("21] frGstType " + frGstType);
 
 		String frGstNo;
 		if (frGstType == 0) {
@@ -653,7 +654,7 @@ public class FranchiseeController {
 
 		String ownerMob = request.getParameter("owner_mob");
 		logger.info("26] frTarget " + ownerMob);
-		
+
 		String fdaNo = request.getParameter("fda_no");
 		logger.info("27] fdaNo " + fdaNo);
 
@@ -849,31 +850,34 @@ public class FranchiseeController {
 				// date ="0";
 			}
 
-			//Sachin 19-01-2021
-			int rateSettingFrom=Integer.parseInt(request.getParameter("rate_setting_from"));
-			float profitPer=0.0f;
-			int rateSettingType=-1;
-			
-			if(rateSettingFrom==0) {
-				profitPer=Float.parseFloat(request.getParameter("profit_per"));
-			}else {
-				rateSettingType=Integer.parseInt(request.getParameter("rateTypeValue"));
+			// Sachin 19-01-2021
+			int rateSettingFrom = Integer.parseInt(request.getParameter("rate_setting_from"));
+			float profitPer = 0.0f;
+			int rateSettingType = -1;
+
+			if (rateSettingFrom == 0) {
+				
+			} else {
 			}
-			int delDays=Integer.parseInt(request.getParameter("del_date_days"));
-			int prodDays=Integer.parseInt(request.getParameter("prod_date_days"));
-			float discPer=0.0f;
-			int isDiscApp=Integer.parseInt(request.getParameter("is_disc_app"));
 			
-			if(isDiscApp==1) {
-				discPer=Float.parseFloat(request.getParameter("disc_per"));
+			profitPer = Float.parseFloat(request.getParameter("profit_per"));
+			rateSettingType = Integer.parseInt(request.getParameter("rateTypeValue"));
+
+			int delDays = Integer.parseInt(request.getParameter("del_date_days"));
+			int prodDays = Integer.parseInt(request.getParameter("prod_date_days"));
+			float discPer = 0.0f;
+			int isDiscApp = Integer.parseInt(request.getParameter("is_disc_app"));
+
+			if (isDiscApp == 1) {
+				discPer = Float.parseFloat(request.getParameter("disc_per"));
 			}
-			int grnPer=0;
+			int grnPer = 0;
 			try {
-			grnPer=Integer.parseInt(request.getParameter("grn_per"));
-			}catch (Exception e) {
-				grnPer=0;
+				grnPer = Integer.parseInt(request.getParameter("grn_per"));
+			} catch (Exception e) {
+				grnPer = 0;
 			}
-			//Sachin 19-01-2021 Code end
+			// Sachin 19-01-2021 Code end
 			RestTemplate rest = new RestTemplate();
 			/*
 			 * for(int j=0;j<frList.size();j++) {commented on 29 dec 18
@@ -889,21 +893,21 @@ public class FranchiseeController {
 			map.add("settingType", settingType);
 			map.add("date", convertedDate);
 			map.add("day", convertedDays);
-			
-			//New Fields added
+
+			// New Fields added
 			map.add("rateSettingFrom", rateSettingFrom);
 			map.add("profitPer", profitPer);
 			map.add("rateSettingType", rateSettingType);
-			
+
 			map.add("delDays", delDays);
 			map.add("prodDays", prodDays);
-			
+
 			map.add("isDiscApp", isDiscApp);
 			map.add("discPer", discPer);
-			
+
 			map.add("grnPer", grnPer);
 			map.add("subCat", 0);
-
+System.err.println("Map Here when menu conf " +map);
 			ErrorMessage errorMessage = rest.postForObject(Constants.url + "configureFranchisee", map,
 					ErrorMessage.class);
 			if (errorMessage.getError()) {
@@ -914,8 +918,8 @@ public class FranchiseeController {
 
 			}
 			/* } */
-		}catch (HttpClientErrorException e) {
-			System.err.println("Exce at configureFranchisee " +e.getResponseBodyAsString());
+		} catch (HttpClientErrorException e) {
+			System.err.println("Exce at configureFranchisee " + e.getResponseBodyAsString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -950,17 +954,12 @@ public class FranchiseeController {
 		java.sql.Time sqlFromTime = new java.sql.Time(d1.getTime());
 		java.sql.Time sqlToTime = new java.sql.Time(d2.getTime());
 
-		logger.info(" converted sql from time=" + sqlFromTime);
-		logger.info("converted sql to time=" + sqlToTime);
-
 		int settingType = Integer.parseInt(request.getParameter("typeselector"));
-		logger.info(" type selector :get parameter" + settingType);
 
 		int settingId = Integer.parseInt(request.getParameter("settingId"));
 		logger.info(" setting Id :get Parameter " + settingId);
 
 		String[] itemShow = request.getParameterValues("items[]");
-		logger.info("str item show: get Parameter " + itemShow);
 
 		StringBuilder sb = new StringBuilder();
 
@@ -971,7 +970,6 @@ public class FranchiseeController {
 
 		String strItems = sb.toString();
 		strItems = strItems.substring(0, strItems.length() - 1);
-		logger.info("item id list is" + strItems.toString());
 
 		if (settingType == 1) {
 			// date =0;
@@ -987,7 +985,6 @@ public class FranchiseeController {
 			}
 			convertedDate = sbForDate.toString();
 			convertedDate = convertedDate.substring(0, convertedDate.length() - 1);
-			logger.info("date" + convertedDate);
 
 		} else {
 			day = request.getParameterValues("day[]");
@@ -1000,7 +997,6 @@ public class FranchiseeController {
 			}
 			convertedDays = sbForDay.toString();
 			convertedDays = convertedDays.substring(0, convertedDays.length() - 1);
-			logger.info("convertedDays" + convertedDays);
 
 		}
 
@@ -1015,47 +1011,48 @@ public class FranchiseeController {
 		map.add("itemShow", strItems);
 		map.add("settingId", settingId);
 
-		
-		//Sachin 19-01-2021
-		int rateSettingFrom=Integer.parseInt(request.getParameter("rate_setting_from"));
-		float profitPer=0.0f;
-		int rateSettingType=-1;
-		
-		if(rateSettingFrom==0) {
-			profitPer=Float.parseFloat(request.getParameter("profit_per"));
-		}else {
-			rateSettingType=Integer.parseInt(request.getParameter("rateTypeValue"));
+		// Sachin 19-01-2021
+		int rateSettingFrom = Integer.parseInt(request.getParameter("rate_setting_from"));
+		float profitPer = 0.0f;
+		int rateSettingType = -1;
+
+		if (rateSettingFrom == 0) {
+			
+		} else {
+			
 		}
-		int delDays=Integer.parseInt(request.getParameter("del_date_days"));
-		int prodDays=Integer.parseInt(request.getParameter("prod_date_days"));
-		float discPer=0.0f;
-		int isDiscApp=Integer.parseInt(request.getParameter("is_disc_app"));
-		
-		if(isDiscApp==1) {
-			discPer=Float.parseFloat(request.getParameter("disc_per"));
+		profitPer = Float.parseFloat(request.getParameter("profit_per"));
+		rateSettingType = Integer.parseInt(request.getParameter("rateTypeValue"));
+		int delDays = Integer.parseInt(request.getParameter("del_date_days"));
+		int prodDays = Integer.parseInt(request.getParameter("prod_date_days"));
+		float discPer = 0.0f;
+		int isDiscApp = Integer.parseInt(request.getParameter("is_disc_app"));
+
+		if (isDiscApp == 1) {
+			discPer = Float.parseFloat(request.getParameter("disc_per"));
 		}
-		int grnPer=0;
+		int grnPer = 0;
 		try {
-		grnPer=Integer.parseInt(request.getParameter("grn_per"));
-		}catch (Exception e) {
-			grnPer=0;
+			grnPer = Integer.parseInt(request.getParameter("grn_per"));
+		} catch (Exception e) {
+			grnPer = 0;
 		}
-		
-		//New Fields added
+
+		// New Fields added
 		map.add("rateSettingFrom", rateSettingFrom);
 		map.add("profitPer", profitPer);
 		map.add("rateSettingType", rateSettingType);
-		
+
 		map.add("delDays", delDays);
 		map.add("prodDays", prodDays);
-		
+
 		map.add("isDiscApp", isDiscApp);
 		map.add("discPer", discPer);
-		
+
 		map.add("grnPer", grnPer);
 		map.add("subCat", 0);
-		//Sachin 21-01-2021 Code end
-		
+		// Sachin 21-01-2021 Code end
+
 		ErrorMessage errorMessage = rest.postForObject(Constants.url + "updateConfFr", map, ErrorMessage.class);
 		if (errorMessage.getError()) {
 			return "redirect:/configureFranchiseesList";
@@ -1140,193 +1137,194 @@ public class FranchiseeController {
 
 	@RequestMapping(value = "/updateFranchiseeConf/{settingId}", method = RequestMethod.GET)
 	public ModelAndView updateFranchiseeConf(@PathVariable int settingId) {
-
+		System.err.println("I am Here");
 		ModelAndView model = new ModelAndView("franchisee/editConfigureFr");
-try {
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
-		RestTemplate restTemplate = new RestTemplate();
+			RestTemplate restTemplate = new RestTemplate();
 
-		franchiseeAndMenuList = restTemplate.getForObject(Constants.url + "getFranchiseeAndMenu",
-				FranchiseeAndMenuList.class);
+			franchiseeAndMenuList = restTemplate.getForObject(Constants.url + "getFranchiseeAndMenu",
+					FranchiseeAndMenuList.class);
 
-		logger.info("Franchisee Response " + franchiseeAndMenuList.getAllFranchisee());
+			logger.info("Franchisee Response " + franchiseeAndMenuList.getAllFranchisee());
 
-		model.addObject("franchiseeAndMenuList", franchiseeAndMenuList);
+			model.addObject("franchiseeAndMenuList", franchiseeAndMenuList);
 
-		ConfigureFrBean franchiseeList = restTemplate.getForObject(
-				Constants.url + "getFrConfUpdate?settingId={settingId}", ConfigureFrBean.class, settingId);
-		model.addObject("franchiseeList", franchiseeList);
+			ConfigureFrBean franchiseeList = restTemplate.getForObject(
+					Constants.url + "getFrConfUpdate?settingId={settingId}", ConfigureFrBean.class, settingId);
+			model.addObject("franchiseeList", franchiseeList);
 
-		logger.info("-------------SELECTED FRANCHISEE-------------" + franchiseeList.getItemShow());
+			logger.info("-------------SELECTED FRANCHISEE-------------" + franchiseeList.getItemShow());
 
-		franchiseeList.getSettingId();
+			franchiseeList.getSettingId();
 
-		String date = franchiseeList.getDate();
-		List<String> dateList = Arrays.asList(date.split("\\s*,\\s*"));
+			String date = franchiseeList.getDate();
+			List<String> dateList = Arrays.asList(date.split("\\s*,\\s*"));
 
-		logger.info("selected franchisee is" + franchiseeList.toString());
-		// ##int frId = franchiseeList.getFrId();
+			logger.info("selected franchisee is" + franchiseeList.toString());
+			// ##int frId = franchiseeList.getFrId();
 
-		// ##FranchiseeList frList = restTemplate.getForObject(Constants.url +
-		// "getFranchisee?frId={frId}",
-		// ## FranchiseeList.class, frId);
-		// ##String frName = frList.getFrName();
-		// ##logger.info("fr name== " + frName);
-		// ## model.addObject("frName", frName);
+			// ##FranchiseeList frList = restTemplate.getForObject(Constants.url +
+			// "getFranchisee?frId={frId}",
+			// ## FranchiseeList.class, frId);
+			// ##String frName = frList.getFrName();
+			// ##logger.info("fr name== " + frName);
+			// ## model.addObject("frName", frName);
 
-		menuList = franchiseeAndMenuList.getAllMenu();
-		String menuName = "";
-		logger.info("menu titles are " + menuList.toString());
+			menuList = franchiseeAndMenuList.getAllMenu();
+			String menuName = "";
+			logger.info("menu titles are " + menuList.toString());
 
-		for (int i = 0; i < menuList.size(); i++) {
-			if (menuList.get(i).getMenuId() == franchiseeList.getMenuId()) {
-				menuName = menuList.get(i).getMenuTitle();
+			for (int i = 0; i < menuList.size(); i++) {
+				if (menuList.get(i).getMenuId() == franchiseeList.getMenuId()) {
+					menuName = menuList.get(i).getMenuTitle();
 
-				if (menuList.get(i).getMainCatId() == 5) {
-					List<SpecialCake> getSpCakeByCatId = spCakeById(menuList.get(i).getMainCatId());
+					if (menuList.get(i).getMainCatId() == 5) {
+						List<SpecialCake> getSpCakeByCatId = spCakeById(menuList.get(i).getMainCatId());
 
-					System.out
-							.println("-------------getSpCakeByCatId--------------------" + getSpCakeByCatId.toString());
-					List<SpecialCake> tempAllSpCkList = getSpCakeByCatId;
+						System.out.println(
+								"-------------getSpCakeByCatId--------------------" + getSpCakeByCatId.toString());
+						List<SpecialCake> tempAllSpCkList = getSpCakeByCatId;
 
-					logger.info("-------------tempAllSpCkList--------------------" + tempAllSpCkList.toString());
+						logger.info("-------------tempAllSpCkList--------------------" + tempAllSpCkList.toString());
 
-					List<SpecialCake> selectedSpCk = new ArrayList<SpecialCake>();
+						List<SpecialCake> selectedSpCk = new ArrayList<SpecialCake>();
 
-					String frPrevItems = franchiseeList.getItemShow();
-					logger.info("-------------frPrevItems--------------------" + frPrevItems.toString());
+						String frPrevItems = franchiseeList.getItemShow();
+						logger.info("-------------frPrevItems--------------------" + frPrevItems.toString());
 
-					List<String> frPrevItemsList = Arrays.asList(frPrevItems.split("\\s*,\\s*"));
+						List<String> frPrevItemsList = Arrays.asList(frPrevItems.split("\\s*,\\s*"));
 
-					logger.info("-------------frPrevItemsList--------------------" + frPrevItemsList.toString());
+						logger.info("-------------frPrevItemsList--------------------" + frPrevItemsList.toString());
 
-					for (int j = 0; j < frPrevItemsList.size(); j++) {
+						for (int j = 0; j < frPrevItemsList.size(); j++) {
 
-						for (int k = 0; k < getSpCakeByCatId.size(); k++) {
+							for (int k = 0; k < getSpCakeByCatId.size(); k++) {
 
-							if (Integer.parseInt(frPrevItemsList.get(j)) == (getSpCakeByCatId.get(k).getSpId())) {
-								// logger.info("-------------if--------------------"+frPrevItemsList.size()+"----"+frPrevItemsList.get(j));
-								// logger.info("-------------if--------------------"+getSpCakeByCatId.size()+"---"+getSpCakeByCatId.get(k).getSpId());
+								if (Integer.parseInt(frPrevItemsList.get(j)) == (getSpCakeByCatId.get(k).getSpId())) {
+									// logger.info("-------------if--------------------"+frPrevItemsList.size()+"----"+frPrevItemsList.get(j));
+									// logger.info("-------------if--------------------"+getSpCakeByCatId.size()+"---"+getSpCakeByCatId.get(k).getSpId());
 
-								selectedSpCk.add(getSpCakeByCatId.get(k));
-								tempAllSpCkList.remove(k);
-							}
-
-						}
-
-					}
-					logger.info("-------------selectedSpCk--------------------" + selectedSpCk.toString());
-
-					model.addObject("selectedItems", selectedSpCk);
-					logger.info("-------------tempAllSpCkList--------------------" + tempAllSpCkList.toString());
-
-					model.addObject("remItems", tempAllSpCkList);
-					model.addObject("catId", menuList.get(i).getMainCatId());
-				} else {
-					List<Item> getItemByMenuId = itemById(menuList.get(i).getMainCatId());
-					List<Item> tempAllItemsList = getItemByMenuId;
-					List<Item> selectedItems = new ArrayList<Item>();
-					String frPrevItems = franchiseeList.getItemShow();
-
-					List<String> frPrevItemsList = Arrays.asList(frPrevItems.split("\\s*,\\s*"));
-					logger.info("frPrevItemsList SiZe: " + frPrevItemsList.size());
-					logger.info("getItemByMenuId SiZe: " + getItemByMenuId.size());
-
-					int countOuter = 0;
-					int countInner = 0;
-
-					for (int l = 0; l < frPrevItemsList.size(); l++) {
-
-						countOuter = countOuter + 1;
-						for (int m = 0; m < getItemByMenuId.size(); m++) {
-							countInner = countInner + 1;
-
-							if (Integer.parseInt(frPrevItemsList.get(l)) == getItemByMenuId.get(m).getId()) {
-
-								selectedItems.add(getItemByMenuId.get(m));
-								tempAllItemsList.remove(m);
+									selectedSpCk.add(getSpCakeByCatId.get(k));
+									tempAllSpCkList.remove(k);
+								}
 
 							}
 
 						}
+						logger.info("-------------selectedSpCk--------------------" + selectedSpCk.toString());
 
+						model.addObject("selectedItems", selectedSpCk);
+						logger.info("-------------tempAllSpCkList--------------------" + tempAllSpCkList.toString());
+
+						model.addObject("remItems", tempAllSpCkList);
+						model.addObject("catId", menuList.get(i).getMainCatId());
+					} else {
+						List<Item> getItemByMenuId = itemById(menuList.get(i).getMainCatId());
+						List<Item> tempAllItemsList = getItemByMenuId;
+						List<Item> selectedItems = new ArrayList<Item>();
+						String frPrevItems = franchiseeList.getItemShow();
+
+						List<String> frPrevItemsList = Arrays.asList(frPrevItems.split("\\s*,\\s*"));
+						logger.info("frPrevItemsList SiZe: " + frPrevItemsList.size());
+						logger.info("getItemByMenuId SiZe: " + getItemByMenuId.size());
+
+						int countOuter = 0;
+						int countInner = 0;
+
+						for (int l = 0; l < frPrevItemsList.size(); l++) {
+
+							countOuter = countOuter + 1;
+							for (int m = 0; m < getItemByMenuId.size(); m++) {
+								countInner = countInner + 1;
+
+								if (Integer.parseInt(frPrevItemsList.get(l)) == getItemByMenuId.get(m).getId()) {
+
+									selectedItems.add(getItemByMenuId.get(m));
+									tempAllItemsList.remove(m);
+
+								}
+
+							}
+
+						}
+
+						logger.info("Outer " + countOuter + " inner " + countInner);
+						model.addObject("selectedItems", selectedItems);
+
+						model.addObject("remItems", tempAllItemsList);
+						model.addObject("catId", menuList.get(i).getMainCatId());
 					}
 
-					logger.info("Outer " + countOuter + " inner " + countInner);
-					model.addObject("selectedItems", selectedItems);
-
-					model.addObject("remItems", tempAllItemsList);
-					model.addObject("catId", menuList.get(i).getMainCatId());
 				}
 
 			}
 
-		}
+			logger.info("menu name= ==" + menuName);
 
-		logger.info("menu name= ==" + menuName);
+			model.addObject("menuName", menuName);
 
-		model.addObject("menuName", menuName);
+			logger.info("Franchisee menu  id ******* : " + franchiseeList.getMenuId());// new
+			int menuId = franchiseeList.getMenuId();
 
-		logger.info("Franchisee menu  id ******* : " + franchiseeList.getMenuId());// new
-		int menuId = franchiseeList.getMenuId();
+			int settingType = franchiseeList.getSettingType();
+			model.addObject("settingType", settingType);
 
-		int settingType = franchiseeList.getSettingType();
-		model.addObject("settingType", settingType);
+			String fromTime = franchiseeList.getFromTime();
+			String toTime = franchiseeList.getToTime();
 
-		String fromTime = franchiseeList.getFromTime();
-		String toTime = franchiseeList.getToTime();
+			try {
+				final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				final Date fromDate = sdf.parse(fromTime);
+				final Date toDate = sdf.parse(toTime);
 
-		try {
-			final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-			final Date fromDate = sdf.parse(fromTime);
-			final Date toDate = sdf.parse(toTime);
+				logger.info("From Time " + fromDate);
+				logger.info("To Time " + toDate);
 
-			logger.info("From Time " + fromDate);
-			logger.info("To Time " + toDate);
+				logger.info(new SimpleDateFormat("hh:mm a").format(fromDate));
 
-			logger.info(new SimpleDateFormat("hh:mm a").format(fromDate));
+				logger.info(new SimpleDateFormat("hh:mm a").format(toDate));
 
-			logger.info(new SimpleDateFormat("hh:mm a").format(toDate));
+				model.addObject("fromTime", new SimpleDateFormat("hh:mm a").format(fromDate));
+				model.addObject("toTime", new SimpleDateFormat("hh:mm a").format(toDate));
+			} catch (final ParseException e) {
+				e.printStackTrace();
+			}
 
-			model.addObject("fromTime", new SimpleDateFormat("hh:mm a").format(fromDate));
-			model.addObject("toTime", new SimpleDateFormat("hh:mm a").format(toDate));
-		} catch (final ParseException e) {
+			String day = franchiseeList.getDay();
+			List<String> dayList = Arrays.asList(day.split("\\s*,\\s*"));
+			logger.info("days" + dayList.toString());
+			List<String> dates = new ArrayList<>();
+
+			for (int i = 1; i <= 32; i++) {
+				dates.add("" + i);
+
+			}
+			System.err.println("Here A" );
+			HashMap<String, String> allDays = new HashMap<String, String>();
+			allDays.put("1", "Sunday");
+			allDays.put("2", "Monday");
+			allDays.put("3", "Tuesday");
+			allDays.put("4", "Wednesday");
+			allDays.put("5", "Thursday");
+			allDays.put("6", "Friday");
+			allDays.put("7", "Saturday");
+
+			model.addObject("frDay", dayList);
+			model.addObject("remDate", dates);
+			model.addObject("allDays", allDays);
+			model.addObject("date", dateList);
+
+			model.addObject("franchiseeList", franchiseeList);
+
+			model.addObject("url", Constants.FR_IMAGE_URL);
+			System.err.println("Here B" );
+		}catch (Exception e) {
+			System.err.println("In conf show edit ex " +e.getMessage());
 			e.printStackTrace();
-		}
-
-		String day = franchiseeList.getDay();
-		List<String> dayList = Arrays.asList(day.split("\\s*,\\s*"));
-		logger.info("days" + dayList.toString());
-		List<String> dates = new ArrayList<>();
-
-		for (int i = 1; i <= 32; i++) {
-			dates.add("" + i);
-
-		}
-		HashMap<String, String> allDays = new HashMap<String, String>();
-		allDays.put("1", "Sunday");
-		allDays.put("2", "Monday");
-		allDays.put("3", "Tuesday");
-		allDays.put("4", "Wednesday");
-		allDays.put("5", "Thursday");
-		allDays.put("6", "Friday");
-		allDays.put("7", "Saturday");
-
-		model.addObject("frDay", dayList);
-		model.addObject("remDate", dates);
-		model.addObject("allDays", allDays);
-		model.addObject("date", dateList);
-
-		model.addObject("franchiseeList", franchiseeList);
- 
-		model.addObject("url", Constants.FR_IMAGE_URL);
-}catch (HttpClientErrorException e) {
-System.err.println("in 1280 fc "+e.getResponseBodyAsString());			// TODO: handle exception
-		}
-catch (Exception e) {
-	e.printStackTrace();
-}
+		} 
+		System.err.println("Here C" );
 		return model;
 
 	}
@@ -1340,116 +1338,115 @@ catch (Exception e) {
 		Constants.subAct = 3;
 		ModelAndView mav = new ModelAndView("franchisee/listAllFranchisee");
 		try {
-		RestTemplate restTemplate = new RestTemplate();
-		AllFranchiseeList allFranchiseeList = restTemplate.getForObject(Constants.url + "getAllFranchisee",
-				AllFranchiseeList.class);
-		AllRoutesListResponse allRoutesListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
-				AllRoutesListResponse.class);
+			RestTemplate restTemplate = new RestTemplate();
+			AllFranchiseeList allFranchiseeList = restTemplate.getForObject(Constants.url + "getAllFranchisee",
+					AllFranchiseeList.class);
+			AllRoutesListResponse allRoutesListResponse = restTemplate.getForObject(Constants.url + "showRouteList",
+					AllRoutesListResponse.class);
 
-		List<Route> routeList = new ArrayList<Route>();
-		routeList = allRoutesListResponse.getRoute();
+			List<Route> routeList = new ArrayList<Route>();
+			routeList = allRoutesListResponse.getRoute();
 
-		
+			List<FranchiseeList> franchiseeList = new ArrayList<FranchiseeList>();
+			franchiseeList = allFranchiseeList.getFranchiseeList();
+			logger.info("Franchisee List:" + franchiseeList.toString());
 
-		List<FranchiseeList> franchiseeList = new ArrayList<FranchiseeList>();
-		franchiseeList = allFranchiseeList.getFranchiseeList();
-		logger.info("Franchisee List:" + franchiseeList.toString());
+			mav.addObject("franchiseeList", franchiseeList);
+			mav.addObject("routeList", routeList);
+			mav.addObject("url", Constants.FR_IMAGE_URL);
 
-		mav.addObject("franchiseeList", franchiseeList);
-		mav.addObject("routeList", routeList);
-		mav.addObject("url", Constants.FR_IMAGE_URL);
+			// exportToExcel
 
-		// exportToExcel
+			com.ats.adminpanel.model.mastexcel.FranchiseeList frList = restTemplate.getForObject(
+					Constants.url + "tally/getAllExcelFranchise",
+					com.ats.adminpanel.model.mastexcel.FranchiseeList.class);
 
-		com.ats.adminpanel.model.mastexcel.FranchiseeList frList = restTemplate.getForObject(
-				Constants.url + "tally/getAllExcelFranchise", com.ats.adminpanel.model.mastexcel.FranchiseeList.class);
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
-		List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
 
-		ExportToExcel expoExcel = new ExportToExcel();
-		List<String> rowData = new ArrayList<String>();
-
-		rowData.add("Sr. No.");
-		rowData.add("Fr Id");
-		rowData.add("Franchisee Code");
-		rowData.add("Franchisee Name");
-		rowData.add("Rate Cat");
-		rowData.add("City");
-		rowData.add("Address 1");
-		rowData.add("Address 2");
-		rowData.add("State");
-		rowData.add("GSTIN");
-
-		expoExcel.setRowData(rowData);
-		exportToExcelList.add(expoExcel);
-
-		List<Franchisee> franchisee = frList.getFranchiseeList();
-
-		for (int i = 0; i < franchisee.size(); i++) {
-			expoExcel = new ExportToExcel();
-			rowData = new ArrayList<String>();
-
-			rowData.add("" + (i + 1));
-			rowData.add("" + franchisee.get(i).getCustomerId());
-			rowData.add(franchisee.get(i).getFrCode());
-			rowData.add(franchisee.get(i).getCustomerName());
-			rowData.add("" + franchisee.get(i).getFrRateCat());
-			rowData.add(franchisee.get(i).getCity());
-			rowData.add(franchisee.get(i).getAddress1());
-
-			rowData.add(franchisee.get(i).getAddress2());
-
-			rowData.add(franchisee.get(i).getState());
-			rowData.add(franchisee.get(i).getGSTIN());
+			rowData.add("Sr. No.");
+			rowData.add("Fr Id");
+			rowData.add("Franchisee Code");
+			rowData.add("Franchisee Name");
+			rowData.add("Rate Cat");
+			rowData.add("City");
+			rowData.add("Address 1");
+			rowData.add("Address 2");
+			rowData.add("State");
+			rowData.add("GSTIN");
 
 			expoExcel.setRowData(rowData);
 			exportToExcelList.add(expoExcel);
 
-		}
+			List<Franchisee> franchisee = frList.getFranchiseeList();
 
-		HttpSession session = request.getSession();
-		session.setAttribute("exportExcelList", exportToExcelList);
-		session.setAttribute("excelName", "frList");
+			for (int i = 0; i < franchisee.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
 
-		List<ExportToExcel> exportExcelListDummy = new ArrayList<ExportToExcel>();
+				rowData.add("" + (i + 1));
+				rowData.add("" + franchisee.get(i).getCustomerId());
+				rowData.add(franchisee.get(i).getFrCode());
+				rowData.add(franchisee.get(i).getCustomerName());
+				rowData.add("" + franchisee.get(i).getFrRateCat());
+				rowData.add(franchisee.get(i).getCity());
+				rowData.add(franchisee.get(i).getAddress1());
 
-		expoExcel = new ExportToExcel();
-		rowData = new ArrayList<String>();
+				rowData.add(franchisee.get(i).getAddress2());
 
-		rowData.add("Franchisee Name");
-		rowData.add("Franchisee Code");
-		rowData.add("Opening Date");
-		rowData.add("Rating (0 to 9)");
-		rowData.add("Rate Type(1/2/3)");
-		rowData.add("Route ID");
-		rowData.add("City");
-		rowData.add("KG1");
-		rowData.add("KG2");
-		rowData.add("KG3");
-		rowData.add("KG4");
-		rowData.add("Email Id");
-		rowData.add("Password");
-		rowData.add("Mobile No.");
-		rowData.add("Owner Name");
-		rowData.add("Franchisee Address");
-		rowData.add("Is Grn 2 Applicable?(1/0)");
-		rowData.add("Is Same Day Applicable?(1/0)");
-		rowData.add("Owner Birth date");
-		rowData.add("FBA Licence Date");
-		rowData.add("FR Agreement Date");
-		rowData.add("FR GST TYPE");
-		rowData.add("FR GST NO.");
-		rowData.add("FR Target");
-		rowData.add("Stock Type");
-		rowData.add("Is Same State(1,0)");
+				rowData.add(franchisee.get(i).getState());
+				rowData.add(franchisee.get(i).getGSTIN());
 
-		expoExcel.setRowData(rowData);
-		exportExcelListDummy.add(expoExcel);
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
 
-		session.setAttribute("exportExcelListDummy", exportExcelListDummy);
-		session.setAttribute("excelName", "FrExcelImportFormat");
-		}catch (Exception e) {
-			System.out.println("Excep in /listAllFranchisee : "+e.getMessage());
+			}
+
+			HttpSession session = request.getSession();
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "frList");
+
+			List<ExportToExcel> exportExcelListDummy = new ArrayList<ExportToExcel>();
+
+			expoExcel = new ExportToExcel();
+			rowData = new ArrayList<String>();
+
+			rowData.add("Franchisee Name");
+			rowData.add("Franchisee Code");
+			rowData.add("Opening Date");
+			rowData.add("Rating (0 to 9)");
+			rowData.add("Rate Type(1/2/3)");
+			rowData.add("Route ID");
+			rowData.add("City");
+			rowData.add("KG1");
+			rowData.add("KG2");
+			rowData.add("KG3");
+			rowData.add("KG4");
+			rowData.add("Email Id");
+			rowData.add("Password");
+			rowData.add("Mobile No.");
+			rowData.add("Owner Name");
+			rowData.add("Franchisee Address");
+			rowData.add("Is Grn 2 Applicable?(1/0)");
+			rowData.add("Is Same Day Applicable?(1/0)");
+			rowData.add("Owner Birth date");
+			rowData.add("FBA Licence Date");
+			rowData.add("FR Agreement Date");
+			rowData.add("FR GST TYPE");
+			rowData.add("FR GST NO.");
+			rowData.add("FR Target");
+			rowData.add("Stock Type");
+			rowData.add("Is Same State(1,0)");
+
+			expoExcel.setRowData(rowData);
+			exportExcelListDummy.add(expoExcel);
+
+			session.setAttribute("exportExcelListDummy", exportExcelListDummy);
+			session.setAttribute("excelName", "FrExcelImportFormat");
+		} catch (Exception e) {
+			System.out.println("Excep in /listAllFranchisee : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return mav;
@@ -1773,7 +1770,7 @@ catch (Exception e) {
 
 		map.add("frId", frId);
 		RestTemplate restTemplate = new RestTemplate();
-		
+
 		RouteMaster[] routeArr = restTemplate.getForObject(Constants.url + "showRouteListAndAbcType",
 				RouteMaster[].class);
 		List<RouteMaster> routeList = new ArrayList<RouteMaster>(Arrays.asList(routeArr));
@@ -2010,7 +2007,7 @@ catch (Exception e) {
 
 			String ownerMob = request.getParameter("owner_mob");
 			logger.info("26] frTarget " + ownerMob);
-			
+
 			String fdaNo = request.getParameter("fda_no");
 			logger.info("26] fda_no " + fdaNo);
 			// logger.info("del status selected is==:" + delStatus);
@@ -2094,9 +2091,9 @@ catch (Exception e) {
 			map.add("stockType", stockType);
 			map.add("frAddress", frAddr);
 			map.add("frTarget", ownerMob);
-			map.add("isSameState", isSameState);			
+			map.add("isSameState", isSameState);
 			map.add("fdaNo", fdaNo);
-			
+
 			ErrorMessage errorMessage = rest.postForObject(Constants.url + "updateFranchisee", map, ErrorMessage.class);
 		} catch (Exception e) {
 			logger.info(e.getMessage());
@@ -2134,7 +2131,7 @@ catch (Exception e) {
 			configureFrList = congigureFrList.getConfigureFrBean();
 
 			mav.addObject("confMenuIdList", configureFrList);
-			
+
 			for (FranchiseeList franchisee : franchiseeAndMenuList.getAllFranchisee()) {
 				frIdArray.add(String.valueOf(franchisee.getFrId()));
 				// logger.info("frIdArray"+frIdArray.toString());
@@ -2160,7 +2157,7 @@ catch (Exception e) {
 			 */
 			mav.addObject("catId", catId);
 			mav.addObject("menuList", menuList);
-		//	mav.addObject("itemList", itemList);
+			// mav.addObject("itemList", itemList);
 			mav.addObject("allFranchiseeAndMenuList", franchiseeAndMenuList);
 
 		} catch (Exception e) {
@@ -2218,7 +2215,8 @@ catch (Exception e) {
 			map.add("menuId", menuId);
 			RestTemplate restTemplate = new RestTemplate();
 
-			ItemIdOnly[] itemArr = restTemplate.postForObject(Constants.url + "/getItemsByMenuId", map, ItemIdOnly[].class);
+			ItemIdOnly[] itemArr = restTemplate.postForObject(Constants.url + "/getItemsByMenuId", map,
+					ItemIdOnly[].class);
 			itemList = new ArrayList<ItemIdOnly>(Arrays.asList(itemArr));
 
 			System.out.println("itemList" + itemList.toString());
@@ -2486,32 +2484,33 @@ catch (Exception e) {
 		int menuId = frMenu.getMenuId();
 		// ------------------------------------------------------------------------
 		// ------------Service Call to get Selected Record for Edit by Id----------
-		
+
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 		map.add("spdayId", spdayId);
 
 		GetConfiguredSpDayCk getConfiguredSpDayCk = restTemplate.postForObject(Constants.url + "getConfSpDayCake", map,
 				GetConfiguredSpDayCk.class);
-		
-		//Sachin
+
+		// Sachin
 		map = new LinkedMultiValueMap<>();
 		map.add("menuId", getConfiguredSpDayCk.getMenuId());
 
 		ItemIdOnly[] itemArr = restTemplate.postForObject(Constants.url + "/getItemsByMenuId", map, ItemIdOnly[].class);
 		List<ItemIdOnly> menuItems = new ArrayList<ItemIdOnly>(Arrays.asList(itemArr));
 		model.addObject("menuItems", menuItems);
-		//End Sachin
+		// End Sachin
 
 		// ------------------------------------------------------------------------
 
-		//logger.info("-------------SELECTED getConfiguredSpDayCk-------------");
+		// logger.info("-------------SELECTED getConfiguredSpDayCk-------------");
 
 		String frPrevItems = getConfiguredSpDayCk.getItemId();
 
-		//logger.info("-------------frPrevItems--------------------" + frPrevItems.toString());
+		// logger.info("-------------frPrevItems--------------------" +
+		// frPrevItems.toString());
 
 		List<String> frPrevItemsList = Arrays.asList(frPrevItems.split("\\s*,\\s*"));
-		
+
 		logger.info("-------------IdList--------------------" + frPrevItemsList);
 		logger.info("-------------frPrevItemsList--------------------" + getConfiguredSpDayCk.getCatId());
 
@@ -2523,23 +2522,23 @@ catch (Exception e) {
 
 		Item[] item = restTemplate.postForObject(Constants.url + "getItemsByCatId", mav, Item[].class);
 		ArrayList<Item> itemList = new ArrayList<Item>(Arrays.asList(item));
-		System.err.println("Items----------"+itemList);
-		//logger.info("Filter Item List " + itemList.toString());
+		System.err.println("Items----------" + itemList);
+		// logger.info("Filter Item List " + itemList.toString());
 		// ------------------------------------------------------------------------------
 		List<Item> filteredItemList = new ArrayList<Item>();
 		List<Item> tempItemList = new ArrayList<Item>(Arrays.asList(item));
-		//logger.info("temp Item List " + itemList.toString());
+		// logger.info("temp Item List " + itemList.toString());
 
 		// ------------------------------------------------------------------------------
-		
+
 		for (int j = 0; j < frPrevItemsList.size(); j++) {
-			//logger.info("j " + j);
+			// logger.info("j " + j);
 
 			for (int k = 0; k < itemList.size(); k++) {
-			//	logger.info("k " + k);
+				// logger.info("k " + k);
 
 				if (Integer.parseInt(frPrevItemsList.get(j)) == (itemList.get(k).getId())) {
-			//		logger.info("jk " + j + "k" + k);
+					// logger.info("jk " + j + "k" + k);
 					filteredItemList.add(itemList.get(k));
 					tempItemList.remove(itemList.get(k));
 				}
@@ -2549,7 +2548,7 @@ catch (Exception e) {
 		}
 
 		// ------------------------------------------------------------------------------
-		
+
 		model.addObject("selectedItemList", filteredItemList);
 		logger.info("filteredItemList " + filteredItemList.toString());
 
@@ -2564,17 +2563,17 @@ catch (Exception e) {
 		String toTime = getConfiguredSpDayCk.getToTime();
 
 		try {
-			
+
 			final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 			final Date fromDate = sdf.parse(fromTime);
 			final Date toDate = sdf.parse(toTime);
 
-		//	logger.info("From Time " + fromDate);
-		//	logger.info("To Time " + toDate);
+			// logger.info("From Time " + fromDate);
+			// logger.info("To Time " + toDate);
 
-		//	logger.info(new SimpleDateFormat("hh:mm a").format(fromDate));
+			// logger.info(new SimpleDateFormat("hh:mm a").format(fromDate));
 
-		//	logger.info(new SimpleDateFormat("hh:mm a").format(toDate));
+			// logger.info(new SimpleDateFormat("hh:mm a").format(toDate));
 
 			model.addObject("fromTime", new SimpleDateFormat("hh:mm a").format(fromDate));
 			model.addObject("toTime", new SimpleDateFormat("hh:mm a").format(toDate));
@@ -2583,15 +2582,15 @@ catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		// ------------------------------------------------------------------------------	
+		// ------------------------------------------------------------------------------
 		List<FranchiseeList> franchiseeList = franchiseeAndMenuList.getAllFranchisee();
-		//logger.info("franchiseeList " + franchiseeList.toString());
+		// logger.info("franchiseeList " + franchiseeList.toString());
 
 		String frPrevFr = getConfiguredSpDayCk.getFrId();
-		//logger.info("frPrevFr " + frPrevFr.toString());
+		// logger.info("frPrevFr " + frPrevFr.toString());
 
 		List<String> frPrevFrList = Arrays.asList(frPrevFr.split("\\s*,\\s*"));
-		//logger.info("frPrevFrList " + frPrevFrList.toString());
+		// logger.info("frPrevFrList " + frPrevFrList.toString());
 
 		// ------------------------------------------------------------------------------
 		List<FranchiseeList> filteredFrList = new ArrayList<FranchiseeList>();
@@ -2599,7 +2598,7 @@ catch (Exception e) {
 		logger.info("tempFrList " + tempFrList.toString());
 
 		// ------------------------------------------------------------------------------
-		//logger.info("frPrevFrList.size() " + frPrevFrList.size());
+		// logger.info("frPrevFrList.size() " + frPrevFrList.size());
 		for (int j = 0; j < frPrevFrList.size(); j++) {
 
 			for (int k = 0; k < franchiseeList.size(); k++) {
@@ -2623,7 +2622,7 @@ catch (Exception e) {
 		model.addObject("catId", getConfiguredSpDayCk.getCatId());
 		model.addObject("menuId", menuId);
 		model.addObject("menuList", menuList);
-		
+
 		model.addObject("franchiseeAndMenuList", franchiseeAndMenuList);
 
 		model.addObject("getConfiguredSpDayCk", getConfiguredSpDayCk);
@@ -2651,15 +2650,15 @@ catch (Exception e) {
 
 		FranchiseSupList frSupList = restTemplate.getForObject(Constants.url + "/getFranchiseSupList",
 				FranchiseSupList.class);
-	
+
 		State[] stateList = restTemplate.getForObject(Constants.url + "/getAllStates", State[].class);
 		mav.addObject("stateList", stateList);
-		
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("settingKey", "defaultState"); 		
-		map.add("delStatus", 0); 		
-		NewSetting settingValue = restTemplate.postForObject(Constants.url + "/getNewSettingByKey", map, NewSetting.class);
 
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		map.add("settingKey", "defaultState");
+		map.add("delStatus", 0);
+		NewSetting settingValue = restTemplate.postForObject(Constants.url + "/getNewSettingByKey", map,
+				NewSetting.class);
 
 		logger.info("Franchisee List:" + franchiseeList.toString());
 		FranchiseSup frSup = new FranchiseSup();
@@ -2709,18 +2708,16 @@ catch (Exception e) {
 
 			String pass5 = request.getParameter("fr_status");
 
-			
-
 			int frequency = Integer.parseInt(request.getParameter("frequency"));
 
 			int noInRoute = Integer.parseInt(request.getParameter("no_in_route"));
 
 			// String remainderDate=request.getParameter("remainder_date");
-			
+
 			SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
 			Date date = new Date();
-			//String pestControlDate = request.getParameter("pest_control_date");
-			
+			// String pestControlDate = request.getParameter("pest_control_date");
+
 			String pestControlDate = sf.format(date);
 			Date pestCtrlDate = new SimpleDateFormat("dd-MM-yyyy").parse(pestControlDate);
 			Date newDate = addDays(pestCtrlDate, frequency);
@@ -2798,9 +2795,9 @@ catch (Exception e) {
 
 			FranchiseSupList frSupList = restTemplate.getForObject(Constants.url + "/getFranchiseSupList",
 					FranchiseSupList.class);
-			
+
 			State[] stateList = restTemplate.getForObject(Constants.url + "/getAllStates", State[].class);
-			
+
 			model.addObject("stateList", stateList);
 			model.addObject("franchiseeList", franchiseeList);
 			model.addObject("frSup", frSup);
@@ -2814,7 +2811,7 @@ catch (Exception e) {
 		}
 		return model;
 	}
-	
+
 	// ------------------------------------showAddFrTarget--------------------------------------------
 	@RequestMapping(value = "/showAddFrTarget", method = RequestMethod.GET)
 	public ModelAndView showAddFrTarget(HttpServletRequest request, HttpServletResponse response) {

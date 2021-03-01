@@ -228,7 +228,7 @@ body{
 																			<c:when test="${isEdit==1}">
 
 																				<td style="text-align: center;"><a
-																					href="updateFranchiseeConf/${configureFrList.menuId}"><span
+																					href="updateFranchiseeConf/${configureFrList.settingId}"><span
 																						class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 
 
@@ -236,7 +236,7 @@ body{
 																			</c:when>
 																			<c:otherwise>
 																				<td style="text-align: center;"><a
-																					href="updateFranchiseeConf/${configureFrList.menuId}" class="disableClick"><span
+																					href="updateFranchiseeConf/${configureFrList.settingId}" class="disableClick"><span
 																						class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 
 																			</c:otherwise>
