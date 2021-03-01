@@ -203,10 +203,15 @@ public class ItemController {
 				mCategoryList = new ArrayList<MCategoryList>();
 				mCategoryList = categoryListResponse.getmCategoryList();
 				System.out.println("Main Cat is  " + categoryListResponse.toString());
-				// Integer maxId = restTemplate.getForObject(Constants.url +
-				// "getUniqueItemCode", Integer.class);
-
-				// model.addObject("itemId", maxId);
+				
+				List<RawMaterialUom> rawMaterialUomList = restTemplate
+						.getForObject(Constants.url + "rawMaterial/getRmUom", List.class);
+				
+				
+				List<TrayType> trayTypeList = restTemplate.getForObject(Constants.url + "/getTrayTypes", List.class);	
+				
+				model.addObject("trayTypes", trayTypeList);
+				model.addObject("rmUomList", rawMaterialUomList);
 				model.addObject("mCategoryList", mCategoryList);
 				model.addObject("isError", isError);
 				isError = false;
@@ -888,9 +893,30 @@ public class ItemController {
 		int grnTwo = Integer.parseInt(request.getParameter("grn_two"));
 
 		int itemShelfLife = Integer.parseInt(request.getParameter("item_shelf_life"));
+		
+		//Item Supplement//
+		String itemHsncd = request.getParameter("item_hsncd");
 
-		logger.info("Add new item request mapping.");
+		int uomId = Integer.parseInt(request.getParameter("item_uom"));
 
+		String uom = request.getParameter("uom");
+
+		float actualWeight = Float.parseFloat(request.getParameter("actual_weight"));
+
+		float baseWeight = Float.parseFloat(request.getParameter("base_weight"));
+		float itemCessPer= Float.parseFloat(request.getParameter("cessPer"));
+		float inputPerQty = Float.parseFloat(request.getParameter("input_per_qty"));
+		int trayType = Integer.parseInt(request.getParameter("tray_type"));
+
+		int noOfItemPerTray = Integer.parseInt(request.getParameter("no_of_item"));
+
+		int isGateSale = 0;
+		int isGateSaleDisc = 0;
+		int isAllowBday = 0;
+		
+		int cutSection = Integer.parseInt(request.getParameter("cut_section"));
+		String shortName = request.getParameter("short_name");
+		
 		// String itemImage = ImageS3Util.uploadItemImage(file);
 
 		VpsImageUpload upload = new VpsImageUpload();
@@ -906,19 +932,7 @@ public class ItemController {
 
 		String curTimeStamp = sdf.format(cal.getTime());
 
-		/*
-		 * try {
-		 * 
-		 * upload.saveUploadedFiles(file, Constants.ITEM_IMAGE_TYPE, curTimeStamp + "-"
-		 * + file.get(0).getOriginalFilename()); // upload.saveUploadedFiles(file,
-		 * Constants.ITEM_IMAGE_TYPE, itemName);
-		 * System.out.println("upload method called " + file.toString());
-		 * 
-		 * } catch (IOException e) {
-		 * 
-		 * System.out.println("Exce in File Upload In Item Insert " + e.getMessage());
-		 * e.printStackTrace(); }
-		 */
+		
 		RestTemplate rest = new RestTemplate();
 		try {
 
@@ -971,22 +985,49 @@ public class ItemController {
 
 			if (itemRes != null) {
 				isError = false;
+				
+				
+				System.err.println("Short Name " + shortName);
+				
+				ItemSup itemSup = new ItemSup();
+				
+				itemSup.setId(0);
+				itemSup.setItemId(itemRes.getId());
+				itemSup.setUomId(uomId);
+				itemSup.setItemUom(uom);
+				itemSup.setItemHsncd(itemHsncd);
+				itemSup.setIsGateSale(isGateSale);
+				itemSup.setActualWeight(actualWeight);
+				itemSup.setBaseWeight(baseWeight);
+				itemSup.setInputPerQty(inputPerQty);
+				itemSup.setIsGateSaleDisc(isGateSaleDisc);
+				itemSup.setIsAllowBday(isAllowBday);
+				itemSup.setNoOfItemPerTray(noOfItemPerTray);
+				itemSup.setTrayType(trayType);
+				itemSup.setDelStatus(0);
+				itemSup.setIsTallySync(0);
+				itemSup.setCutSection(cutSection);
+				itemSup.setShortName(shortName);
+				itemSup.setItemCess(itemCessPer);//cess%
+				RestTemplate restTemplate = new RestTemplate();
 
-				suppId = itemRes.getId();
-				suppCatId = Integer.parseInt(itemGrp1);
-				suppItemName = itemRes.getItemName();
-				return "redirect:/showAddItemSup";
+				Info info = restTemplate.postForObject(Constants.url + "/saveItemSup", itemSup, Info.class);
+				System.out.println("Response: " + info.toString());
+
 			} else {
 				isError = true;
-				return "redirect:/addItem";
+				
 			}
 
 		} catch (Exception e) {
 			isError = true;
-			return "redirect:/addItem";
+			
 
 		}
+		return "redirect:/itemList";
+		
 
+		
 	}
 
 	@RequestMapping(value = "/itemList")
@@ -1440,6 +1481,19 @@ public class ItemController {
 
 		int itemGrp3 = item.getItemGrp3();
 		mav.addObject("itemGrp3", String.valueOf(itemGrp3));
+		
+		map = new LinkedMultiValueMap<String, Object>();
+		map.add("itemId", id);
+
+		GetItemSup itemSupRes = restTemplate.postForObject(Constants.url + "/getItemSupByItemId", map, GetItemSup.class);
+		System.out.println("itemSupRes" + itemSupRes.toString());
+		List<RawMaterialUom> rawMaterialUomList = restTemplate.getForObject(Constants.url + "rawMaterial/getRmUom",
+				List.class);
+		mav.addObject("rmUomList", rawMaterialUomList);
+		List<TrayType> trayTypeList = restTemplate.getForObject(Constants.url + "/getTrayTypes", List.class);
+
+		mav.addObject("trayTypes", trayTypeList);
+		mav.addObject("itemSupp", itemSupRes);
 
 		return mav;
 
@@ -1454,46 +1508,55 @@ public class ItemController {
 		ModelAndView model = new ModelAndView("items/itemList");
 
 		RestTemplate restTemplate = new RestTemplate();
-		String itemId = request.getParameter("item_id");
+	
 
-		int minQty = Integer.parseInt(request.getParameter("min_qty"));
+		
 
-		String itemName = request.getParameter("item_name");
+	
 
-		String itemGrp1 = request.getParameter("item_grp1");
+		
 
-		String itemGrp2 = request.getParameter("item_grp2");
 
-		String itemGrp3 = request.getParameter("item_grp3");
 
-		double itemRate1 = Double.parseDouble(request.getParameter("item_rate1"));
+		float itemMrp1 = Float.parseFloat(request.getParameter("item_mrp1"));
 
-		double itemRate2 = Double.parseDouble(request.getParameter("item_rate2"));
+		
 
-		double itemRate3 = Double.parseDouble(request.getParameter("item_rate3"));
-
-		double itemMrp1 = Double.parseDouble(request.getParameter("item_mrp1"));
-
-		double itemMrp2 = Double.parseDouble(request.getParameter("item_mrp2"));
-
-		double itemMrp3 = Double.parseDouble(request.getParameter("item_mrp3"));
+	
 
 		/*
 		 * String itemImage = request.getParameter("item_image");
 		 */
-		double itemTax1 = Double.parseDouble(request.getParameter("item_tax1"));
+		
+		
 
-		double itemTax2 = Double.parseDouble(request.getParameter("item_tax2"));
 
-		double itemTax3 = Double.parseDouble(request.getParameter("item_tax3"));
+		
 
-		int itemIsUsed = Integer.parseInt(request.getParameter("is_used"));
+	
 
-		double itemSortId = Double.parseDouble(request.getParameter("item_sort_id"));
+		
+		
+	
+		
+		//Item Supplement//
+				
 
-		int grnTwo = Integer.parseInt(request.getParameter("grn_two"));
-		int id = Integer.parseInt(request.getParameter("itemId"));
-		int shelfLife = Integer.parseInt(request.getParameter("item_shelf_life"));
+			
+
+				
+
+				
+				
+				
+			
+
+				
+
+				
+				
+			
+				String shortName = request.getParameter("short_name");
 
 		logger.info("Add new item request mapping.");
 		RestTemplate rest = new RestTemplate();
@@ -1543,31 +1606,81 @@ public class ItemController {
 				e.printStackTrace();
 			}
 		}
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("itemId", itemId);
-		map.add("itemName", itemName);
-		map.add("itemGrp1", itemGrp1);
-		map.add("itemGrp2", itemGrp2);
-		map.add("itemGrp3", Integer.parseInt(request.getParameter("product_type")));
-		map.add("itemRate1", itemRate1);
-		map.add("itemRate2", itemRate2);
-		map.add("itemRate3", itemRate3);
-		map.add("minQty", minQty);
-		map.add("itemMrp1", itemMrp1);
-		map.add("itemMrp2", itemMrp2);
-		map.add("itemMrp3", itemMrp3);
-		map.add("itemImage", itemImage);
-		map.add("itemTax1", itemTax1);
-		map.add("itemTax2", itemTax2);
-		map.add("itemTax3", itemTax3);
-		map.add("itemIsUsed", itemIsUsed);
-		map.add("itemSortId", itemSortId);
-		map.add("grnTwo", grnTwo);
-		map.add("id", id);
-
-		map.add("itemShelfLife", shelfLife);
-		ErrorMessage errorResponse = rest.postForObject("" + Constants.url + "updateItem", map, ErrorMessage.class);
-
+//		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+//		map.add("itemId", itemId);
+//		map.add("itemName", itemName);
+//		map.add("itemGrp1", itemGrp1);
+//		map.add("itemGrp2", itemGrp2);
+//		map.add("itemGrp3", Integer.parseInt(request.getParameter("product_type")));
+//		map.add("itemRate1", itemRate1);
+//		map.add("itemRate2", itemRate2);
+//		map.add("itemRate3", itemRate3);
+//		map.add("minQty", minQty);
+//		map.add("itemMrp1", itemMrp1);
+//		map.add("itemMrp2", itemMrp2);
+//		map.add("itemMrp3", itemMrp3);
+//		map.add("itemImage", itemImage);
+//		map.add("itemTax1", Float.parseFloat(request.getParameter("item_tax1")));
+//		map.add("itemTax2", itemTax2);
+//		map.add("itemTax3", itemTax3);
+//		map.add("itemIsUsed", itemIsUsed);
+//		map.add("itemSortId", itemSortId);
+//		map.add("grnTwo", grnTwo);
+//		map.add("id", id);
+//		map.add("itemShelfLife", shelfLife);
+//		
+		Item item = new Item();
+		item.setId(Integer.parseInt(request.getParameter("itemId")));
+		item.setItemId(request.getParameter("item_id"));
+		item.setItemImage(itemImage);
+		item.setItemGrp1(Integer.parseInt(request.getParameter("item_grp1")));
+		item.setItemGrp2(Integer.parseInt(request.getParameter("item_grp2")));
+		item.setItemGrp3(Integer.parseInt(request.getParameter("product_type")));
+		item.setMinQty(Integer.parseInt(request.getParameter("min_qty")));
+		item.setItemIsUsed(Integer.parseInt(request.getParameter("is_used")));
+		item.setItemMrp1(itemMrp1);
+		item.setItemMrp2(Float.parseFloat(request.getParameter("item_mrp2")));
+		item.setItemMrp3(Float.parseFloat(request.getParameter("item_mrp3")));
+		item.setItemRate1(Float.parseFloat(request.getParameter("item_rate1")));
+		item.setItemRate2(Float.parseFloat(request.getParameter("item_rate2")));
+		item.setItemRate3(Float.parseFloat(request.getParameter("item_rate3")));
+		item.setItemName(request.getParameter("item_name"));
+		item.setItemSortId(Float.parseFloat(request.getParameter("item_sort_id")));
+		item.setItemTax1(Float.parseFloat(request.getParameter("item_tax1")));
+		item.setItemTax2(Float.parseFloat(request.getParameter("item_tax2")));
+		item.setItemTax3(Float.parseFloat(request.getParameter("item_tax3")));
+		item.setGrnTwo(Integer.parseInt(request.getParameter("grn_two")));
+		item.setShelfLife(Integer.parseInt(request.getParameter("item_shelf_life")));
+		
+		
+		
+//		ItemSup itemSup = new ItemSup();
+//		
+//		itemSup.setId(Integer.parseInt(request.getParameter("id")));
+//		itemSup.setItemId(Integer.parseInt(request.getParameter("item_id")));
+//		itemSup.setUomId(Integer.parseInt(request.getParameter("item_uom")));
+//		itemSup.setItemUom(request.getParameter("uom"));
+//		itemSup.setItemHsncd(request.getParameter("item_hsncd"));		
+//		itemSup.setActualWeight(Float.parseFloat(request.getParameter("actual_weight")));
+//		itemSup.setBaseWeight(Float.parseFloat(request.getParameter("base_weight")));
+//		itemSup.setInputPerQty(Float.parseFloat(request.getParameter("input_per_qty")));		
+//		itemSup.setNoOfItemPerTray(Integer.parseInt(request.getParameter("no_of_item")));
+//		itemSup.setTrayType(Integer.parseInt(request.getParameter("tray_type")));		
+//		itemSup.setCutSection(Integer.parseInt(request.getParameter("cut_section")));
+//		itemSup.setShortName(shortName);
+//		itemSup.setItemCess(Float.parseFloat(request.getParameter("cessPer")));//cess%
+//		
+//		itemSup.setIsGateSaleDisc(0);
+//		itemSup.setIsAllowBday(0);
+//		itemSup.setIsGateSale(0);
+//		itemSup.setDelStatus(0);
+//		itemSup.setIsTallySync(0);
+//
+//		Info info = restTemplate.postForObject(Constants.url + "/saveItemSup", itemSup, Info.class);
+//		System.out.println("Response: " + info.toString());
+		
+		ErrorMessage errorResponse = rest.postForObject("" + Constants.url + "updateProducts", item, ErrorMessage.class);
+		
 		return "redirect:/itemList";
 
 	}
