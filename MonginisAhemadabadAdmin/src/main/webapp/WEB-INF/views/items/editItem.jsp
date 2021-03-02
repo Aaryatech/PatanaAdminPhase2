@@ -599,6 +599,8 @@
 									</div>
 							  </div>
 							  <input type="hidden" name="uom" id="uom" value="${itemSupp.itemUom}"/> 
+							  
+							  <%-- <div>
 							  <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Actual Weight</label>
 									<div class="col-sm-9 col-lg-3 controls">
@@ -615,6 +617,7 @@
 											data-rule-required="true" data-rule-number="true" value="${itemSupp.baseWeight}"/>
 									</div>
 							  </div>
+							  </div> --%>
 							   <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Short Name</label>
 									<div class="col-sm-9 col-lg-3 controls">
@@ -631,6 +634,12 @@
 											data-rule-required="true"  data-rule-number="true" value="1"/>
 									<!-- </div>
 							  </div> -->
+							   <input type="hidden" value="0" name="cut_section">
+							   <input type="hidden" value="0" name="tray_type">
+							   <input type="hidden" value="0" name="no_of_item">
+							   <input type="hidden" value="0" name="actual_weight">
+							   <input type="hidden" value="0" name="base_weight">
+							  <%-- <div>
 							    <div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Cut Section</label>
 									<div class="col-sm-9 col-lg-3 controls">
@@ -691,6 +700,7 @@
 											data-rule-required="true"  data-rule-number="true" value="${itemSupp.noOfItemPerTray}"/>
 									</div>
 							  </div> 
+							  </div> --%>
 							   <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Cess %</label>
 									<div class="col-sm-9 col-lg-3 controls">

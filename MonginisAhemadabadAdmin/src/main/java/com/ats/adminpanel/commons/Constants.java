@@ -2,8 +2,8 @@ package com.ats.adminpanel.commons;
 
 public class Constants {
 
-	public static final String url = "http://132.148.148.215:8080/demoapi/";
-	// public static final String url="http://localhost:8098/";
+	//public static final String url = "http://132.148.148.215:8080/demoapi/";
+	public static final String url="http://localhost:8098/";
 
 	public static final String SPCAKE_IMAGE_URL = "http://132.148.148.215:8080/uploads/MSPCAKE/";
 	public static final String FR_IMAGE_URL = "http://132.148.148.215:8080/uploads/FR/";
@@ -37,7 +37,7 @@ public class Constants {
 	public static String storeUrl = "";
 
 	// public static final String ReportURL ="http://localhost:8985/adminpanel/";
-	public static final String ReportURL = "http://132.148.148.215:8080/admin/";// change
+	public static final String ReportURL = "http://localhost:8080/adminpanel/";// change
 
 	public static final String SETTING_KEY = "PB";
 
@@ -53,7 +53,7 @@ public class Constants {
 
 	public static final int DIS_BY_GATE = 3;
 	// public static final String REPORT_SAVE = "/home/ats-12/report.pdf";
-	public static final String REPORT_SAVE = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/Report.pdf";
+	public static final String REPORT_SAVE = "/home/maddy/ats-12/Report.pdf";//"/home/devour/apache-tomcat-9.0.12/webapps/uploads/Report.pdf";
 
 	public static final String SP_CAKE_FOLDER = "http://132.148.148.215:8080/uploads/SPCAKE/";
 
@@ -64,6 +64,10 @@ public class Constants {
 	public static  Object FACTORYNAME = "DEVOUR FOODS LLP";
 	public static  Object FACTORYADDRESS = "Village-Fatehpur,Dist-Patna\n" + "Email: bihar.monginis@gmail.com";
 
+	public static Integer dayOfMonthEnd = 1;
+
+	public static final String PUSH_ORDER_SECTION_ID = "1";
+
 	public static final String FACTORYGSTIN = "-";
 	public static final String CITY = "";
 	public static final String STATE = "";
@@ -73,7 +77,7 @@ public class Constants {
 	public static final String CRN_REPORT_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/crn.pdf";
 	public static final String FINISHEDGOOD_REPORT_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/fsr.pdf";
 	public static final String PO_PDF_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/po.pdf";
-	public static final String SALES_REPORT_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/report.pdf";
+	public static final String SALES_REPORT_PATH = "/home/maddy/ats-12/report.pdf"; //"/home/devour/apache-tomcat-9.0.12/webapps/uploads/report.pdf";
 	public static final String INWARD_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/Inward.pdf";
 	public static final String LOG_PDF_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/logdf.pdf";
 	public static final String DISPATCH_PATH = "/home/devour/apache-tomcat-9.0.12/webapps/uploads/dispatch.pdf";

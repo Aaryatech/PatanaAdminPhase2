@@ -459,12 +459,13 @@
 									</div>
 							  </div>
 							  <input type="hidden" name="uom" id="uom" value="${itemSupp.itemUom}"/> 
+							  <!-- <div>
 							  <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Actual Weight</label>
 									<div class="col-sm-9 col-lg-3 controls">
 										<input type="text" name="actual_weight" id="actual_weight"
 											placeholder="Actual Weight" class="form-control"
-											data-rule-required="true" data-rule-number="true"value="${itemSupp.actualWeight}"/>
+											data-rule-required="true" value="0"/>
 									</div>
 							  </div>
 							   <div class="form-group">
@@ -472,9 +473,10 @@
 									<div class="col-sm-9 col-lg-3 controls">
 										<input type="text" name="base_weight" id="base_weight"
 											placeholder="Base Weight" class="form-control"
-											data-rule-required="true" data-rule-number="true" value="${itemSupp.baseWeight}"/>
+											data-rule-required="true" value="0"/>
 									</div>
 							  </div>
+							  </div> -->
 							   <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Short Name</label>
 									<div class="col-sm-9 col-lg-3 controls">
@@ -488,14 +490,20 @@
 									<div class="col-sm-9 col-lg-3 controls"> -->
 										<input type="hidden" name="input_per_qty" id="input_per_qty"
 											placeholder="Input Per Unit" class="form-control"
-											data-rule-required="true"  data-rule-number="true" value="1"/>
+											data-rule-required="true" value="1"/>
 									<!-- </div>
 							  </div> -->
+							  
+							  <input type="hidden" value="0" name="cut_section">
+							   <input type="hidden" value="0" name="tray_type">
+							   <input type="hidden" value="0" name="no_of_item">
+							   <input type="hidden" value="0" name="actual_weight">
+							   <input type="hidden" value="0" name="base_weight">
+							  <%-- <div>
 							    <div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Cut Section</label>
 									<div class="col-sm-9 col-lg-3 controls">
-										<select name="cut_section" id="cut_section" class="form-control chosen"
-												 data-rule-required="true">
+										<select name="cut_section" id="cut_section" class="form-control chosen">
 											<option value="">Select Cut Section</option>
 											
 										<c:choose>
@@ -526,8 +534,7 @@
 						    <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Type Of Tray</label>
 									<div class="col-sm-9 col-lg-3 controls">
-												<select name="tray_type" id="tray_type" class="form-control chosen" placeholder="Type Of Tray"
-												 data-rule-required="true">
+												<select name="tray_type" id="tray_type" class="form-control chosen" placeholder="Type Of Tray">
 											<option value="">Select Type Of Tray</option>
 											<c:forEach items="${trayTypes}" var="trayTypes"
 													varStatus="count">
@@ -548,9 +555,10 @@
 									<div class="col-sm-9 col-lg-3 controls">
 										<input type="text" name="no_of_item" id="no_of_item"
 											placeholder="No. Of Item Per Tray" class="form-control"
-											data-rule-required="true"  data-rule-number="true" value="${itemSupp.noOfItemPerTray}"/>
+											data-rule-required="true" value="0"/>
 									</div>
 							  </div> 
+							  </div> --%>
 							   <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Cess %</label>
 									<div class="col-sm-9 col-lg-3 controls">

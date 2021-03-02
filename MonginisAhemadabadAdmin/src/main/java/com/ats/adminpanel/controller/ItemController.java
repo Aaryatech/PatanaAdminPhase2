@@ -58,6 +58,7 @@ import com.ats.adminpanel.model.item.FrItemStockConfigurePost;
 import com.ats.adminpanel.model.item.GetItemSup;
 import com.ats.adminpanel.model.item.GetPrevItemStockResponse;
 import com.ats.adminpanel.model.item.Item;
+import com.ats.adminpanel.model.item.ItemAndItemSuplement;
 import com.ats.adminpanel.model.item.ItemSup;
 import com.ats.adminpanel.model.item.ItemSupList;
 import com.ats.adminpanel.model.item.MCategoryList;
@@ -1503,60 +1504,6 @@ public class ItemController {
 
 	public String updateMessage(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("item_image") List<MultipartFile> file) {
-		System.out.println("HI");
-
-		ModelAndView model = new ModelAndView("items/itemList");
-
-		RestTemplate restTemplate = new RestTemplate();
-	
-
-		
-
-	
-
-		
-
-
-
-		float itemMrp1 = Float.parseFloat(request.getParameter("item_mrp1"));
-
-		
-
-	
-
-		/*
-		 * String itemImage = request.getParameter("item_image");
-		 */
-		
-		
-
-
-		
-
-	
-
-		
-		
-	
-		
-		//Item Supplement//
-				
-
-			
-
-				
-
-				
-				
-				
-			
-
-				
-
-				
-				
-			
-				String shortName = request.getParameter("short_name");
 
 		logger.info("Add new item request mapping.");
 		RestTemplate rest = new RestTemplate();
@@ -1573,17 +1520,7 @@ public class ItemController {
 
 			String curTimeStamp = sdf.format(cal.getTime());
 			itemImage = curTimeStamp + "-" + file.get(0).getOriginalFilename();
-			/*
-			 * try { itemImage = curTimeStamp + "-" + file.get(0).getOriginalFilename();
-			 * upload.saveUploadedFiles(file, Constants.ITEM_IMAGE_TYPE, curTimeStamp + "-"
-			 * + file.get(0).getOriginalFilename());
-			 * System.out.println("upload method called " + file.toString());
-			 * 
-			 * } catch (IOException e) {
-			 * 
-			 * System.out.println("Exce in File Upload In Item Update " + e.getMessage());
-			 * e.printStackTrace(); }
-			 */
+			
 			try {
 				LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				String tempFileName;
@@ -1606,29 +1543,9 @@ public class ItemController {
 				e.printStackTrace();
 			}
 		}
-//		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-//		map.add("itemId", itemId);
-//		map.add("itemName", itemName);
-//		map.add("itemGrp1", itemGrp1);
-//		map.add("itemGrp2", itemGrp2);
-//		map.add("itemGrp3", Integer.parseInt(request.getParameter("product_type")));
-//		map.add("itemRate1", itemRate1);
-//		map.add("itemRate2", itemRate2);
-//		map.add("itemRate3", itemRate3);
-//		map.add("minQty", minQty);
-//		map.add("itemMrp1", itemMrp1);
-//		map.add("itemMrp2", itemMrp2);
-//		map.add("itemMrp3", itemMrp3);
-//		map.add("itemImage", itemImage);
-//		map.add("itemTax1", Float.parseFloat(request.getParameter("item_tax1")));
-//		map.add("itemTax2", itemTax2);
-//		map.add("itemTax3", itemTax3);
-//		map.add("itemIsUsed", itemIsUsed);
-//		map.add("itemSortId", itemSortId);
-//		map.add("grnTwo", grnTwo);
-//		map.add("id", id);
-//		map.add("itemShelfLife", shelfLife);
-//		
+		
+		ItemAndItemSuplement itemItemSup = new ItemAndItemSuplement();
+		
 		Item item = new Item();
 		item.setId(Integer.parseInt(request.getParameter("itemId")));
 		item.setItemId(request.getParameter("item_id"));
@@ -1638,7 +1555,7 @@ public class ItemController {
 		item.setItemGrp3(Integer.parseInt(request.getParameter("product_type")));
 		item.setMinQty(Integer.parseInt(request.getParameter("min_qty")));
 		item.setItemIsUsed(Integer.parseInt(request.getParameter("is_used")));
-		item.setItemMrp1(itemMrp1);
+		item.setItemMrp1(Float.parseFloat(request.getParameter("item_mrp1")));
 		item.setItemMrp2(Float.parseFloat(request.getParameter("item_mrp2")));
 		item.setItemMrp3(Float.parseFloat(request.getParameter("item_mrp3")));
 		item.setItemRate1(Float.parseFloat(request.getParameter("item_rate1")));
@@ -1652,34 +1569,36 @@ public class ItemController {
 		item.setGrnTwo(Integer.parseInt(request.getParameter("grn_two")));
 		item.setShelfLife(Integer.parseInt(request.getParameter("item_shelf_life")));
 		
+		itemItemSup.setItem(item);
 		
+		ItemSup itemSup = new ItemSup();
 		
-//		ItemSup itemSup = new ItemSup();
-//		
-//		itemSup.setId(Integer.parseInt(request.getParameter("id")));
-//		itemSup.setItemId(Integer.parseInt(request.getParameter("item_id")));
-//		itemSup.setUomId(Integer.parseInt(request.getParameter("item_uom")));
-//		itemSup.setItemUom(request.getParameter("uom"));
-//		itemSup.setItemHsncd(request.getParameter("item_hsncd"));		
-//		itemSup.setActualWeight(Float.parseFloat(request.getParameter("actual_weight")));
-//		itemSup.setBaseWeight(Float.parseFloat(request.getParameter("base_weight")));
-//		itemSup.setInputPerQty(Float.parseFloat(request.getParameter("input_per_qty")));		
-//		itemSup.setNoOfItemPerTray(Integer.parseInt(request.getParameter("no_of_item")));
-//		itemSup.setTrayType(Integer.parseInt(request.getParameter("tray_type")));		
-//		itemSup.setCutSection(Integer.parseInt(request.getParameter("cut_section")));
-//		itemSup.setShortName(shortName);
-//		itemSup.setItemCess(Float.parseFloat(request.getParameter("cessPer")));//cess%
-//		
-//		itemSup.setIsGateSaleDisc(0);
-//		itemSup.setIsAllowBday(0);
-//		itemSup.setIsGateSale(0);
-//		itemSup.setDelStatus(0);
-//		itemSup.setIsTallySync(0);
+		itemSup.setId(Integer.parseInt(request.getParameter("id")));
+		itemSup.setItemId(Integer.parseInt(request.getParameter("itemId")));
+		itemSup.setUomId(Integer.parseInt(request.getParameter("item_uom")));
+		itemSup.setItemUom(request.getParameter("uom"));
+		itemSup.setItemHsncd(request.getParameter("item_hsncd"));		
+		itemSup.setActualWeight(Float.parseFloat(request.getParameter("actual_weight")));
+		itemSup.setBaseWeight(Float.parseFloat(request.getParameter("base_weight")));
+		itemSup.setInputPerQty(Float.parseFloat(request.getParameter("input_per_qty")));		
+		itemSup.setNoOfItemPerTray(Integer.parseInt(request.getParameter("no_of_item")));
+		itemSup.setTrayType(Integer.parseInt(request.getParameter("tray_type")));		
+		itemSup.setCutSection(Integer.parseInt(request.getParameter("cut_section")));
+		itemSup.setShortName(request.getParameter("short_name"));
+		itemSup.setItemCess(Float.parseFloat(request.getParameter("cessPer")));//cess%
+		
+		itemSup.setIsGateSaleDisc(0);
+		itemSup.setIsAllowBday(0);
+		itemSup.setIsGateSale(0);
+		itemSup.setDelStatus(0);
+		itemSup.setIsTallySync(0);
+		
+		itemItemSup.setItemSup(itemSup);
 //
 //		Info info = restTemplate.postForObject(Constants.url + "/saveItemSup", itemSup, Info.class);
 //		System.out.println("Response: " + info.toString());
 		
-		ErrorMessage errorResponse = rest.postForObject("" + Constants.url + "updateProducts", item, ErrorMessage.class);
+		ErrorMessage errorResponse = rest.postForObject("" + Constants.url + "updateProducts", itemItemSup, ErrorMessage.class);
 		
 		return "redirect:/itemList";
 
