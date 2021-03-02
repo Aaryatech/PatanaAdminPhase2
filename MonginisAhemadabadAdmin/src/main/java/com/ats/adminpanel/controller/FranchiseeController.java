@@ -479,11 +479,12 @@ public class FranchiseeController {
 
 			mav.addObject("configureFrList", configureFrList);
 
-			List<Item> itemList = new ArrayList<Item>();
-			AllItemsListResponse itemListResponse = restTemplate.getForObject(Constants.url + "getAllItems",
-					AllItemsListResponse.class);
-
-			itemList = itemListResponse.getItems();
+			/*
+			 * List<Item> itemList = new ArrayList<Item>(); AllItemsListResponse
+			 * itemListResponse = restTemplate.getForObject(Constants.url + "getAllItems",
+			 * AllItemsListResponse.class);
+			 */
+			//itemList = itemListResponse.getItems();
 
 			mav.addObject("configureFrList", configureFrList);
 
