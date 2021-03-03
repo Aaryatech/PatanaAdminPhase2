@@ -27,10 +27,13 @@ import com.ats.adminpanel.commons.AccessControll;
 import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.model.AllEventListResponse;
 import com.ats.adminpanel.model.CustList;
+import com.ats.adminpanel.model.ExportToExcel;
 import com.ats.adminpanel.model.FlavourConf;
 import com.ats.adminpanel.model.FlavourList;
 import com.ats.adminpanel.model.Info;
 import com.ats.adminpanel.model.Route;
+import com.ats.adminpanel.model.RouteAbcVal;
+import com.ats.adminpanel.model.RouteMaster;
 import com.ats.adminpanel.model.SpCakeResponse;
 import com.ats.adminpanel.model.SpecialCake;
 import com.ats.adminpanel.model.SubCategoryRes;
@@ -283,7 +286,7 @@ public class MastersController {
 
 			RestTemplate restTemplate = new RestTemplate();
 			AllFlavoursListResponse allFlavoursListResponse = restTemplate
-					.getForObject(Constants.url + "showFlavourList", AllFlavoursListResponse.class);
+					.getForObject(Constants.url + "showAllFlavourList", AllFlavoursListResponse.class);
 
 			List<Flavour> flavoursList = new ArrayList<Flavour>();
 			List<Integer> spTypeArray = new ArrayList<Integer>();
@@ -435,7 +438,7 @@ public class MastersController {
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 		map.add("spfId", strSpfIdIds);
 		map.add("status", status);
-		ErrorMessage errorResponse = restTemplate.postForObject(Constants.url + "updateFlavourStatus", map,
+		ErrorMessage errorResponse = restTemplate.postForObject(Constants.url + "updateMultiFlavourStatus", map,
 				ErrorMessage.class);
 		System.out.println(errorResponse.toString());
 
@@ -1134,5 +1137,129 @@ public class MastersController {
 		}
 
 		return "redirect:/flConfList";
+	}
+	
+	//------------------------------------------------------------------
+	List<Flavour> flavourList = new ArrayList<Flavour>();
+	List<Long> flavourIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getFlavourPrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<Flavour> getCompanyPrintIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();		
+					
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+			
+			RestTemplate restTemplate = new RestTemplate();
+			
+			AllFlavoursListResponse allFlavoursListResponse = restTemplate
+					.getForObject(Constants.url + "showFlavourList", AllFlavoursListResponse.class);
+
+			flavoursList = allFlavoursListResponse.getFlavour();
+
+			flavourIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			rowData.add("Sr No.");
+			for (int i = 0; i < flavourIds.size(); i++) {
+								
+				if(flavourIds.get(i)==1)
+				rowData.add("Flavour");
+				
+				if(flavourIds.get(i)==2)
+				rowData.add("Add On Rate");
+				
+				if(flavourIds.get(i)==3)
+				rowData.add("Type");
+				
+				if(flavourIds.get(i)==4)
+				rowData.add("Status");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			String routeAbcType = null;
+			for (int i = 0; i < flavoursList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				
+				rowData.add(" "+srno);
+				for (int j = 0; j < flavourIds.size(); j++) {		
+					
+					
+					if(flavourIds.get(j)==1)
+					rowData.add(" " + flavoursList.get(i).getSpfName());
+					
+					if(flavourIds.get(j)==2)
+					rowData.add(" " + flavoursList.get(i).getSpfAdonRate());
+					
+					if(flavourIds.get(j)==3)
+					rowData.add(flavoursList.get(i).getSpType()==1 ? "Chocolate" : "FC");
+					
+					if(flavourIds.get(j)==4)
+					rowData.add(flavoursList.get(i).getDelStatus()==0 ? "Active" : "Inactive");					
+				
+					
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Flavour List");
+			session.setAttribute("reportNameNew", "Flavour List");
+			session.setAttribute("", "");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+			session.setAttribute("excelName", "Flavour Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flavoursList;
+	}
+	
+	@RequestMapping(value = "pdf/getFlavourListPdf/{selctId}", method = RequestMethod.GET)
+	public ModelAndView getCompanyListPdf(HttpServletRequest request,
+			HttpServletResponse response, @PathVariable String selctId) {
+		ModelAndView model = new ModelAndView("masters/masterPdf/flavourPdf");
+		try {
+			
+			RestTemplate restTemplate = new RestTemplate();
+			
+			AllFlavoursListResponse allFlavoursListResponse = restTemplate
+					.getForObject(Constants.url + "showFlavourList", AllFlavoursListResponse.class);
+
+			flavoursList = allFlavoursListResponse.getFlavour();
+
+			flavourIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			model.addObject("flavoursList", flavoursList);
+			model.addObject("flavourIds", flavourIds);
+				
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 }
