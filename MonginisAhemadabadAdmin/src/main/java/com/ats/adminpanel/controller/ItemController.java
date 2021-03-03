@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +48,8 @@ import com.ats.adminpanel.commons.Constants;
 import com.ats.adminpanel.commons.VpsImageUpload;
 import com.ats.adminpanel.model.ExportToExcel;
 import com.ats.adminpanel.model.Info;
+import com.ats.adminpanel.model.RouteAbcVal;
+import com.ats.adminpanel.model.RouteMaster;
 import com.ats.adminpanel.model.StockItem;
 import com.ats.adminpanel.model.TrayType;
 import com.ats.adminpanel.model.RawMaterial.RawMaterialUom;
@@ -57,6 +61,7 @@ import com.ats.adminpanel.model.item.FrItemStockConfigureList;
 import com.ats.adminpanel.model.item.FrItemStockConfigurePost;
 import com.ats.adminpanel.model.item.GetItemSup;
 import com.ats.adminpanel.model.item.GetPrevItemStockResponse;
+import com.ats.adminpanel.model.item.GetProductListExlPdf;
 import com.ats.adminpanel.model.item.Item;
 import com.ats.adminpanel.model.item.ItemAndItemSuplement;
 import com.ats.adminpanel.model.item.ItemSup;
@@ -1856,4 +1861,177 @@ public class ItemController {
 		return info;
 	}
 
+	
+	@RequestMapping(value = "/getProductsPrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<GetProductListExlPdf> getCompanyPrintIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		List<GetProductListExlPdf> printProductList = new ArrayList<GetProductListExlPdf>();
+		try {
+			HttpSession session = request.getSession();		
+					
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+			
+			RestTemplate restTemplate = new RestTemplate();
+			
+			
+
+			GetProductListExlPdf[] allRouteListResponse = restTemplate.getForObject(Constants.url + "/getAllProdctExlPdf",
+					GetProductListExlPdf[].class);
+
+			printProductList = new ArrayList<GetProductListExlPdf>(Arrays.asList(allRouteListResponse));
+
+			List<Long> porductIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			rowData.add("Sr No.");
+			for (int i = 0; i < porductIds.size(); i++) {
+								
+				if(porductIds.get(i)==1)
+					rowData.add("Product");
+				
+				if(porductIds.get(i)==2)
+				rowData.add("UOM");
+				
+				if(porductIds.get(i)==3)
+				rowData.add("Sub Category");
+				
+				if(porductIds.get(i)==4)
+					rowData.add("MRP1");
+				
+				if(porductIds.get(i)==5)
+					rowData.add("MRP2");
+				
+				if(porductIds.get(i)==6)
+					rowData.add("MRP3");
+				
+				if(porductIds.get(i)==7)
+					rowData.add("GST%");
+								
+				if(porductIds.get(i)==8)
+					rowData.add("HSN Code");
+									
+				if(porductIds.get(i)==9)
+					rowData.add("Shelf Life");
+									
+				if(porductIds.get(i)==10)
+					rowData.add("Sort No.");
+									
+				if(porductIds.get(i)==11)
+					rowData.add("Is Active");									
+				
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			String routeAbcType = null;
+			for (int i = 0; i < printProductList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				rowData.add(" "+srno);
+				for (int j = 0; j < porductIds.size(); j++) {		
+					
+					
+					if(porductIds.get(j)==1)
+					rowData.add(" " + printProductList.get(i).getItemName());
+					
+					if(porductIds.get(j)==2)
+					rowData.add(" " + printProductList.get(i).getUom());
+					
+					if(porductIds.get(j)==3)
+					rowData.add(" " + printProductList.get(i).getSubCatName());
+					
+					if(porductIds.get(j)==4)
+					rowData.add(" " + printProductList.get(i).getItemMrp1());
+					
+					if(porductIds.get(j)==5)
+					rowData.add(" " + printProductList.get(i).getItemMrp2());
+					
+					if(porductIds.get(j)==6)
+					rowData.add(" " + printProductList.get(i).getItemMrp3());
+						
+					if(porductIds.get(j)==7)
+					rowData.add(" " + printProductList.get(i).getItemTax3());	
+					
+					if(porductIds.get(j)==8)
+						rowData.add(" " + printProductList.get(i).getItemHsncd());	
+					
+					if(porductIds.get(j)==9)
+						rowData.add(" " + printProductList.get(i).getItemShelfLife());	
+					
+					if(porductIds.get(j)==10)
+						rowData.add(" " + printProductList.get(i).getItemSortId());	
+					
+					if(porductIds.get(j)==11)
+						rowData.add(printProductList.get(i).getItemIsUsed()==1 ? "Active" :
+							printProductList.get(i).getItemIsUsed()==4 ? "Inactive" :
+								printProductList.get(i).getItemIsUsed()==11 ? "Sunday Active" :
+									printProductList.get(i).getItemIsUsed()==12 ? "Monday Active" :
+										printProductList.get(i).getItemIsUsed()==13 ? "Tuesday Active" :
+											printProductList.get(i).getItemIsUsed()==14 ? "Wednesday Active" :
+												printProductList.get(i).getItemIsUsed()==15 ? "Thursday Active" :
+													printProductList.get(i).getItemIsUsed()==16 ? "Friday Active" : "Saturday Active");	
+					
+					
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Product List");
+			session.setAttribute("reportNameNew", "Product List");
+			session.setAttribute("", "");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+			session.setAttribute("excelName", "Product List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return printProductList;
+	}
+	
+	@RequestMapping(value = "pdf/getProductListPdf/{selctId}", method = RequestMethod.GET)
+	public ModelAndView getCompanyListPdf(HttpServletRequest request,
+			HttpServletResponse response, @PathVariable String selctId) {
+		ModelAndView model = new ModelAndView("masters/masterPdf/productPdf");
+		List<GetProductListExlPdf> printProductList = new ArrayList<GetProductListExlPdf>();
+		try {
+			
+			RestTemplate restTemplate = new RestTemplate();
+			
+			GetProductListExlPdf[] allRouteListResponse = restTemplate.getForObject(Constants.url + "/getAllProdctExlPdf",
+					GetProductListExlPdf[].class);
+
+			printProductList = new ArrayList<GetProductListExlPdf>(Arrays.asList(allRouteListResponse));
+
+			List<Long> porductIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			model.addObject("printProductList", printProductList);
+			model.addObject("porductIds", porductIds);
+				
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
 }

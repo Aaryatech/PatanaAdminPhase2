@@ -862,6 +862,13 @@ function calMrp()
 	//document.getElementById("item_rate3").setAttribute('value',  (calRate3).toFixed(2));
 }
 </script>
+<script type="text/javascript">
 
+			function uomChanged() {
+				
+				document.getElementById('uom').value=$('#item_uom option:selected').text();
+				
+			}
+</script>
 </body>
 </html>

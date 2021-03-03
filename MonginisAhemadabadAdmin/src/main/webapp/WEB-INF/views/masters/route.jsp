@@ -260,8 +260,8 @@
 		</div>
 		<!-- END Content -->
 	</div>
-	<table width="100%" class="table table-advance" id="printtable2">
-		<thead style="background-color: #f3b5db;" style="display: none;">
+	<table width="100%" class="table table-advance" id="printtable2" style="display: none;">
+		<thead style="background-color: #f3b5db;" >
 			<tr>
 				<th>Route</th>
 				<th>Prefix</th>

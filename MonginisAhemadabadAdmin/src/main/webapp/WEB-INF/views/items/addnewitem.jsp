@@ -788,6 +788,13 @@ $( "#prdRadios1" ).on( "click", function() {
 
 
 </script>
+<script type="text/javascript">
 
+			function uomChanged() {
+				
+				document.getElementById('uom').value=$('#item_uom option:selected').text();
+				
+			}
+</script>
 </body>
 </html>
