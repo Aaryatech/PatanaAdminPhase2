@@ -271,7 +271,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																			
 																			
 																		<td style="text-align: left;"><c:out
-																			value="${specialCake.isAddonRateAppli == 1 ? 'YEs' : NO}  "></c:out></td>
+																			value="${specialCake.isAddonRateAppli == 1 ? 'YES' : 'NO'}  "></c:out></td>
 																		
 																		<c:choose>
 																	<c:when test="${isEdit==1 and isDelete==1}">
@@ -281,7 +281,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																			<a href="viewSpCakeDetailed/${specialCake.spId}" class="action_btn" data-toggle="tooltip" title="Sp Ingredients Details">
 					                                                  <i class="fa fa-list"></i></a>
                                                                          <a href="deleteSpecialCake/${specialCake.spId}"
-																		onClick="return confirm('Are you sure want to delete this record');" data-toggle="tooltip" title="Delete"><span
+																		onclick="return confirm('Are you sure want to delete this record');" data-toggle="tooltip" title="Delete"><span
 																			class="glyphicon glyphicon-remove"></span></a>
 																			
 																	<a href="javascript:void(0);" data-toggle="tooltip" title="Image" onclick="openImg(${specialCake.spId})">
@@ -330,7 +330,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 																			<a href="viewSpCakeDetailed/${specialCake.spId}" class="action_btn"data-toggle="tooltip" title="Sp Ingredients Details" >
 					                                                  	<i class="fa fa-list"></i></a>
                                                                          <a href="deleteSpecialCake/${specialCake.spId}"  class="disableClick"
-																		onClick="return confirm('Are you sure want to delete this record');"><span
+																		onClick="return confirm('Are you sure want to delete this record!');"><span
 																			class="glyphicon glyphicon-remove"></span></a>
 																	<a href="javascript:void(0);" data-toggle="tooltip" title="Image" onclick="openImg(${specialCake.spId})">
 																		<span class="glyphicon glyphicon-picture"></span>
@@ -569,7 +569,10 @@ if(checkedVals=="")
 	}
 else
 	{
-	window.location.href='${pageContext.request.contextPath}/deleteSpecialCake/'+checkedVals;
+	 if (confirm("Are you sure want to delete this record!")) {
+		 window.location.href='${pageContext.request.contextPath}/deleteSpecialCake/'+checkedVals;
+		  } 
+	
 
 	}
 
