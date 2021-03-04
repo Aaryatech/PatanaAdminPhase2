@@ -45,6 +45,8 @@ import com.ats.adminpanel.model.Event;
 import com.ats.adminpanel.model.EventNameId;
 import com.ats.adminpanel.model.ExportToExcel;
 import com.ats.adminpanel.model.Info;
+import com.ats.adminpanel.model.RouteAbcVal;
+import com.ats.adminpanel.model.RouteMaster;
 import com.ats.adminpanel.model.Setting;
 import com.ats.adminpanel.model.Shape;
 import com.ats.adminpanel.model.SpCake;
@@ -60,6 +62,7 @@ import com.ats.adminpanel.model.masters.GetSpCkSupplement;
 import com.ats.adminpanel.model.masters.Rate;
 import com.ats.adminpanel.model.mastexcel.SpCakeList;
 import com.ats.adminpanel.model.modules.ErrorMessage;
+import com.ats.adminpanel.model.reportv2.GetSpCakeExlPdf;
 import com.ats.adminpanel.model.spprod.CakeType;
 
 @Controller
@@ -1430,4 +1433,218 @@ public class SpecialCakeController {
 		return "redirect:/showCakeTypeList";
 
 	}
+	
+	@RequestMapping(value = "/getSpCakePrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<GetSpCakeExlPdf> getCompanyPrintIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		List<GetSpCakeExlPdf> printSpCakeList = new ArrayList<GetSpCakeExlPdf>();
+		
+		try {
+			HttpSession session = request.getSession();		
+					
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+			
+			RestTemplate restTemplate = new RestTemplate();
+			
+		
+			GetSpCakeExlPdf[] allRouteListResponse = restTemplate.getForObject(Constants.url + "/getSpCakeListPdfExl",
+					GetSpCakeExlPdf[].class);
+
+			printSpCakeList = new ArrayList<GetSpCakeExlPdf>(Arrays.asList(allRouteListResponse));
+
+			List<Long> spCakeIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			rowData.add("Sr No.");
+			for (int i = 0; i < spCakeIds.size(); i++) {
+								
+				if(spCakeIds.get(i)==1)
+					rowData.add("Name");
+				
+				if(spCakeIds.get(i)==2)
+					rowData.add("UOM");
+				
+				if(spCakeIds.get(i)==3)
+					rowData.add("GST %");
+				
+				if(spCakeIds.get(i)==4)
+					rowData.add("HSN Code");
+				
+				if(spCakeIds.get(i)==5)
+					rowData.add("Cake Type");
+				
+				if(spCakeIds.get(i)==6)
+					rowData.add("Cake Shape");
+				
+				if(spCakeIds.get(i)==7)
+					rowData.add("Flavour");
+				
+				if(spCakeIds.get(i)==8)
+					rowData.add("Event");
+				
+				if(spCakeIds.get(i)==9)
+					rowData.add("Book Before");
+				
+				if(spCakeIds.get(i)==10)
+					rowData.add("MAX Range");
+				
+				if(spCakeIds.get(i)==11)
+					rowData.add("MIN Range");
+				
+				if(spCakeIds.get(i)==12)
+					rowData.add("Increamented By");
+				
+				if(spCakeIds.get(i)==13)
+					rowData.add("MRP1");				
+				
+				if(spCakeIds.get(i)==14)
+					rowData.add("MRP2");
+				
+				if(spCakeIds.get(i)==15)
+					rowData.add("MRP3");
+				
+				if(spCakeIds.get(i)==16)
+					rowData.add("Customer Choice");
+				
+				if(spCakeIds.get(i)==17)
+					rowData.add("Addon Appli");
+				
+				if(spCakeIds.get(i)==18)
+					rowData.add("Status");
+				
+								
+				
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			String routeAbcType = null;
+			for (int i = 0; i < printSpCakeList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();				
+				
+				rowData.add(" "+srno);
+				for (int j = 0; j < spCakeIds.size(); j++) {		
+					
+					
+					if(spCakeIds.get(j)==1)
+					rowData.add(" " + printSpCakeList.get(i).getSpName());
+					
+					if(spCakeIds.get(j)==2)
+					rowData.add(" " + printSpCakeList.get(i).getUom());
+					
+					if(spCakeIds.get(j)==3)
+					rowData.add(" " + printSpCakeList.get(i).getSpTax3());
+					
+					if(spCakeIds.get(j)==4)
+					rowData.add(" " + printSpCakeList.get(i).getSpHsncd());
+					
+					if(spCakeIds.get(j)==5)
+					rowData.add(" " + printSpCakeList.get(i).getTypeName());
+					
+					if(spCakeIds.get(j)==6)
+					rowData.add(" " + printSpCakeList.get(i).getShapeName());
+						
+					if(spCakeIds.get(j)==7)
+					rowData.add(" " + printSpCakeList.get(i).getFlavour());	
+					
+					if(spCakeIds.get(j)==8)
+						rowData.add(" " + printSpCakeList.get(i).getEventName());	
+					
+					if(spCakeIds.get(j)==9)
+						rowData.add(" " + printSpCakeList.get(i).getSpBookB4());	
+					
+					if(spCakeIds.get(j)==10)
+						rowData.add(" " + printSpCakeList.get(i).getSpMaxwt());	
+					
+					if(spCakeIds.get(j)==11)
+						rowData.add(" " + printSpCakeList.get(i).getSpMinwt());	
+					
+					if(spCakeIds.get(j)==12)
+						rowData.add(" " + printSpCakeList.get(i).getIncreamentedBy());	
+					
+					if(spCakeIds.get(j)==13)
+						rowData.add(" " + printSpCakeList.get(i).getMrpRate1());	
+					
+					if(spCakeIds.get(j)==14)
+						rowData.add(" " + printSpCakeList.get(i).getMrpRate2());	
+					
+					if(spCakeIds.get(j)==15)
+						rowData.add(" " + printSpCakeList.get(i).getMrpRate3());	
+					
+					if(spCakeIds.get(j)==16)
+						rowData.add(printSpCakeList.get(i).getIsCustChoiceCk() == 0 ? "Yes" : "No");	
+					
+					if(spCakeIds.get(j)==17)
+						rowData.add(printSpCakeList.get(i).getIsAddonRateAppli()== 0 ? "Yes" : "No");	
+					
+					if(spCakeIds.get(j)==18)
+						rowData.add(printSpCakeList.get(i).getIsUsed()== 0 ? "Yes" : "No");	
+					
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Sp Cake List");
+			session.setAttribute("reportNameNew", "Sp Cake List");
+			session.setAttribute("", "");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+			session.setAttribute("excelName", "Sp Cake Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return printSpCakeList;
+	}
+	
+	
+	@RequestMapping(value = "pdf/getSpCakeListPdf/{selctId}", method = RequestMethod.GET)
+	public ModelAndView getCompanyListPdf(HttpServletRequest request,
+			HttpServletResponse response, @PathVariable String selctId) {
+		
+		ModelAndView model = new ModelAndView("masters/masterPdf/spCakePdf");
+		
+		List<GetSpCakeExlPdf> printSpCakeList = new ArrayList<GetSpCakeExlPdf>();
+		try {
+			
+			RestTemplate restTemplate = new RestTemplate();
+			
+			GetSpCakeExlPdf[] allRouteListResponse = restTemplate.getForObject(Constants.url + "/getSpCakeListPdfExl",
+					GetSpCakeExlPdf[].class);
+
+			printSpCakeList = new ArrayList<GetSpCakeExlPdf>(Arrays.asList(allRouteListResponse));
+
+			List<Long> spCakeIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			model.addObject("printSpCakeList", printSpCakeList);
+			model.addObject("spCakeIds", spCakeIds);
+				
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+	
 }
