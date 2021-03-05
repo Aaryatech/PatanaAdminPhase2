@@ -7,7 +7,7 @@ public class GetFrMenuExlPdf {
 	private String menuDesc;
 	private String menuImage;
 	private String selectedMenuImage;
-	private String isSameDayApplicable;
+	private int isSameDayApplicable;
 	private int mainCatId;
 	private int delStatus;
 	
@@ -54,11 +54,11 @@ public class GetFrMenuExlPdf {
 		this.selectedMenuImage = selectedMenuImage;
 	}
 
-	public String getIsSameDayApplicable() {
+	public int getIsSameDayApplicable() {
 		return isSameDayApplicable;
 	}
 
-	public void setIsSameDayApplicable(String isSameDayApplicable) {
+	public void setIsSameDayApplicable(int isSameDayApplicable) {
 		this.isSameDayApplicable = isSameDayApplicable;
 	}
 
