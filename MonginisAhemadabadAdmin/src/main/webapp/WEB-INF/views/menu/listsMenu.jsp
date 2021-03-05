@@ -65,8 +65,7 @@
 												<th width="17" style="width: 18px">#</th>
 												<th width="221" align="left">Menu Title</th>
 												<th width="301" align="left">Menu Desc</th>
-												<th width="185" align="left">Menu Image</th>
-
+												<th width="185" align="left">Category</th>
 												<th width="190" align="center">Action</th>
 											</tr>
 										</thead>
@@ -81,8 +80,8 @@
 												<th width="17" style="width: 18px">#</th>
 												<th width="221" align="left">Menu Title</th>
 												<th width="301" align="left">Menu Desc</th>
-												<th width="185" align="left">Menu Image</th>
-
+												<th width="185" align="left">Category</th>
+												<th width="185" align="left">Type</th>
 												<th width="190" align="center">Action</th>
 
 											</tr>
@@ -90,19 +89,37 @@
 										<tbody>
 											<c:forEach items="${mesnuShowList}" var="menu"
 												varStatus="count">
+
+												<c:set value="0" var="flag" />
+												<c:forEach items="${menuIds}" var="menuIds">
+													<c:if
+														test="${menu.menuId == menuIds.menuId && menu.isSameDayApplicable == menuIds.type}">
+														<c:set value="1" var="flag" />
+													</c:if>
+												</c:forEach>
+
 												<tr>
 													<td><c:out value="${count.index+1}" /></td>
 													<td align="left"><c:out value="${menu.menuTitle}" /></td>
 													<td align="left"><c:out value="${menu.menuDesc}" /></td>
-													<td align="left"><img src="${url}${menu.menuImage}"
+													<td align="left"><c:out value="${menu.catName}" /></td>
+													<td align="left"><c:out 
+													value="${menu.isSameDayApplicable==0 ? 'Regular' : 
+															menu.isSameDayApplicable==1 ? 'Same Day Regular' : 
+															menu.isSameDayApplicable==2 ? 'Regular with limit' : 
+														  	menu.isSameDayApplicable==3 ? 'Regular cake As SP Order' : 'Delivery And Production Date'}" /></td>
+													<%-- <td align="left"><img src="${url}${menu.menuImage}"
 														width="120" height="100"
-														onerror="this.src='resources/img/No_Image_Available.jpg';" /></td>
+														onerror="this.src='resources/img/No_Image_Available.jpg';" /></td> --%>
 													<td align="center"><a
 														href="updateMenuShow/${menu.menuId}"><span
-															class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp; <a
+															class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+															
+															<c:if test="${flag==0}">
+															 <a
 														href="deleteMenuShow/${menu.menuId}"
 														onClick="return confirm('Are you sure want to delete this record');"><span
-															class="glyphicon glyphicon-remove"></span></a></td>
+															class="glyphicon glyphicon-remove"></span></a></c:if></td>
 												</tr>
 											</c:forEach>
 

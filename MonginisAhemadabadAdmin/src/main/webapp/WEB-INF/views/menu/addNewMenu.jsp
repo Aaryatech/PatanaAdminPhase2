@@ -121,31 +121,6 @@
 											</select>
 										</div>
 									</div>
-
-									<%-- <div class="col2">
-										<label class="col-sm-3 col-lg-2 control-label"> Select
-											Flavour </label>
-										<div class="col-sm-9 col-lg-3 controls">
-											<select name="flavourId" id="flavourId"
-												class="form-control chosen" placeholder="Select Flavour"
-												data-rule-required="true" multiple="multiple">
-
-												<c:forEach items="${flavoursList}" var="flavoursList"
-													varStatus="count">
-													<c:choose>
-														<c:when test="${flavoursList.spfId==flavoursList.spfId}">
-															<option value="${flavoursList.spfId}"><c:out
-																	value="${flavoursList.spfName}" /></option>
-														</c:when>
-														<c:otherwise>
-															<option value="${flavoursList.spfId}"><c:out
-																	value="${flavoursList.spfName}" /></option>
-														</c:otherwise>
-													</c:choose>
-												</c:forEach>
-											</select>
-										</div>
-									</div> --%>
 								</div>
 
 
@@ -159,11 +134,7 @@
 									</div>
 								</div>
 
-
-
-
-
-								<div class="form-group">
+								<!-- <div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Menu
 										Image</label>
 									<div class="col-sm-6 col-lg-3 controls">
@@ -217,7 +188,7 @@
 										</div>
 
 									</div>
-								</div>
+								</div> -->
 
 
 								<div class="form-group">
@@ -230,13 +201,12 @@
 								</div>
 
 								<div class="form-group">
-									<label class="col-sm-3 col-lg-2 control-label">Is Same
-										Day Applicable</label>
+									<label class="col-sm-3 col-lg-2 control-label">Type</label>
 									<div class="col-sm-9 col-lg-10 controls">
 										<select class="form-control input-sm"
 											name="isSameDayAppicable" id="isSameDayAppicable">
 											<option value="0">Regular</option>
-											<option value="1">Same Day regular</option>
+											<option value="1">Same Day Regular</option>
 											<option value="2">Regular with limit</option>
 											<option value="3">Regular cake As SP Order</option>
 											<option value="4">Delivery And Production Date</option>

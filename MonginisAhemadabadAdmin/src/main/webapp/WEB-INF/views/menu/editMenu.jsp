@@ -132,7 +132,7 @@
 
 
 
-								<div class="form-group">
+								<%-- <div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Photo1</label>
 									<div class="col-sm-6 col-lg-3 controls">
 										<div class="fileupload fileupload-new"
@@ -182,7 +182,7 @@
 										</div>
 
 									</div>
-								</div>
+								</div> --%>
 
 
 								<div class="form-group">
