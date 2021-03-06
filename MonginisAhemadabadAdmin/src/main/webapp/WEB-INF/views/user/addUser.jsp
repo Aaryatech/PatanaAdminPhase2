@@ -66,7 +66,7 @@
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">User Name</label>
 									<div class="col-sm-6 col-lg-4 controls">
-										<input type="text" name="uname" id="uname" onkeyup="sameUser();" class="form-control"placeholder="User Name"data-rule-required="true" />
+										<input type="text" name="uname" id="uname" class="form-control"placeholder="User Name"data-rule-required="true" />
 									</div>
 									<input type="hidden" name="umo_id" id="umo_id" />
 									

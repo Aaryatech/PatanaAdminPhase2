@@ -115,6 +115,38 @@ public class UserController {
 		
 	}
 	
+	@RequestMapping(value = "/getUniqueEmailById", method = RequestMethod.GET)
+	public @ResponseBody Info getUniqueEmailById(HttpServletRequest request, HttpServletResponse response) {
+		Info info = new Info();
+	try{
+																																																																																																																																																																																																																																																																																																																																																																																																																																																
+		RestTemplate rest = new RestTemplate();
+		String email = request.getParameter("email");
+		int userId = Integer.parseInt(request.getParameter("userId"));
+		
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("email", email);
+			map.add("userId", userId);
+		
+		User user = rest.postForObject(Constants.url + "getUserInfoByEmailAndId", map, User.class);
+	//	System.err.println("User-----------"+user);
+		if(user!=null) {
+			info.setError(false);
+			info.setMessage("User Found");
+			System.err.println(info);
+		}else {
+			info.setError(true);
+			info.setMessage("User Not Found");
+			System.err.println(info);
+		}
+	}catch (Exception e) {
+		e.printStackTrace();		
+	}
+		
+		return info;
+		
+	}
+	
 	@RequestMapping(value = "/getUniqueContact", method = RequestMethod.GET)
 	public @ResponseBody Info getUniqueContact(HttpServletRequest request, HttpServletResponse response) {
 		Info info = new Info();
@@ -127,6 +159,38 @@ public class UserController {
 			map.add("contact", contact);
 		
 		User user = rest.postForObject(Constants.url + "getUserInfoByContact", map, User.class);
+		//System.err.println("User-----------"+user);
+		if(user!=null) {
+			info.setError(false);
+			info.setMessage("User Found");
+			System.err.println(info);
+		}else {
+			info.setError(true);
+			info.setMessage("User Not Found");
+			System.err.println(info);
+		}
+	}catch (Exception e) {
+		e.printStackTrace();		
+	}
+		
+		return info;
+		
+	}
+	
+	
+	@RequestMapping(value = "/getUniqueContactAndId", method = RequestMethod.GET)
+	public @ResponseBody Info getUniqueContactAndId(HttpServletRequest request, HttpServletResponse response) {
+		Info info = new Info();
+	try{
+		
+		RestTemplate rest = new RestTemplate();
+		String contact = request.getParameter("contact");
+		int userId = Integer.parseInt(request.getParameter("userId"));
+		//System.out.println("Contact--------------------------"+contact);
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("contact", contact);
+			map.add("userId", userId);
+		User user = rest.postForObject(Constants.url + "getUserInfoByContactAndId", map, User.class);
 		//System.err.println("User-----------"+user);
 		if(user!=null) {
 			info.setError(false);

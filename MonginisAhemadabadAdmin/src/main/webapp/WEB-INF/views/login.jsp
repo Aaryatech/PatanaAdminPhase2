@@ -5,10 +5,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>ATS</title>
+	<title>Monginis</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/img/ats-logo.png"/>
+	<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/img/monginislogo.png"/>
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/vendor/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
@@ -22,7 +22,8 @@
 <style type="text/css">
 .bg-overlay {
     /* background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url("${pageContext.request.contextPath}/resources/img/cake.jpg"); */
-   background-repeat: no-repeat;
+   	background:  url("${pageContext.request.contextPath}/resources/img/lgn_bg.jpg");
+    background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
     color: #fff;
@@ -42,7 +43,7 @@
 				<div class="row">
 					<div class="col-md-6">
 						<div class="login_left">
-						<img src="${pageContext.request.contextPath}/resources/img/ats-logo.png" style="margin: 40% 0px 0px 20%;"> 
+						<img src="${pageContext.request.contextPath}/resources/img/mongi.png" style="margin: 30% 0px 0px 30%;"> 
 						<!-- <h2 class="welcome">Welcome to ATS</h2>
 						<p class="welcome_txt">	Lets make ATS a part of everybody’s celebration!!</p>  -->
 							
@@ -113,7 +114,7 @@
 					
 						<span class="txt1" >
 							<!-- Forgot -->
-							<a href="${pageContext.request.contextPath}/forgetPwd"><span class="links">
+							<a href="${pageContext.request.contextPath}/forgetPwd"><span class="links" style="color: #fff;">
 							Forgot Password</span></a>
 						</span>
 

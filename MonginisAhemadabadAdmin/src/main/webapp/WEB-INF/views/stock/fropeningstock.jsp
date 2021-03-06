@@ -65,7 +65,7 @@
 
 			<div class="box-content">
 				<div class="row">
-					<div class="form-group col-md-9">
+					<div class="form-group col-lg-12">
 						<label class=" col-md-2 control-label franchisee_label">Select
 							Franchise </label>
 						<div class=" col-md-3 controls franchisee_select">

@@ -8,7 +8,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>Dashboard - Admin</title>
+<title>Monginis</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -29,8 +29,9 @@
 <link rel="shortcut icon" href="resources/img/favicon.png">
 
 <style type="text/css">
-/* .bg-overlay {
-    background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url("${pageContext.request.contextPath}/resources/img/cake.jpg");
+.bg-overlay {
+    /* background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url("${pageContext.request.contextPath}/resources/img/cake.jpg"); */
+   background:  url("${pageContext.request.contextPath}/resources/img/lgn_bg.jpg");
    background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -38,7 +39,7 @@
     height:auto;
     width:auto;
     padding-top: 0px;
-}     */
+}    
 
 .login_bx{background: #FFF; border-radius:10px; color:#000; margin: 200px 0 0 0;}
 .login_left{padding:40px 10px 30px 40px;}

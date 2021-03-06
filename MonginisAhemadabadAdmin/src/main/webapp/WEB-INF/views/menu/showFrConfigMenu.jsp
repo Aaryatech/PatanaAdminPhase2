@@ -41,7 +41,7 @@
 		<div class="page-title">
 			<div>
 				<h1>
-					<i class="fa fa-file-o"></i>Bill-wise Report
+					<i class="fa fa-file-o"></i>Configure Franchise And Menu
 				</h1>
 				<h4></h4>
 			</div>
@@ -63,7 +63,7 @@
 		<div class="box">
 			<div class="box-title">
 				<h3>
-					<i class="fa fa-bars"></i>Franchise Menu Configuration
+					<i class="fa fa-bars"></i>Franchise Menu Configure
 				</h3>
 
 			</div>

@@ -1,3 +1,3 @@
 <footer>
-	<p>2021 © ATS.</p>
+	<p>2021 © Monginis.</p>
 </footer>

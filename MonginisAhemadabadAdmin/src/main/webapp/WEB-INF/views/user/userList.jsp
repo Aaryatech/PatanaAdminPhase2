@@ -6,8 +6,8 @@
 
 <jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 <body>
-<c:url var="getUniqueEmail" value="/getUniqueEmail" />
-	<c:url var="getUniqueContact" value="/getUniqueContact" />	
+	<c:url var="getUniqueContact" value="/getUniqueContactAndId" />	
+<c:url var="getUniqueEmailById" value="/getUniqueEmailById" />	
 	
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
 	<div class="container" id="main-container">
@@ -59,6 +59,7 @@
 						<div class="box-content">
 							<form action="${pageContext.request.contextPath}/editUserProcess"
 								class="form-horizontal" id="validation-form" method="post">
+								<input type="hidden" name="userId" id="userId"  value="${user.id}"/>
 <%-- 
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">User
@@ -99,7 +100,7 @@
 									<label class="col-sm-3 col-lg-2 control-label">Email</label>
 									<div class="col-sm-6 col-lg-4 controls">
 										<input type="text" name="email" id="email"
-											value="${user.email}" 
+											value="${user.email}"  onkeyup="sameEmail()"
 											class="form-control" placeholder="Email"
 											data-rule-required="true" />
 									</div>
@@ -111,7 +112,7 @@
 									<div class="col-sm-6 col-lg-4 controls">
 										<input type="text" name="contact" maxlength="10"
 											value="${user.contact}" id="contact"
-											 class="form-control"
+											 class="form-control" onkeyup="sameContact();"
 											placeholder="Contact" data-rule-required="true" />
 									</div>
 									
@@ -393,15 +394,17 @@ function validateEmail(email) {
 function  sameEmail(){
 	var valid = true
 		var email = $("#email").val();
+		var userId = $("#userId").val();
 		//alert(email);
 		$(document)
 				.ready(
 						function() {
 							$
 									.getJSON(
-											'${getUniqueEmail}',
+											'${getUniqueEmailById}',
 											{
 												email : email,
+												userId : userId,
 												ajax : 'true'
 											},
 											function(data) {
@@ -420,6 +423,7 @@ function  sameEmail(){
 function  sameContact(){
 	var valid = true
 		var contact = $("#contact").val();
+	    var userId = $("#userId").val();
 	//	alert(contact);
 		$(document)
 				.ready(
@@ -429,6 +433,7 @@ function  sameContact(){
 											'${getUniqueContact}',
 											{
 												contact : contact,
+												userId : userId,
 												ajax : 'true'
 											},
 											function(data) {

@@ -8,7 +8,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>Dashboard - Admin</title>
+<title>Monginis</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -102,7 +102,7 @@
 			<!-- BEGIN Navlist -->
 			<a class="navbar-brand" href="#"
 				style="width: 100%; text-align: center; padding: 15px 0px; "> <img
-				src="${pageContext.request.contextPath}/resources/img/ats-logo.png"
+				src="${pageContext.request.contextPath}/resources/img/monginislogo.png"
 				style="position: relative;" alt="">
 			</a>
 			<div style="clear: both;"></div>
