@@ -13,13 +13,13 @@
 			<li class="user-profile">
 			<a data-toggle="dropdown" href="#"
 				class="user-menu dropdown-toggle"> 
-					<span class="hhh" id="user_info"> Admin </span> <i
+					<span class="hhh" id="user_info"> ${userName} </span> <i
 					class="fa fa-caret-down"></i>
 			</a> 
 				<ul class="dropdown-menu dropdown-navbar" id="user_menu">				
 					<li>
-						 <a href="${pageContext.request.contextPath}/logout">Logout <c:out
-								value="${sessionScope['userName']}" />
+						 <a href="${pageContext.request.contextPath}/logout">Logout <%-- <c:out
+								value="${sessionScope['userName']}" /> --%>
 					</a>
 					</li>
 					</ul>
