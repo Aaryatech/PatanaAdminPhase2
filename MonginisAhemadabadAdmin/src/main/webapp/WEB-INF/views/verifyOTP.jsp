@@ -43,7 +43,7 @@
 					<input type="text" placeholder="OTP" class="form-control" id="otp" name="otp" maxlength="6" />
 				</div>
 			</div>
-			<input type="hidden" id="username" name="username" value="${username}">
+			<input type="hidden" id="username" name="mobNo" value="${mobNo}">
 			<div class="form-group">
 				<div class="controls">
 					<button type="submit" class="btn btn-primary form-control">Verify OTP</button>

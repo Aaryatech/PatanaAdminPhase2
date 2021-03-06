@@ -29,7 +29,7 @@
 <link rel="shortcut icon" href="resources/img/favicon.png">
 
 <style type="text/css">
-.bg-overlay {
+/* .bg-overlay {
     background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url("${pageContext.request.contextPath}/resources/img/cake.jpg");
    background-repeat: no-repeat;
     background-size: cover;
@@ -38,7 +38,7 @@
     height:auto;
     width:auto;
     padding-top: 0px;
-}    
+}     */
 
 .login_bx{background: #FFF; border-radius:10px; color:#000; margin: 200px 0 0 0;}
 .login_left{padding:40px 10px 30px 40px;}
@@ -62,6 +62,7 @@ text-transform: uppercase; margin: 15px 0 5px 0;}
 		<div class="col-md-8">
 			<div class="login_bx">
 				<div class="row">
+				<h3>${msg}</h3>
 					<div class="col-md-6">
 						<div class="login_left">
 							<form id="form-forgot" action="${pageContext.request.contextPath}/getUserInfo" method="post">
@@ -69,7 +70,7 @@ text-transform: uppercase; margin: 15px 0 5px 0;}
 			
 			<div class="form-group">
 				<div class="controls">
-					<input type="text" placeholder="Username" class="form-control" id="username" name="username" required/>
+					<input type="text" placeholder="Enter Registered Mobile No." class="form-control" id="mobNo" name="mobNo" maxlength="10" required/>
 				</div>
 			</div>
 			<div class="form-group">

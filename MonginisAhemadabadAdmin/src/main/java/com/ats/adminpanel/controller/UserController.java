@@ -190,16 +190,16 @@ public class UserController {
 	try{
 		
 		RestTemplate rest = new RestTemplate();
-		String username = request.getParameter("username");
-		//System.out.println("Contact--------------------------"+username);
+		String mobNo = request.getParameter("mobNo");
+		System.out.println("Contact--------------------------"+mobNo);
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-		map.add("username", username);
+		map.add("mobEmail", mobNo);
 		
-		User user = rest.postForObject(Constants.url + "getUserInfoByUsername", map, User.class);
+		User user = rest.postForObject(Constants.url + "getMnUserDetailByMobNo", map, User.class);
 		System.err.println("User Info-----------"+user);
 		if(user!=null) {
 			model = new ModelAndView("verifyOTP");
-			model.addObject("username", username);
+			model.addObject("mobNo", mobNo);
 			info.setError(false);
 			info.setMessage("User Found");
 			System.err.println(info);
@@ -238,7 +238,7 @@ public class UserController {
 
 			map.add("otp", otp);
 
-			User user = rest.postForObject(Constants.url + "VerifyOTP", map, User.class);	
+			User user = rest.postForObject(Constants.url + "verifyOTP", map, User.class);	
 		//	System.err.println("OTP User--------------"+user);
 
 			if (user.getId() == 0) {
@@ -303,7 +303,7 @@ public class UserController {
 	@RequestMapping(value = "/reGenOtp1", method = RequestMethod.POST)
 	public ModelAndView reGenOtp1(HttpServletRequest request, HttpServletResponse response) {
 		String c = null;
-		System.err.println("Hiii  checkValue  ");
+		
 		Info info = new Info();
 		ModelAndView model = null;
 		User user = new User();
@@ -312,17 +312,17 @@ public class UserController {
 			RestTemplate rest = new RestTemplate();
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
-			String username = request.getParameter("username");
+			String mobNo = request.getParameter("mobNo");
 		//	System.err.println("Username for regeneration mob***  " + username);
 
-			map.add("username", username);
+			map.add("mobEmail", mobNo);
 
-			user = rest.postForObject(Constants.url + "getUserInfoByUsername", map, User.class);
-			System.err.println("Info Response  " + info.toString());
+			user = rest.postForObject(Constants.url + "getMnUserDetailByMobNo", map, User.class);
+		//	System.err.println("Info Response  " + info.toString());
 
 			if (user!=null) {
 				model = new ModelAndView("verifyOTP");
-				model.addObject("username", username);
+				model.addObject("mobNo", mobNo);
 				model.addObject("msg", "OTP Resent Please check");
 				start = Instant.now();
 			} else {
