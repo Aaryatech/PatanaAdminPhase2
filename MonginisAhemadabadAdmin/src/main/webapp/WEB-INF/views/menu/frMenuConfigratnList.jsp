@@ -6,12 +6,20 @@
 <jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 <body>
 <c:url value="/getFrMenuConfigPrintIds" var="getFrMenuConfigPrintIds"/>
+<c:url value="/getFranchiseByFrMenuId" var="getFranchiseByFrMenuId"/>
 <style>
 	.modal-content{
 	    margin-top: 10%;
 	    margin-left: 35%;
 	    width: 40%;
 	    height: 50%;
+	}
+	
+	.modal-content-fr{
+	    margin-top: 5%;
+	    margin-left: 10%;
+	    width: 80%;
+	    height: 80%;
 	}
 	</style>
 	<jsp:include page="/WEB-INF/views/include/logout.jsp"></jsp:include>
@@ -102,7 +110,9 @@
 												varStatus="count">
 												<tr>
 													<td><c:out value="${count.index+1}" /></td>
-													<td style="text-align: left;"><c:out value="${menu.menuTitle}" /></td>
+													<td style="text-align: left;">
+													<a href="javascript:void(0);" onclick="showFranchise(${menu.menuId}, '${menu.menuTitle}')">
+													<c:out value="${menu.menuTitle}" /></a></td>
 													<td style="text-align: left;"><c:out value="${menu.catName}" /></td>
 													<td style="text-align: left;"><c:out
 															value="${menu.type==0 ? 'Regular' : 
@@ -143,8 +153,9 @@
 		<!-- END Content -->
 	</div>
 	<!-- END Container -->
-<table width="100%" class="table table-advance" id="printtable2" style="display: none;">
-		<thead style="background-color: #f3b5db;" >
+	<table width="100%" class="table table-advance" id="printtable2"
+		style="display: none;">
+		<thead style="background-color: #f3b5db;">
 			<tr>
 				<th>Menu Title</th>
 				<th>Category</th>
@@ -160,15 +171,15 @@
 
 	<div id="myModal" class="modal">
 
-  <!-- Modal content -->
-  <div class="modal-content" id="modal_theme_primary">
-    <span class="close">&times;</span>
-    <div class="box">
-									<div class="box-title">
-										<h3>
-											<i class="fa fa-table"></i> Select Columns
-										</h3>										
-									</div>
+		<!-- Modal content -->
+		<div class="modal-content" id="modal_theme_primary">
+			<span class="close">&times;</span>
+			<div class="box">
+				<div class="box-title">
+					<h3>
+						<i class="fa fa-table"></i> Select Columns
+					</h3>
+				</div>
 
 				<div class="box-content">
 					<div class="clearfix"></div>
@@ -177,8 +188,7 @@
 							<thead style="background-color: #f3b5db;">
 								<tr>
 									<th width="15"><input type="checkbox" name="selAll"
-										id="selAllChk" />
-									</th>
+										id="selAllChk" /></th>
 									<th>Headers</th>
 								</tr>
 							</thead>
@@ -186,24 +196,70 @@
 							</tbody>
 						</table>
 						<span class="validation-invalid-label" id="error_modelchks"
-										style="display: none;">Select Check Box.</span>
+							style="display: none;">Select Check Box.</span>
 					</div>
 				</div>
 				<div class="form-group" style="background-color: white;">
-									&nbsp;	&nbsp;	&nbsp;	&nbsp;
-										<input type="button" margin-right: 5px;"
-											class="btn btn-primary" id="expExcel" onclick="getIdsReport(1)" 
-											value="Excel" />
-									&nbsp;	&nbsp;	&nbsp;	&nbsp;
-										<input type="button" margin-right: 5px;"
-											class="btn btn-primary" onclick="getIdsReport(2)" 
-											value="Pdf" />
-									</div>
-									</div>
-								
-  </div>
+					&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
+						margin-right: 5px;"
+											class="btn btn-primary"
+						id="expExcel" onclick="getIdsReport(1)" value="Excel" /> &nbsp;
+					&nbsp; &nbsp; &nbsp; <input type="button"
+						margin-right: 5px;"
+											class="btn btn-primary"
+						onclick="getIdsReport(2)" value="Pdf" />
+				</div>
+			</div>
 
-</div>
+		</div>
+
+	</div>
+	
+	<!-- Franchise Model -->
+	<div id="frModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content-fr" id="modal_fr">
+
+			<div class="box">
+				<div class="box-title">
+					<h3>
+						<i class="fa fa-table"></i> <u><span id="menu_title"></span></u> - Menu Alloted Franchises
+					</h3>
+					<input type="button" class="btn btn-primary" style="
+    float: right;
+						id="btn_close" onclick="clsFrModal()" value="Close" />
+				</div>
+
+				<div class="box-content">
+					<div class="clearfix"></div>
+					<div class="table-responsive" style="border: 0">
+						<table width="100%" class="table table-advance" id="frtable_grid">
+							<thead style="background-color: #f3b5db;">
+								<tr>
+									<th width="15">Sr No.</th>
+									<th style="text-align: center;">Franchise</th>
+									<th style="text-align: center;">Code</th>
+									<th style="text-align: center;">City</th>
+									<th style="text-align: center;">Owner name</th>
+									<th style="text-align: center;">Mobile No.</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</div>
+			<!-- <div class="form-group" style="background-color: white;">
+				&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
+					margin-right: 5px;"
+											class="btn btn-primary"
+					id="btn_close" onclick="clsFrModal()" value="Close" />
+
+			</div> -->
+		</div>
+	</div>
 	<!--basic scripts-->
 	<script
 		src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -370,6 +426,55 @@ window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";
   }
+}
+</script>
+<script type="text/javascript">
+var modalFr = document.getElementById("frModal");
+function showFranchise(menuId, menuName){	
+	$('#frtable_grid td').remove();
+	document.getElementById( "menu_title" ).innerHTML=menuName;
+	$
+	.getJSON(
+			'${getFranchiseByFrMenuId}',
+			{							
+				menuId : menuId,
+				ajax : 'true'
+			},
+			function(data) {	
+				if(data==""){
+					alert("No Franchise Found");
+				}else{
+					modalFr.style.display = "block";						
+				}
+				$.each(data, function(key, fr) {
+					
+					var index = key + 1;	
+					var tr = $('<tr></tr>');
+					tr.append($('<td></td>').html(index));
+					
+					tr.append($('<td style="text-align:left;"></td>').html(
+							fr.frName));
+					
+					tr.append($('<td style="text-align:center;"></td>').html(
+							fr.frCode));
+					
+					tr.append($('<td style="text-align:left;"></td>').html(
+							fr.frCity));
+					
+					tr.append($('<td style="text-align:left;"></td>').html(
+							fr.frOwner));
+					
+					tr.append($('<td style="text-align:center;"></td>').html(
+							fr.frTarget));
+					
+					$('#frtable_grid tbody').append(tr);
+
+				})
+			});
+}	
+
+function clsFrModal() {
+	modalFr.style.display = "none";
 }
 </script>
 </body>

@@ -36,6 +36,7 @@ import com.ats.adminpanel.model.AllFrIdNameList;
 import com.ats.adminpanel.model.AllRoutesListResponse;
 import com.ats.adminpanel.model.ErrorMessage;
 import com.ats.adminpanel.model.ExportToExcel;
+import com.ats.adminpanel.model.Franchisee;
 import com.ats.adminpanel.model.GetFrMenuExlPdf;
 import com.ats.adminpanel.model.GetMenuIdAndType;
 import com.ats.adminpanel.model.GetMenuShow;
@@ -522,6 +523,28 @@ public class MenuController {
 
 		mav.addObject("mesnuShowList", mesnuShowList);
 		return mav;
+	}
+	
+	@RequestMapping(value = "/getFranchiseByFrMenuId", method = RequestMethod.GET)
+	public @ResponseBody List<Franchisee> getFranchiseByFrMenuId(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		List<Franchisee> franchiseList = new ArrayList<Franchisee>();
+		try {		
+			
+			
+			int menuId = Integer.parseInt(request.getParameter("menuId")); 
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("menuId", menuId);
+			
+			Franchisee[] frArr = restTemplate.postForObject(Constants.url + "/getAllFranchisesByMenuId", map,
+					Franchisee[].class);				
+			franchiseList = new ArrayList<Franchisee>(Arrays.asList(frArr));	
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return franchiseList;
 	}
 
 	@RequestMapping(value = "/getFrMenuConfigPrintIds", method = RequestMethod.GET)

@@ -200,7 +200,7 @@
 														
 															<td style="text-align: center;"><c:out value="${count.index+1}"/></td>
 															<td style="text-align: center;">
-															<a href="javascript:void(0);" onclick="showFranchise(${routeList.routeId})">
+															<a href="javascript:void(0);" onclick="showFranchise(${routeList.routeId}, '${routeList.routeName}')">
 															<c:out
 																	value="${routeList.routeName}"></c:out></a></td>
 															<td style="text-align: center;"><c:out
@@ -218,9 +218,9 @@
 																</c:when>
 															</c:choose>
 															
-															<td style="text-align: center;"><c:out
+															<td style="text-align: left;"><c:out
 																	value="${type}"></c:out></td>
-															<td style="text-align: center;"><a
+															<td style="text-align: left;"><a
 																href="${pageContext.request.contextPath}/updateRoute/${routeList.routeId}"><span
 																	class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;	
 																<c:if test="${flag==0}">
@@ -332,8 +332,12 @@
 			<div class="box">
 				<div class="box-title">
 					<h3>
-						<i class="fa fa-table"></i> Route Alloted Franchises
+						<i class="fa fa-table"></i><u><span id="route_title"></span></u> - Route Alloted Franchises
 					</h3>
+					
+					<input type="button" class="btn btn-primary" style="
+    float: right;
+						id="btn_close" onclick="clsFrModal()" value="Close" />
 				</div>
 
 				<div class="box-content">
@@ -355,15 +359,7 @@
 						</table>
 					</div>
 				</div>
-
-			</div>
-			<div class="form-group" style="background-color: white;">
-				&nbsp; &nbsp; &nbsp; &nbsp; <input type="button"
-					margin-right: 5px;"
-											class="btn btn-primary"
-					id="btn_close" onclick="clsFrModal()" value="Close" />
-
-			</div>
+			</div>			
 		</div>
 	</div>
 
@@ -582,8 +578,9 @@ $( "#short_name" ).change(function() {
 	});
 	
 var modalFr = document.getElementById("frModal");
-	function showFranchise(routeId){	
+	function showFranchise(routeId, routeName){	
 		$('#frtable_grid td').remove();
+		document.getElementById( "route_title" ).innerHTML=routeName; 
 		$
 		.getJSON(
 				'${getFranchiseByRoutIds}',
