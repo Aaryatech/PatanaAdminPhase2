@@ -51,11 +51,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
   cursor: pointer;
 }
 		
-	.modal-content{
-	    margin-top: 5%;
-	    margin-left: 35%;
-	    width: 55%;
-	    height: 50%;
+	.col-modal-content{
+	    margin-left: 25%;
+	    width: 50%;
+	    height: 20%;
 	}
 	</style>
 
@@ -506,16 +505,18 @@ body {font-family: Arial, Helvetica, sans-serif;}
 		</tbody>
 	</table>
 
-	<div id="myModal" class="modal">
+	<div id="modal_exl_pdf" class="modal">
 
   <!-- Modal content -->
-  <div class="modal-content" id="modal_theme_primary">
-    <span class="close">&times;</span>
+  <div class="col-modal-content" id="modal_theme_primary">
+    
     <div class="box">
 									<div class="box-title">
 										<h3>
 											<i class="fa fa-table"></i> Select Columns
-										</h3>										
+										</h3>	
+										<input type="button" class="btn btn-primary" style=" float: right;
+						id="btn_close" onclick="clsFrModal()" value="Close" />							
 									</div>
 
 				<div class="box-content">
@@ -524,10 +525,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
 						<table width="100%" class="table table-advance" id="modelTable">
 							<thead style="background-color: #f3b5db;">
 								<tr>
-									<th width="15"><input type="checkbox" name="selAll"
+									<th width="3"><input type="checkbox" name="selAll"
 										id="selAllChk" />
 									</th>
-									<th>Headers</th>
+									<th width="3">Headers</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -804,24 +805,12 @@ window.onclick = function(event) {
 				</script>
 <script>
 //Get the modal
-var modal = document.getElementById("myModal");
+var frModal = document.getElementById("modal_exl_pdf");
 function openModel(){
-	modal.style.display = "block";
+	frModal.style.display = "block";
 }
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
+function clsFrModal() {
+	frModal.style.display = "none";
 }
 </script>
 </html>

@@ -225,8 +225,7 @@
 					<h3>
 						<i class="fa fa-table"></i> <u><span id="menu_title"></span></u> - Menu Alloted Franchises
 					</h3>
-					<input type="button" class="btn btn-primary" style="
-    float: right;
+					<input type="button" class="btn btn-primary" style=" float: right;
 						id="btn_close" onclick="clsFrModal()" value="Close" />
 				</div>
 
