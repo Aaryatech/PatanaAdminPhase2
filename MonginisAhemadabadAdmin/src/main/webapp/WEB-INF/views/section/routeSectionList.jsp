@@ -253,7 +253,7 @@
 												<td style="text-align: left;">
 													<c:out value="${sec.exVar2}"/></td>
 												
-												<td style="text-align: right;"><a href="updateRouteSection?secId=${sec.sectionId}"><span
+												<td style="text-align: left;"><a href="updateRouteSection?secId=${sec.sectionId}"><span
 														class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
                                              <a href="deleteRouteSection?secId=${sec.sectionId}"><span
 														class="glyphicon glyphicon-remove"></span></a>

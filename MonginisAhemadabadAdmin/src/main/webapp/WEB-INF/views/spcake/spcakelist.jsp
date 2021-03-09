@@ -17,7 +17,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  /* padding-top: 100px; */ /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -516,7 +516,8 @@ body {font-family: Arial, Helvetica, sans-serif;}
 											<i class="fa fa-table"></i> Select Columns
 										</h3>	
 										<input type="button" class="btn btn-primary" style=" float: right;
-						id="btn_close" onclick="clsFrModal()" value="Close" />							
+						id="btn_close" onclick="clsFrModal()" value="Close" />	
+						<div class="clr"></div>						
 									</div>
 
 				<div class="box-content">
@@ -538,7 +539,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 										style="display: none;">Select Check Box.</span>
 					</div>
 				</div>
-				<div class="form-group" style="background-color: white;">
+				<div class="form-group" style="background-color: white; padding:0 0 10px 0;">
 									&nbsp;	&nbsp;	&nbsp;	&nbsp;
 										<input type="button" margin-right: 5px;"
 											class="btn btn-primary" id="expExcel" onclick="getIdsReport(1)" 
@@ -737,14 +738,14 @@ window.onclick = function(event) {
 					for (var i = 0; i < thArray.length; i++) {
 						seq=i+1;					
 						var tr1 = $('<tr></tr>');
-						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html('<input type="checkbox" class="chkcls" name="chkcls'
+						tr1.append($('<td ></td>').html('<input type="checkbox" class="chkcls" name="chkcls'
 								+ seq
 								+ '" id="catCheck'
 								+ seq
 								+ '" value="'
 								+ seq
 								+ '">') );
-						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html(innerHTML=thArray[i]));
+						tr1.append($('<td></td>').html(innerHTML=thArray[i]));
 						$('#modelTable tbody').append(tr1);
 					}
 				}

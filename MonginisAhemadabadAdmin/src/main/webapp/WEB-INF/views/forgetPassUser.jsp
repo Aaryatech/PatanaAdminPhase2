@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="resources/css/flaty.css">
 <link rel="stylesheet" href="resources/css/flaty-responsive.css">
 
-<link rel="shortcut icon" href="resources/img/favicon.png">
+<link rel="shortcut icon" href="${pageContext.request.contextPath}/resources/img/monginislogo.png">
 
 <style type="text/css">
 .bg-overlay {
@@ -51,6 +51,8 @@ text-align: center; color: #FFF;}
 text-transform: uppercase; margin: 15px 0 5px 0;}
 .welcome_txt{color: #ffe3f2; font-size: 13px; line-height: 18px;}
 
+.error_message{color: #F00; font-size: 12px; display: inline-block; width: 100%; text-align: center; font-family: 'Source Sans Pro', sans-serif;}
+.form-control{font-family: 'Source Sans Pro', sans-serif;}
 </style>
 
 </head>
@@ -62,12 +64,12 @@ text-transform: uppercase; margin: 15px 0 5px 0;}
 		<div class="col-md-2">&nbsp;</div>
 		<div class="col-md-8">
 			<div class="login_bx">
-				<div class="row">
-				<h3>${msg}</h3>
+				<div class="row">				
 					<div class="col-md-6">
-						<div class="login_left">
+						<div class="login_left">						
+						<h3 class="error_message">${msg}</h3>						
 							<form id="form-forgot" action="${pageContext.request.contextPath}/getUserInfo" method="post">
-			<h3 class="login_head">Forgot password</h3>
+			<h3 class="login_head">Forgot Password</h3>
 			
 			<div class="form-group">
 				<div class="controls">
