@@ -236,7 +236,7 @@
 											</table>
 										</div>
 									</div>
-									<div class="form-group" style="background-color: white;">
+									<div class="form-group" style="background-color: white; padding:0 0 10px 0;">
 									&nbsp;	&nbsp;	&nbsp;	&nbsp;
 										<input type="button" margin-right: 5px;" id="btn_delete"
 											class="btn btn-primary" onclick="deleteById()" 
@@ -307,7 +307,7 @@
 										style="display: none;">Select Check Box.</span>
 					</div>
 				</div>
-				<div class="form-group" style="background-color: white;">
+				<div class="form-group" style="background-color: white; padding:0 0 10px 0;">
 									&nbsp;	&nbsp;	&nbsp;	&nbsp;
 										<input type="button" margin-right: 5px;"
 											class="btn btn-primary" id="expExcel" onclick="getIdsReport(1)" 
