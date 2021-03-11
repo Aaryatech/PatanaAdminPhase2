@@ -275,7 +275,7 @@
                                <div class="col2">
 									<label class="col-sm-3 col-lg-2 control-label">Margin %</label>
 									<div class="col-sm-9 col-lg-3 controls">
-										<input type="text" name="margin" id="margin"
+										<input type="text" name="grn_two" id="grn_two"
 											placeholder="Enter Margin %" class="form-control"
 											data-rule-required="true" data-rule-number="true" value="0" onchange="calMrp()"/>
 									</div>
@@ -364,7 +364,7 @@
 									</div>
 								</div>
 								
-								<input type="hidden" name="grn_two" id="grn_two" value="-1"/>
+								
 								<!-- <div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">GRN Type</label>
 									<div class="col-sm-9 col-lg-10 controls">
