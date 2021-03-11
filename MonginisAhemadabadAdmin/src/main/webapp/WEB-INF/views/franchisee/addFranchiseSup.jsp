@@ -366,7 +366,7 @@
 														<th style="text-align: center;">Franchisee</th>
 														<th style="text-align: center;">PAN No.</th>
 														<th style="text-align: center;">State</th>
-														<th style="text-align: center;">Country</th><!-- 
+													<!-- <th style="text-align: center;">Country</th>
 														<th style="text-align: center;">PestControl Date</th>
 														<th style="text-align: center;">Frequency</th>
 														<th style="text-align: center;">Remainder Date</th>
@@ -386,9 +386,9 @@
 															<td  style="text-align: left; padding-left: 3%;"><c:out value="${frSupList.frName}"></c:out></td>
 															<td style="text-align: center;"><c:out value="${frSupList.frPanNo}"></c:out></td>
 															<td align="left"><c:out value="${frSupList.frState}"></c:out></td>
-															<td style="text-align: center;"><c:out
+															<%--<td style="text-align: center;"><c:out
 																	value="${frSupList.frCountry}"></c:out></td>
-															<%-- <td style="text-align: center;"><c:out
+															 <td style="text-align: center;"><c:out
 																	value="${frSupList.pestControlDate}"></c:out></td>
 															<td  style="text-align: center; padding-left: 2%;"><c:out
 																	value="${frSupList.frequency}"></c:out></td>

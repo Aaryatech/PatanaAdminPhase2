@@ -81,7 +81,7 @@
 								<i class="fa fa-bars"></i> ${title}
 							</h3>
 							<div class="box-tool">
-								<a href="${pageContext.request.contextPath}/showSectionList">Back to List</a> <a data-action="collapse" href="#"><i
+								<a href="${pageContext.request.contextPath}/showRouteSectionList">Back to List</a> <a data-action="collapse" href="#"><i
 									class="fa fa-chevron-up"></i></a>
 							</div>
 							<!-- <div class="box-tool">
@@ -123,25 +123,24 @@
 											<div class="col-sm-9 col-lg-10 controls">
 												<select data-placeholder="Select Routes" name="section_mid"
 													class="form-control chosen"  id="section_mid" multiple="multiple"
-													data-rule-required="true">
-													
+													data-rule-required="true">		
+													<c:forEach items="${routeList}" var="routeList">
 													<c:set value="0" var="flag"/>
-												<c:forEach items="${routeList}" var="routeList">
-												
 													<c:forEach items="${routeIds}" var="routeIds">
-														<c:choose>
-														<c:when test="${routeList.routeId==routeIds}">
-															<option selected="selected" value="${routeList.routeId}">${routeList.routeName}</option>														
+														<c:if test="${routeList.routeId==routeIds}">
+															<c:set value="1" var="flag" />
+														</c:if>
+													</c:forEach>
+													<c:choose>
+														<c:when test="${flag==1}">
+															<option selected="selected" value="${routeList.routeId}">${routeList.routeName}</option>
 														</c:when>
 														<c:otherwise>
-															<option value="${routeList.routeId}">${routeList.routeName}</option>		
-														</c:otherwise>	
-														</c:choose>	
-													</c:forEach>
-
-												
+															<option value="${routeList.routeId}">${routeList.routeName}</option>
+														</c:otherwise>
+													</c:choose>
 											</c:forEach>
-										</select>												
+										</select>											
 									</div>
 								</div>
 								

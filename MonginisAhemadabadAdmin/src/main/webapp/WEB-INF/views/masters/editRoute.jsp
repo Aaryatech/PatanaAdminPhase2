@@ -135,7 +135,7 @@
 									<label class="col-sm-3 col-lg-2 control-label">Sequence No.</label>
 									<div class="col-sm-9 col-lg-3 controls">
 										<input type="number" name="seqNo" id="seqNo"
-											placeholder="Route" class="form-control"
+											placeholder="0" class="form-control"
 											data-rule-required="true" value="${route.seqNo}"/>
 									</div>
 								</div>
