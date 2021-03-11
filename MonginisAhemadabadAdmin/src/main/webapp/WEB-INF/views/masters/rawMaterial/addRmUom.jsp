@@ -304,7 +304,7 @@ function deleteById()
 		
 		if(checkedVals=="")
 			{
-			alert("Please Select Route")
+			alert("Please Select UOMs")
 			}
 		else
 			{
