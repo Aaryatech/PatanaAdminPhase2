@@ -100,57 +100,18 @@
 								<div class="form-group">
 									<label class="col-sm-3 col-lg-2 control-label">Type </label>
 									<div class="col-sm-9 col-lg-10 controls">
-										<c:choose>
-											<c:when test="${strSpType==2}">
-
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2" checked="checked"
+										<label class="radio-inline"> <input type="radio" ${strSpType==2 ? 'checked' : ''}
+													name="sp_type" id="optionsRadios2" 
 													value="2"/>FC
 												</label>
-												<label class="radio-inline"> <input type="radio"
+												<label class="radio-inline"> <input type="radio" ${strSpType==1 ? 'checked' : ''}
 													name="sp_type" id="optionsRadios2" value="1"/>
 													Chocolate
 												</label>
-                                               <label class="radio-inline"> <input type="radio"
+                                               <!-- <label class="radio-inline"> <input type="radio"
 													name="sp_type" id="optionsRadios2" 
 													value="0"/>Butter Cream
-												</label>
-
-											</c:when>
-											<c:when test="${strSpType==1}">
-
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2" value="2"/>
-													FC
-												</label>
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2" checked="checked"
-													value="1"/>Chocolate
-												</label>
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2" 
-													value="0"/>Butter Cream
-												</label>
-											</c:when>
-											<c:when test="${strSpType==0}">
-
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2" value="2"/>
-													FC
-												</label>
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2" 
-													value="1"/>Chocolate
-												</label>
-												<label class="radio-inline"> <input type="radio"
-													name="sp_type" id="optionsRadios2"  checked="checked"
-													value="0"/>Butter Cream
-												</label>
-											</c:when>
-                                           <c:otherwise>
-                                           
-                                           </c:otherwise>
-										</c:choose>
+												</label> -->
 
 									</div>
 								</div>
