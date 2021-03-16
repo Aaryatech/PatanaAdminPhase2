@@ -91,7 +91,6 @@ public class PosConfigItem {
 				+ extInt1 + ", extInt2=" + extInt2 + ", extVar1=" + extVar1 + ", extVar2=" + extVar2 + ", delStatus="
 				+ delStatus + "]";
 	}
-	
-	
+		
 	
 }

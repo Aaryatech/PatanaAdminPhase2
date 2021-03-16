@@ -26,6 +26,7 @@ import com.ats.adminpanel.model.item.AllItemsListResponse;
 import com.ats.adminpanel.model.item.Item;
 import com.ats.adminpanel.model.modules.ErrorMessage;
 
+
 @Controller
 public class PosConfigItemController {
 	AllItemsListResponse allItemsListResponse;
